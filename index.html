@@ -1,598 +1,688 @@
-<!DOCTYPE html>
+
+    <!DOCTYPE html>
 <html lang="en">
-   <head>
-      <meta charset="UTF-8"/>
-      <meta name="description" content="Miles Walters's Personal Website">
-      <meta name="keywords" content="Miles Walters, AI, Computer Science, Engineering, Portfolio">
-      <meta name="author" content="Miles Walters">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <meta property="og:image" content="https://i.ibb.co/Z6Qnp58d/SCR-20250317-hggs.png" />
-      <title>Miles Walters</title>
-      <link rel="icon" type="image/png" href="https://i.ibb.co/RknPSzvt/SCR-20250317-hhay.png">
-      <style>
-         :root {
-         --primary-color-light: #6195e8;
-         --primary-color-dark: #284b82;
-         --text-color-light: #1b1b1b;
-         --text-color-dark: #e0e0e0;
-         --bg-color-light: #f0f8ff;
-         --bg-color-dark: #1a1a1a;
-         --link-color-light: #547bb9;
-         --link-hover-color-light: #1a3c5a;
-         --link-color-dark: #6195e8;
-         --link-hover-color-dark: #a8c8ff;
-         --code-bg-color-light: #e8f1fa;
-         --code-bg-color-dark: #2d2d2d;
-         --code-text-color-light: #333333;
-         --code-text-color-dark: #ffffff;
-         --code-border-light: #b0c4de;
-         --code-border-dark: #3b3b3b;
-         --copy-button-bg: #4c90d9;
-         --copy-button-hover-bg: #3b78b7;
-         --copy-button-text: #ffffff;
-         --string-color-light: #9b4e97; /* Purple string color for light mode */
-         --string-color-dark: #9b4e97;  /* Purple string color for dark mode */
-         }
-         body {
-         font-family: Arial, sans-serif;
-         transition: background-color 0.3s, color 0.3s;
-         }
-         pre {
-         line-height: 125%;
-         background-color: var(--code-bg-color-light);
-         color: var(--code-text-color-light);
-         border: 1px solid var(--code-border-light);
-         padding: 15px;
-         border-radius: 5px;
-         }
-         td.linenos .normal, span.linenos {
-         color: inherit;
-         background-color: transparent;
-         padding-left: 5px;
-         padding-right: 5px;
-         }
-         td.linenos .special, span.linenos.special {
-         color: #000000;
-         background-color: #ffffc0;
-         padding-left: 5px;
-         padding-right: 5px;
-         }
-         .hll {
-         background-color: #ffffcc;
-         }
-         .c, .ch, .cm, .cpf, .c1, .cs {
-         color: #3D7B7B;
-         font-style: italic;
-         }
-         .err {
-         border: 1px solid #F00;
-         }
-         .k, .kc, .kd, .kn, .kr, .kt {
-         color: var(--primary-color-dark);
-         font-weight: bold;
-         }
-         .o {
-         color: #666;
-         }
-         .m {
-         color: #666;
-         }
-         .s {
-         color: var(--string-color-light); /* Purple strings */
-         }
-         .na, .nb, .nc, .nd, .ni, .nf, .nl, .nn, .nt, .nv, .ow {
-         color: var(--primary-color-light);
-         }
-         .go {
-         color: #717171;
-         }
-         .gd, .gr {
-         color: #A00000;
-         }
-         .gi {
-         color: #008400;
-         }
-         .gs, .gu {
-         font-weight: bold;
-         }
-         .gt {
-         color: #04D;
-         }
-         .bp {
-         color: #008000;
-         }
-         .fm {
-         color: #00F;
-         }
-         .vc, .vg, .vi, .vm {
-         color: #19177C;
-         }
-         .il {
-         color: #666;
-         }
-         .sb, .sc, .dl, .sd, .s2, .se, .sh, .si, .sx, .sr, .s1, .ss {
-         color: var(--string-color-light); /* Purple strings */
-         font-style: italic;
-         }
-         .ss {
-         color: #19177C;
-         }
-         @media (prefers-color-scheme: dark) {
-         pre {
-         background-color: var(--code-bg-color-dark);
-         color: var(--code-text-color-dark);
-         border: 1px solid var(--code-border-dark);
-         }
-         .hll {
-         background-color: #3b3b3b;
-         }
-         td.linenos .special, span.linenos.special {
-         background-color: #4b4b4b;
-         }
-         .c, .ch, .cm, .cpf, .c1, .cs {
-         color: #aaa;
-         }
-         .k, .kc, .kd, .kn, .kr, .kt {
-         color: var(--primary-color-light);
-         }
-         .o, .m {
-         color: #888;
-         }
-         .na, .nb, .nc, .nd, .ni, .nf, .nl, .nn, .nt, .nv, .ow {
-         color: var(--primary-color-light);
-         }
-         .go {
-         color: #aaa;
-         }
-         .gd, .gr {
-         color: #F00;
-         }
-         .gi {
-         color: #4CAF50;
-         }
-         .gt {
-         color: #0a90b2;
-         }
-         .bp {
-         color: #64ff64;
-         }
-         .fm {
-         color: #0f74ff;
-         }
-         .vc, .vg, .vi, .vm {
-         color: #8a82ff;
-         }
-         .il {
-         color: #aaa;
-         }
-         .s {
-         color: var(--string-color-dark); /* Purple strings in dark mode */
-         }
-         }
-         html {
-         scroll-behavior: smooth;
-         }
-         /* Global Image Styles */
-         img {
-         max-width: 100%; /* Ensure the image does not overflow the container */
-         height: auto; /* Maintain the aspect ratio */
-         vertical-align: left; /* Aligns the image with the middle of the text */
-         border-radius: 5px; /* Optional: add rounded corners */
-         margin: 0 5px; /* Add space on either side of the image */
-         transition: transform 0.3s ease/* Smooth transitions */
-         }
-         /* Image Hover Effect */
-         img:hover {
-         transform: scale(1.05); /* Slightly increase size on hover */
-         }
-         /* Inline Image Styles */
-         img.inline-image {
-         max-width: 100%; /* Ensure the image does not overflow the container */
-         height: auto; /* Maintain the aspect ratio */
-         vertical-align: middle; /* Aligns the image with the middle of the text */
-         border-radius: 5px; /* Optional: add rounded corners */
-         margin: 0 5px; /* Add space on either side of the image */
-         box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* Optional: add a subtle shadow */
-         transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
-         }
-         /* Image Hover Effect */
-         img.inline-image:hover {
-         transform: scale(1.05); /* Slightly increase size on hover */
-         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Enhance shadow on hover */
-         }
-         pre {
-         white-space: pre-wrap;       /* Since CSS 2.1 */
-         white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
-         white-space: -o-pre-wrap;    /* Opera 7 */
-         word-wrap: break-word;       /* Internet Explorer 5.5+ */
-         }
-         body {
-         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-         margin: 0;
-         padding: 40px;
-         display: flex;
-         flex-direction: column;
-         align-items: center;
-         line-height: 1.6;
-         background-color: var(--bg-color-dark);
-         color: var(--text-color-dark);
-         transition: background-color 0.3s ease, color 0.3s ease;
-         }
-         /* Code Tag Styles */
-         code {
-         background-color: var(--code-bg-color-dark);
-         color: var(--code-text-color-dark);
-         padding: 2px 6px;
-         border-radius: 5px;
-         font-family: 'Courier New', Courier, monospace;
-         font-size: 0.95em;
-         border: 1px solid var(--code-border-dark);
-         box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
-         transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-         display: inline-block;
-         position: relative;
-         }
-         /* Copy Button Styles */
-         .copy-button {
-         background-color: var(--copy-button-bg);
-         color: var(--copy-button-text);
-         border: none;
-         padding: 2px 6px;
-         border-radius: 3px;
-         cursor: pointer;
-         font-size: 0.8em;
-         box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-         transition: background-color 0.3s ease;
-         position: absolute;
-         top: 50%;
-         right: -35px;
-         transform: translateY(-50%);
-         display: none; /* Hidden by default */
-         }
-         .code-container:hover .copy-button {
-         display: inline-block; /* Show when hovering over the code container */
-         }
-         .copy-button:hover {
-         background-color: var(--copy-button-hover-bg);
-         }
-         /* Light Mode Code Tag Styles */
-         body.light-mode code {
-         background-color: var(--code-bg-color-light);
-         color: var(--code-text-color-light);
-         border: 1px solid var(--code-border-light);
-         box-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
-         }
-         body.light-mode .copy-button {
-         background-color: var(--primary-color-light);
-         box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-         }
-         body.light-mode .copy-button:hover {
-         background-color: var(--primary-color-dark);
-         }
-         /* Copy Button Styles */
-         .copy-button {
-         position: absolute;
-         top: -10px;
-         right: -10px;
-         background-color: var(--copy-button-bg);
-         color: var(--copy-button-text);
-         border: none;
-         padding: 5px 10px;
-         border-radius: 5px;
-         cursor: pointer;
-         font-size: 0.8em;
-         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-         transition: background-color 0.3s ease;
-         display: none; /* Initially hidden */
-         }
-         code:hover .copy-button {
-         display: block; /* Show when hovering over code */
-         }
-         .copy-button:hover {
-         background-color: var(--copy-button-hover-bg);
-         }
-         /* Light Mode Copy Button */
-         body.light-mode .copy-button {
-         background-color: var(--primary-color-light);
-         box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
-         }
-         body.light-mode .copy-button:hover {
-         background-color: var(--primary-color-dark);
-         }
-         /* Toggle Button Styles */
-         #theme-toggle {
-         background: none;
-         border: none;
-         cursor: pointer;
-         font-size: 1.5em;
-         margin: 0 0 0 auto; /* Align to the right */
-         color: var(--text-color-dark);
-         transition: color 0.3s ease;
-         }
-         body.light-mode #theme-toggle {
-         color: var(--text-color-light);
-         }
-         #theme-toggle span {
-         display: inline-block;
-         }
-         #icon-sun, #icon-moon {
-         font-size: 1.5em;
-         transition: transform 0.3s ease;
-         }
-         #theme-toggle:hover #icon-sun, #theme-toggle:hover #icon-moon {
-         transform: rotate(20deg);
-         }
-         /* Heading Styles */
-         h1, h2 {
-         color: var(--text-color-dark);
-         text-align: center;
-         text-shadow: 0 0 15px rgba(255, 255, 255, 0.3), 0 0 10px var(--primary-color-light);
-         margin: 0;
-         }
-         h1.light-mode, h2.light-mode {
-         color: #008000;
-         text-align: center;
-         text-shadow: 0 0 15px rgba(255, 255, 255, 0.3), 0 0 10px var(--primary-color-light);
-         margin: 0;
-         }
-         h1 {
-         font-size: 3.5em;
-         margin-bottom: 20px;
-         font-weight: 700;
-         }
-         h2 {
-         font-size: 2.2em;
-         margin-top: 40px;
-         margin-bottom: 20px;
-         font-weight: 600;
-         }
-         /* Paragraph Styles */
-         p {
-         font-size: 1.2em;
-         text-align: center;
-         max-width: 800px;
-         margin: 0 auto 30px auto;
-         }
-         /* List Styles */
-         ul {
-         list-style-type: none;
-         padding: 0;
-         margin: 0 auto;
-         max-width: 600px;
-         }
-         li {
-         background-color: rgba(255, 255, 255, 0.08);
-         margin: 10px 0;
-         padding: 12px 20px;
-         border-radius: 10px;
-         font-size: 1.15em;
-         transition: all 0.3s ease;
-         box-shadow: 0 0 10px var(--primary-color-light);
-         }
-         li:hover {
-         background-color: rgba(255, 255, 255, 0.15);
-         box-shadow: 0 0 20px var(--primary-color-light), 0 0 10px var(--primary-color-light);
-         transform: translateY(-5px);
-         }
-         /* Subtopic Styles */
-         ul li ul {
-         margin-top: 10px;
-         padding-left: 20px;
-         }
-         ul li ul li {
-         background-color: rgba(255, 255, 255, 0.05);
-         padding: 8px 15px;
-         margin: 5px 0;
-         font-size: 1em;
-         border-radius: 8px;
-         box-shadow: none;
-         transition: all 0.3s ease;
-         }
-         ul li ul li:hover {
-         background-color: rgba(255, 255, 255, 0.1);
-         box-shadow: 0 0 10px var(--primary-color-light);
-         }
-         /* Link Styles */
-         a {
-         color: var(--link-color-dark);
-         text-decoration: none;
-         font-weight: 500;
-         transition: color 0.3s ease, text-shadow 0.3s ease;
-         }
-         a:hover {
-         color: var(--link-hover-color-dark);
-         text-shadow: 0 0 8px rgba(255, 255, 255, 0.8), 0 0 12px var(--primary-color-light);
-         }
-         /* Smooth Transition for Headings and Lists */
-         h1, h2, p, li, a {
-         opacity: 0;
-         animation: fadeIn 1s ease-in-out forwards;
-         }
-         @keyframes fadeIn {
-         0% { opacity: 0; transform: translateY(10px); }
-         100% { opacity: 1; transform: translateY(0); }
-         }
-         h1 { animation-delay: 0.2s; }
-         p { animation-delay: 0.4s; }
-         h2 { animation-delay: 0.6s; }
-         ul li, a { animation-delay: 0.8s; }
-         /* Contact Section */
-         h2:last-of-type {
-         margin-top: 50px;
-         }
-         /* Light Mode Styles */
-         body.light-mode {
-         background-color: var(--bg-color-light);
-         color: var(--text-color-light);
-         }
-         body.light-mode h1, body.light-mode h2 {
-         text-shadow: 0 0 15px rgba(0, 0, 0, 0.3), 0 0 10px var(--primary-color-light);
-         }
-         body.light-mode li {
-         background-color: rgba(0, 0, 0, 0.05);
-         box-shadow: 0 0 10px var(--primary-color-light);
-         }
-         body.light-mode li:hover {
-         background-color: rgba(0, 0, 0, 0.1);
-         box-shadow: 0 0 20px var(--primary-color-light, 0 0 10px var(--primary-color-light));
-         }
-         body.light-mode a {
-         color: var(--link-color-light);
-         }
-         body.light-mode a:hover {
-         color: var(--link-hover-color-light);
-         text-shadow: 0 0 8px rgba(0, 0, 0, 0.8), 0 0 12px var(--primary-color-light);
-         }
-         /* Responsive Design */
-         @media (min-width: 768px) {
-         h1 {
-         font-size: 4em;
-         }
-         h2 {
-         font-size: 2.5em;
-         }
-         p {
-         font-size: 1.3em;
-         }
-         li {
-         font-size: 1.3em;
-         }
-         }
-      </style>
-   </head>
-   <body>
-      <button id="theme-toggle">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="description" content="Miles Walters's Personal Website">
+  <meta name="keywords" content="Miles Walters, AI, Computer Science, Engineering, Portfolio">
+  <meta name="author" content="Miles Walters">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta property="og:image" content="https://i.ibb.co/Z6Qnp58d/SCR-20250317-hggs.png" />
+    <title>Miles Walters</title>
+    <link rel="icon" type="image/png" href="https://i.ibb.co/RknPSzvt/SCR-20250317-hhay.png">
+    <style>
+     :root {
+    --primary-color-light: #6195e8;
+    --primary-color-dark: #284b82;
+    --text-color-light: #1b1b1b;
+    --text-color-dark: #e0e0e0;
+    --bg-color-light: #f0f8ff;
+    --bg-color-dark: #1a1a1a;
+    --link-color-light: #547bb9;
+    --link-hover-color-light: #1a3c5a;
+    --link-color-dark: #6195e8;
+    --link-hover-color-dark: #a8c8ff;
+    --code-bg-color-light: #e8f1fa;
+    --code-bg-color-dark: #2d2d2d;
+    --code-text-color-light: #333333;
+    --code-text-color-dark: #ffffff;
+    --code-border-light: #b0c4de;
+    --code-border-dark: #3b3b3b;
+    --copy-button-bg: #4c90d9;
+    --copy-button-hover-bg: #3b78b7;
+    --copy-button-text: #ffffff;
+    --string-color-light: #9b4e97; /* Purple string color for light mode */
+    --string-color-dark: #9b4e97;  /* Purple string color for dark mode */
+}
+
+body {
+    font-family: Arial, sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+pre {
+    line-height: 125%;
+    background-color: var(--code-bg-color-light);
+    color: var(--code-text-color-light);
+    border: 1px solid var(--code-border-light);
+    padding: 15px;
+    border-radius: 5px;
+}
+
+td.linenos .normal, span.linenos {
+    color: inherit;
+    background-color: transparent;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+td.linenos .special, span.linenos.special {
+    color: #000000;
+    background-color: #ffffc0;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.hll {
+    background-color: #ffffcc;
+}
+
+.c, .ch, .cm, .cpf, .c1, .cs {
+    color: #3D7B7B;
+    font-style: italic;
+}
+
+.err {
+    border: 1px solid #F00;
+}
+
+.k, .kc, .kd, .kn, .kr, .kt {
+    color: var(--primary-color-dark);
+    font-weight: bold;
+}
+
+.o {
+    color: #666;
+}
+
+.m {
+    color: #666;
+}
+
+.s {
+    color: var(--string-color-light); /* Purple strings */
+}
+
+.na, .nb, .nc, .nd, .ni, .nf, .nl, .nn, .nt, .nv, .ow {
+    color: var(--primary-color-light);
+}
+
+.go {
+    color: #717171;
+}
+
+.gd, .gr {
+    color: #A00000;
+}
+
+.gi {
+    color: #008400;
+}
+
+.gs, .gu {
+    font-weight: bold;
+}
+
+.gt {
+    color: #04D;
+}
+
+.bp {
+    color: #008000;
+}
+
+.fm {
+    color: #00F;
+}
+
+.vc, .vg, .vi, .vm {
+    color: #19177C;
+}
+
+.il {
+    color: #666;
+}
+
+.sb, .sc, .dl, .sd, .s2, .se, .sh, .si, .sx, .sr, .s1, .ss {
+    color: var(--string-color-light); /* Purple strings */
+    font-style: italic;
+}
+
+.ss {
+    color: #19177C;
+}
+
+@media (prefers-color-scheme: dark) {
+    pre {
+        background-color: var(--code-bg-color-dark);
+        color: var(--code-text-color-dark);
+        border: 1px solid var(--code-border-dark);
+    }
+
+    .hll {
+        background-color: #3b3b3b;
+    }
+
+    td.linenos .special, span.linenos.special {
+        background-color: #4b4b4b;
+    }
+
+    .c, .ch, .cm, .cpf, .c1, .cs {
+        color: #aaa;
+    }
+
+    .k, .kc, .kd, .kn, .kr, .kt {
+        color: var(--primary-color-light);
+    }
+
+    .o, .m {
+        color: #888;
+    }
+
+    .na, .nb, .nc, .nd, .ni, .nf, .nl, .nn, .nt, .nv, .ow {
+        color: var(--primary-color-light);
+    }
+
+    .go {
+        color: #aaa;
+    }
+
+    .gd, .gr {
+        color: #F00;
+    }
+
+    .gi {
+        color: #4CAF50;
+    }
+
+    .gt {
+        color: #0a90b2;
+    }
+
+    .bp {
+        color: #64ff64;
+    }
+
+    .fm {
+        color: #0f74ff;
+    }
+
+    .vc, .vg, .vi, .vm {
+        color: #8a82ff;
+    }
+
+    .il {
+        color: #aaa;
+    }
+
+    .s {
+        color: var(--string-color-dark); /* Purple strings in dark mode */
+    }
+}
+
+html {
+    scroll-behavior: smooth;
+}
+/* Global Image Styles */
+img {
+    max-width: 100%; /* Ensure the image does not overflow the container */
+    height: auto; /* Maintain the aspect ratio */
+    vertical-align: left; /* Aligns the image with the middle of the text */
+    border-radius: 5px; /* Optional: add rounded corners */
+    margin: 0 5px; /* Add space on either side of the image */
+    transition: transform 0.3s ease/* Smooth transitions */
+}
+
+/* Image Hover Effect */
+img:hover {
+    transform: scale(1.05); /* Slightly increase size on hover */
+}
+/* Inline Image Styles */
+img.inline-image {
+    max-width: 100%; /* Ensure the image does not overflow the container */
+    height: auto; /* Maintain the aspect ratio */
+    vertical-align: middle; /* Aligns the image with the middle of the text */
+    border-radius: 5px; /* Optional: add rounded corners */
+    margin: 0 5px; /* Add space on either side of the image */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* Optional: add a subtle shadow */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+}
+
+/* Image Hover Effect */
+img.inline-image:hover {
+    transform: scale(1.05); /* Slightly increase size on hover */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Enhance shadow on hover */
+}
+
+
+pre {
+    white-space: pre-wrap;       /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.6;
+    background-color: var(--bg-color-dark);
+    color: var(--text-color-dark);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Code Tag Styles */
+code {
+    background-color: var(--code-bg-color-dark);
+    color: var(--code-text-color-dark);
+    padding: 2px 6px;
+    border-radius: 5px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.95em;
+    border: 1px solid var(--code-border-dark);
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    display: inline-block;
+    position: relative;
+}
+
+/* Copy Button Styles */
+.copy-button {
+    background-color: var(--copy-button-bg);
+    color: var(--copy-button-text);
+    border: none;
+    padding: 2px 6px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.8em;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    transition: background-color 0.3s ease;
+    position: absolute;
+    top: 50%;
+    right: -35px;
+    transform: translateY(-50%);
+    display: none; /* Hidden by default */
+}
+
+.code-container:hover .copy-button {
+    display: inline-block; /* Show when hovering over the code container */
+}
+
+.copy-button:hover {
+    background-color: var(--copy-button-hover-bg);
+}
+
+/* Light Mode Code Tag Styles */
+body.light-mode code {
+    background-color: var(--code-bg-color-light);
+    color: var(--code-text-color-light);
+    border: 1px solid var(--code-border-light);
+    box-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
+}
+
+body.light-mode .copy-button {
+    background-color: var(--primary-color-light);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+body.light-mode .copy-button:hover {
+    background-color: var(--primary-color-dark);
+}
+/* Copy Button Styles */
+.copy-button {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: var(--copy-button-bg);
+    color: var(--copy-button-text);
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8em;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    transition: background-color 0.3s ease;
+    display: none; /* Initially hidden */
+}
+
+code:hover .copy-button {
+    display: block; /* Show when hovering over code */
+}
+
+.copy-button:hover {
+    background-color: var(--copy-button-hover-bg);
+}
+
+/* Light Mode Copy Button */
+body.light-mode .copy-button {
+    background-color: var(--primary-color-light);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+body.light-mode .copy-button:hover {
+    background-color: var(--primary-color-dark);
+}
+
+/* Toggle Button Styles */
+#theme-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5em;
+    margin: 0 0 0 auto; /* Align to the right */
+    color: var(--text-color-dark);
+    transition: color 0.3s ease;
+}
+
+body.light-mode #theme-toggle {
+    color: var(--text-color-light);
+}
+
+#theme-toggle span {
+    display: inline-block;
+}
+
+#icon-sun, #icon-moon {
+    font-size: 1.5em;
+    transition: transform 0.3s ease;
+}
+
+#theme-toggle:hover #icon-sun, #theme-toggle:hover #icon-moon {
+    transform: rotate(20deg);
+}
+
+
+/* Heading Styles */
+h1, h2 {
+    color: var(--text-color-dark);
+    text-align: center;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.3), 0 0 10px var(--primary-color-light);
+    margin: 0;
+}
+
+
+h1.light-mode, h2.light-mode {
+    color: #008000;
+    text-align: center;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.3), 0 0 10px var(--primary-color-light);
+    margin: 0;
+}
+
+h1 {
+    font-size: 3.5em;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+h2 {
+    font-size: 2.2em;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+/* Paragraph Styles */
+p {
+    font-size: 1.2em;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 30px auto;
+}
+
+/* List Styles */
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 600px;
+}
+
+li {
+    background-color: rgba(255, 255, 255, 0.08);
+    margin: 10px 0;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 1.15em;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px var(--primary-color-light);
+}
+
+li:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 20px var(--primary-color-light), 0 0 10px var(--primary-color-light);
+    transform: translateY(-5px);
+}
+
+/* Subtopic Styles */
+ul li ul {
+    margin-top: 10px;
+    padding-left: 20px;
+}
+
+ul li ul li {
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 8px 15px;
+    margin: 5px 0;
+    font-size: 1em;
+    border-radius: 8px;
+    box-shadow: none;
+    transition: all 0.3s ease;
+}
+
+ul li ul li:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 10px var(--primary-color-light);
+}
+
+/* Link Styles */
+a {
+    color: var(--link-color-dark);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+a:hover {
+    color: var(--link-hover-color-dark);
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.8), 0 0 12px var(--primary-color-light);
+}
+
+/* Smooth Transition for Headings and Lists */
+h1, h2, p, li, a {
+    opacity: 0;
+    animation: fadeIn 1s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+h1 { animation-delay: 0.2s; }
+p { animation-delay: 0.4s; }
+h2 { animation-delay: 0.6s; }
+ul li, a { animation-delay: 0.8s; }
+
+/* Contact Section */
+h2:last-of-type {
+    margin-top: 50px;
+}
+
+/* Light Mode Styles */
+body.light-mode {
+    background-color: var(--bg-color-light);
+    color: var(--text-color-light);
+}
+
+body.light-mode h1, body.light-mode h2 {
+    text-shadow: 0 0 15px rgba(0, 0, 0, 0.3), 0 0 10px var(--primary-color-light);
+}
+
+body.light-mode li {
+    background-color: rgba(0, 0, 0, 0.05);
+    box-shadow: 0 0 10px var(--primary-color-light);
+}
+
+body.light-mode li:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 20px var(--primary-color-light, 0 0 10px var(--primary-color-light));
+}
+
+body.light-mode a {
+    color: var(--link-color-light);
+}
+
+body.light-mode a:hover {
+    color: var(--link-hover-color-light);
+    text-shadow: 0 0 8px rgba(0, 0, 0, 0.8), 0 0 12px var(--primary-color-light);
+}
+
+/* Responsive Design */
+@media (min-width: 768px) {
+    h1 {
+        font-size: 4em;
+    }
+
+    h2 {
+        font-size: 2.5em;
+    }
+
+    p {
+        font-size: 1.3em;
+    }
+
+    li {
+        font-size: 1.3em;
+    }
+}
+
+    </style>
+  </head>
+  <body>
+    <button id="theme-toggle">
       <span id="icon-moon" style="display:none;">🌙</span>
       <span id="icon-sun" style="display:inline;">☀️</span>
-      </button>
-      <h1>Hello, I am Miles Walters</h1>
-      <p>I am a 16-year-old student interested in Artificial Intelligence, Machine Learning, and Engineering.</p>
-      <h2>Education</h2>
-      <ul>
-         <li><strong>Bullis School, Potomac, MD</strong>: High School Diploma <em>(Expected May 2026)</em>, GPA: 4.0/4.0, cum laude, Relevant coursework: AP Computer Science A, Creative Coding, Engineer Your World (dual-enrolled with The University of Texas), Maker Lab II, Making for Social Good.</li>
-         <li><strong>Tufts University, Boston, MA</strong> <em>(Summer 2024)</em>: Engineering with Artificial Intelligence, Final project: Built a generative model using transformers to generate and display colors based on text descriptions.</li>
-         <li><strong>InspiritAI, Online</strong> <em>(Summer 2023)</em>: Conceptualized AI using linear and logistic regression models, Projects included: Determining whether breast cancer cells were malignant or benign, Training computer vision models for autonomous cars, Detecting misinformation in news websites.</li>
-      </ul>
-      <h2>Projects</h2>
-      <ul>
-         <li><strong>AllocateAI</strong> <em>(2023)</em>: AllocateAI is a planner app I made for the iPhone in the Congressional App Challenge (Jamie Raskin's district). It was placed as a runner-up. The app would take a long task (or homework assignment) and use Artificial Intelligence to break it into smaller tasks. I used <span class="code-container">
-            <code>SwiftUI</code>
-            <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
-            </span> and <span class="code-container">
-            <code>Python</code>
-            <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
-            </span> as well as Google's <span class="code-container">
-            <code>Gemini</code>
-            <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
-            </span> for chunking the tasks.
-         </li>
-         <li><strong>My Summer Day Animation</strong> <em>(2022)</em>: As a part of the class called <a href="#:~:text=Creative%20Coding:">Creative Coding</a>, I created an animation that described a surrealist view of a summer day. This included a scenic drive (in traffic) through a mountain ridge with a rainbow behind it, using hardcoded geometric shapes. I was ineligible to take the class as a freshman, due to lacking the math prerequisite, but I was able to appeal and take it anyway.</li>
-         <li><strong>Treasures Judaica Gift Shop</strong> <em>(2020)</em>: In 2020, I helped a brick-and-mortar shop run by senior citizens create their online website, a necessity for their shop during COVID. I first built an e-commerce site using <a href="https://lightspeed.com"><span class="code-container">
-            <code>Lightspeed</code>
-            <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
-            </span></a>, and then taught the employees (over Zoom) how to populate the site with their products, images, and more. I also showed them how to schedule pickup times and consulted for them whenever they had an issue. It was a fun experience that taught me how to explain technical concepts in simple terms, all when I was 12-13!
-         </li>
-         <li><strong>Retrieval Augmented Generation</strong> <em>(2024)</em>: With the permission of my math teacher, I trained a retrieval-augmented generation (RAG) model on my class textbook. This model searches and pulls the most relevant pages based on meaning, and outputs them for the user to read and use with tools like ChatGPT.</li>
-      </ul>
-      <h2>Awards</h2>
-      <ul>
-         <li><strong>Cum Laude Society</strong>: Recognizing academic achievement in having a 95% or higher GPA every trimester since the start of High School <em>(2025 - current)</em></li>
-         <li><strong>High Honor Roll</strong>: Awarded to students who maintain a 92+ GPA in a given trimester <em>(Every trimester since first trimester Freshman year - 8x trimesters - current)</em></li>
-         <li><strong>Runner-up</strong>, Congressional App Challenge, Jamie Raskin MD-08 <em>(2023)</em></li>
-         <li><strong>9th Grade Technology and Engineering Student of the Year Award</strong> <em>(2023)</em></li>
-         <li><strong>Best Public Speaker Award</strong>, Model United Nations of Greater Boston <em>(2020)</em></li>
-         <li><strong>The Library of Congress (Mid-Atlantic), Book That Shaped Me Award</strong> <em>(2018)</em></li>
-      </ul>
-      <h2>Extracurriculars</h2>
-      <ul>
-         <li><strong>Co-Founder, Co-Leader</strong>, AI Club <em>(School)</em></li>
-         <li><strong>Leader</strong>, Computer Science Club <em>(School)</em></li>
-         <li><strong>Robotics Team</strong>, FIRST Tech Challenge (FTC)</li>
-         <li><strong>Varsity Rock Climbing Team</strong> <em>(School)</em></li>
-         <li><strong>International Thespian Society</strong> <em>(5-star thespian)</em></li>
-      </ul>
-      <h2>Coding Languages</h2>
-      <p>In order of experience:</p>
-      <ul>
-         <li><img alt="python" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" /> Python </li>
-         <li><img alt="javascript" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg" /> JavaScript </li>
-         <li><img alt="html" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg" /> HTML/CSS </li>
-         <li><img alt="swift" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/swift/swift-original.svg" /> SwiftUI </li>
-         <li><img alt="java" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg" /> Java </li>
-         <li><img alt="cpp" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg" /> C++</li>
-      </ul>
-      <h2>Classes/Courses I have taken</h2>
-      <h3>Extracurricular</h3>
-      <ul>
-         <li><strong>Engineering with AI at Tufts University</strong> <em>(Summer, 2024)</em></li>
-         <li><strong>InspiritAI - Fake News Detection</strong> <em>(Summer, 2023)</em></li>
-         <li><strong>FTC Robotics</strong> <em>(Winter, 2022)</em></li>
-      </ul>
-      <h3>11th Grade:</h3>
-      <ul>
-         <li><strong>AI Club</strong>: Along with a friend, I co-created the AI Club at my school. It is a place to discuss new advances in AI, its responsible use, and to learn how to use AI to get exactly what you want. I believe this club will help its members learn how to make AI work <em>for them</em>, so they don’t wind up <em>working for</em> AI.</li>
-         <li><strong>Intro to Engineering</strong>: I am taking a class called "Intro to Engineering" where we explore different types of engineering, such as mechanical, electrical, reverse, civil, and computer. I am also taking this course dual-enrolled with The University of Texas.</li>
-      </ul>
-      <h3>10th Grade:</h3>
-      <ul>
-         <li><strong>AP Computer Science A</strong>: In AP Computer Science A, I learned how to use Java and developed a deeper understanding of classes, methods, parameters, and other coding concepts. I created projects, such as edge detection and a simple IF statement chatbot, and scored a 4 on the AP exam.</li>
-      </ul>
-      <h3>9th Grade:</h3>
-      <ul>
-         <li><strong>Creative Coding</strong>: In Creative Coding, I used <a href="https://editor.p5js.org/user.Name./full/Sk5qcn-fo">p5js</a> to create visually appealing artwork using code. I experimented with Bezier curves and learned how to enhance my loops. I also created a project which is now the demo for the class (linked below).</li>
-         <li><strong>Making for Social Good</strong>: This class helped me learn about consumer-targeted engineering and the engineering design process. I worked with 3D printers, laser cutters, and other shop tools to create an <a href="https://www.bullis.org/news/article/~board/bullis/post/bitlab-students-make-meaningful-contributions-to-the-community">Eye Gazing Board</a> for kids with ALS to help them communicate with their teachers.</li>
-         <li><strong>Maker Lab II</strong>: In Maker Lab II, I spent more time with 3D design and printing and began experimenting with Arduinos. I created a LED light stand for a gramophone for an Amazon Alexa. I used an individually addressable LED matrix to create a sound graph for the output of the Alexa. I called it the "<a href="https://www.instagram.com/bullis_school/p/CtuHEeIuJ8g/">Gramazon</a>".</li>
-      </ul>
-      <h2>Contact</h2>
-      <ul>
-         <li>Email: miles j walters 26 @ gmail døt cøm </li>
-         <li>LinkedIn: SOON™</li>
-      </ul>
-   </body>
-   <footer>
-      Made with ❤️ by Miles Walters - Written in <span class="code-container">
-      <code>HTML</code>
-      <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
-      </span>, <span class="code-container">
-      <code>CSS</code>
-      <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
-      </span>, <span class="code-container">
-      <code>Python</code>
-      <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
-      </span>, and <span class="code-container">
-      <code>Markdown</code>
-      <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
-      </span> - Last Update Mar. 16, 2025 
-   </footer>
-   <script type="text/javascript">
-      const toggleButton = document.getElementById('theme-toggle');
-      const iconSun = document.getElementById('icon-sun');
-      const iconMoon = document.getElementById('icon-moon');
-      
-      toggleButton.addEventListener('click', () => {
-      document.body.classList.toggle('light-mode');
-      
-      if (document.body.classList.contains('light-mode')) {
-          iconSun.style.display = 'none';
-          iconMoon.style.display = 'inline';
-      } else {
-          iconSun.style.display = 'inline';
-          iconMoon.style.display = 'none';
-      }
-      });
-      
-      function copyToClipboard(button) {
-      const codeElement = button.previousElementSibling;
-      const codeText = codeElement.innerText;
-      
-      navigator.clipboard.writeText(codeText).then(() => {
-          button.innerText = 'Copied!';
-          setTimeout(() => {
-              button.innerText = 'Copy';
-          }, 2000);
-      }).catch(err => {
-          console.log('Something went wrong', err);
-      });
-      }
-   </script>
+    </button>
+    <h1>Hello, I am Miles Walters</h1>
+<p>I am a 16-year-old junior in high school interested in Computer Science, Artificial Intelligence, Machine Learning, and Engineering.</p>
+<h2>Education</h2>
+<ul>
+<li><strong>Bullis School, Potomac, MD</strong>: High School Diploma <em>(Expected May 2026)</em>, GPA: 4.0/4.0, cum laude, Relevant coursework: AP Computer Science A, Creative Coding, Engineer Your World (dual-enrolled with The University of Texas), Maker Lab II, Making for Social Good.</li>
+<li><strong>Tufts University, Boston, MA</strong> <em>(Summer 2024)</em>: Engineering with Artificial Intelligence, Final project: Built a generative model using transformers to generate and display colors based on text descriptions.</li>
+<li><strong>InspiritAI, Online</strong> <em>(Summer 2023)</em>: Conceptualized AI using linear and logistic regression models, Projects included: Determining whether breast cancer cells were malignant or benign, Training computer vision models for autonomous cars, Detecting misinformation in news websites.</li>
+</ul>
+<h2>Projects</h2>
+<ul>
+<li><strong>AllocateAI</strong> <em>(2023)</em>: AllocateAI is a planner app I made for the iPhone in the Congressional App Challenge (Jamie Raskin's district). It was awarded a runner-up. The app would take a long task (or homework assignment) and use Artificial Intelligence to break it into smaller tasks. I used <span class="code-container">
+    <code>SwiftUI</code>
+    <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+</span> and <span class="code-container">
+    <code>Python</code>
+    <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+</span> as well as Google's <span class="code-container">
+    <code>Gemini</code>
+    <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+</span> for chunking the tasks.</li>
+<li><strong>My Summer Day Animation</strong> <em>(2022)</em>: As a part of the class called <a href="#:~:text=Creative%20Coding:">Creative Coding</a>, I created an animation that described a surrealist view of a summer day. This included a scenic drive (in traffic) through a mountain ridge with a rainbow behind it, using hardcoded geometric shapes. I was ineligible to take the class as a freshman, due to lacking the math prerequisite, but I was able to appeal and take it anyway.</li>
+<li><strong>Treasures Judaica Gift Shop</strong> <em>(2020)</em>: In 2020, I helped a brick-and-mortar shop run by senior citizens create their online website, a necessity for their shop during COVID. I first built an e-commerce site using <a href="https://lightspeed.com"><span class="code-container">
+    <code>Lightspeed</code>
+    <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+</span></a>, and then taught the employees (over Zoom) how to populate the site with their products, images, and more. I also showed them how to schedule pickup times and consulted for them whenever they had an issue. It was a fun experience that taught me how to explain technical concepts in simple terms, all when I was 12-13!</li>
+<li><strong>Retrieval Augmented Generation</strong> <em>(2024)</em>: With the permission of my math teacher, I trained a retrieval-augmented generation (RAG) model on my class textbook. This model searches and pulls the most relevant pages based on meaning, and outputs them for the user to read and use with tools like ChatGPT.</li>
+</ul>
+<h2>Awards</h2>
+<ul>
+<li><strong>Cum Laude Society</strong>: Recognizing academic achievement in having a 95% or higher GPA every trimester since the start of High School <em>(2025 - current)</em></li>
+<li><strong>High Honor Roll</strong>: Awarded to students who maintain a 92+ GPA in a given trimester <em>(Every trimester since first trimester Freshman year - 8x trimesters - current)</em></li>
+<li><strong>Runner-up</strong>, Congressional App Challenge, Jamie Raskin MD-08 <em>(2023)</em></li>
+<li><strong>9th Grade Technology and Engineering Student of the Year Award</strong> <em>(2023)</em></li>
+<li><strong>Best Public Speaker Award</strong>, Model United Nations of Greater Boston <em>(2020)</em></li>
+<li><strong>The Library of Congress (Mid-Atlantic), Book That Shaped Me Award</strong> <em>(2018)</em></li>
+</ul>
+<h2>Extracurriculars</h2>
+<ul>
+<li><strong>Co-Founder, Co-Leader</strong>, AI Club <em>(School)</em></li>
+<li><strong>Leader</strong>, Computer Science Club <em>(School)</em></li>
+<li><strong>Robotics Team</strong>, FIRST Tech Challenge (FTC)</li>
+<li><strong>Varsity Rock Climbing Team</strong> <em>(School)</em></li>
+<li><strong>International Thespian Society</strong> <em>(5-star thespian)</em></li>
+</ul>
+<h2>Coding Languages</h2>
+<p>In order of experience:</p>
+<ul>
+<li><img alt="python" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" /> Python </li>
+<li><img alt="javascript" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg" /> JavaScript </li>
+<li><img alt="html" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg" /> HTML/CSS </li>
+<li><img alt="swift" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/swift/swift-original.svg" /> SwiftUI </li>
+<li><img alt="java" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg" /> Java </li>
+<li><img alt="cpp" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg" /> C++</li>
+</ul>
+<h2>Classes/Courses I have taken</h2>
+<h3>Extracurricular</h3>
+<ul>
+<li><strong>Engineering with AI at Tufts University</strong> <em>(Summer, 2024)</em></li>
+<li><strong>InspiritAI - Fake News Detection</strong> <em>(Summer, 2023)</em></li>
+<li><strong>FTC Robotics</strong> <em>(Winter, 2022)</em></li>
+</ul>
+<h3>11th Grade:</h3>
+<ul>
+<li><strong>AI Club</strong>: Along with a friend, I co-created the AI Club at my school. It is a place to discuss new advances in AI, its responsible use, and to learn how to use AI to get exactly what you want. I believe this club will help its members learn how to make AI work <em>for them</em>, so they don’t wind up <em>working for</em> AI.</li>
+<li><strong>Intro to Engineering</strong>: I am taking a class called "Intro to Engineering" where we explore different types of engineering, such as mechanical, electrical, reverse, civil, and computer. I am also taking this course dual-enrolled with The University of Texas.</li>
+</ul>
+<h3>10th Grade:</h3>
+<ul>
+<li><strong>AP Computer Science A</strong>: In AP Computer Science A, I learned how to use Java and developed a deeper understanding of classes, methods, parameters, and other coding concepts. I created projects, such as edge detection and a simple IF statement chatbot, and scored a 4 on the AP exam.</li>
+</ul>
+<h3>9th Grade:</h3>
+<ul>
+<li><strong>Creative Coding</strong>: In Creative Coding, I used <a href="https://editor.p5js.org/user.Name./full/Sk5qcn-fo">p5js</a> to create visually appealing artwork using code. I experimented with Bezier curves and learned how to enhance my loops. I also created a project which is now the demo for the class (linked below).</li>
+<li><strong>Making for Social Good</strong>: This class helped me learn about consumer-targeted engineering and the engineering design process. I worked with 3D printers, laser cutters, and other shop tools to create an <a href="https://www.bullis.org/news/article/~board/bullis/post/bitlab-students-make-meaningful-contributions-to-the-community">Eye Gazing Board</a> for kids with ALS to help them communicate with their teachers.</li>
+<li><strong>Maker Lab II</strong>: In Maker Lab II, I spent more time with 3D design and printing and began experimenting with Arduinos. I created a LED light stand for a gramophone for an Amazon Alexa. I used an individually addressable LED matrix to create a sound graph for the output of the Alexa. I called it the "<a href="https://www.instagram.com/bullis_school/p/CtuHEeIuJ8g/">Gramazon</a>".</li>
+</ul>
+<h2>Contact</h2>
+<ul>
+<li>Email: miles j walters 26 @ gmail døt cøm </li>
+<li>LinkedIn: SOON™</li>
+</ul>
+  </body>
+  <footer>
+    Made with ❤️ by Miles Walters - Written in <span class="code-container">
+    <code>HTML</code>
+    <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+</span>, <span class="code-container">
+    <code>CSS</code>
+    <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+</span>, <span class="code-container">
+    <code>Python</code>
+    <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+</span>, and <span class="code-container">
+    <code>Markdown</code>
+    <button class="copy-button" onclick="copyToClipboard(this)">Copy</button>
+</span> - Last Update Mar. 16, 2025 
+  </footer>
+  <script type="text/javascript">
+    const toggleButton = document.getElementById('theme-toggle');
+const iconSun = document.getElementById('icon-sun');
+const iconMoon = document.getElementById('icon-moon');
+
+toggleButton.addEventListener('click', () => {
+    document.body.classList.toggle('light-mode');
+
+    if (document.body.classList.contains('light-mode')) {
+        iconSun.style.display = 'none';
+        iconMoon.style.display = 'inline';
+    } else {
+        iconSun.style.display = 'inline';
+        iconMoon.style.display = 'none';
+    }
+});
+
+  function copyToClipboard(button) {
+    const codeElement = button.previousElementSibling;
+    const codeText = codeElement.innerText;
+
+    navigator.clipboard.writeText(codeText).then(() => {
+        button.innerText = 'Copied!';
+        setTimeout(() => {
+            button.innerText = 'Copy';
+        }, 2000);
+    }).catch(err => {
+        console.log('Something went wrong', err);
+    });
+}
+  </script>
 </html>
