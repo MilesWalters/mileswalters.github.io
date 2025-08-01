@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miles Walters - Student and Researcher</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-primary-dark: #120024;
+            --bg-secondary-dark: #1a0a35;
+            --text-primary-dark: #e0e0e0;
+            --text-secondary-dark: #a89cc8;
+            --text-heading-dark: #d8b4fe;
+            --accent-dark: #8b5cf6;
+            --accent-hover-dark: #7c3aed;
+
+            --bg-primary-light: #f8f7fa;
+            --bg-secondary-light: #ffffff;
+            --text-primary-light: #2d3748;
+            --text-secondary-light: #718096;
+            --text-heading-light: #4c1d95;
+            --accent-light: #6d28d9;
+            --accent-hover-light: #5b21b6;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .font-mono {
+            font-family: 'Roboto Mono', monospace;
+        }
+        .dark {
+            --bg-primary: var(--bg-primary-dark);
+            --bg-secondary: var(--bg-secondary-dark);
+            --text-primary: var(--text-primary-dark);
+            --text-secondary: var(--text-secondary-dark);
+            --text-heading: var(--text-heading-dark);
+            --accent: var(--accent-dark);
+            --accent-hover: var(--accent-hover-dark);
+        }
+        .light {
+            --bg-primary: var(--bg-primary-light);
+            --bg-secondary: var(--bg-secondary-light);
+            --text-primary: var(--text-primary-light);
+            --text-secondary: var(--text-secondary-light);
+            --text-heading: var(--text-heading-light);
+            --accent: var(--accent-light);
+            --accent-hover: var(--accent-hover-light);
+        }
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        .bg-primary { background-color: var(--bg-primary); }
+        .bg-secondary { background-color: var(--bg-secondary); }
+        .text-primary { color: var(--text-primary); }
+        .text-secondary { color: var(--text-secondary); }
+        .text-heading { color: var(--text-heading); }
+        .text-accent { color: var(--accent); }
+        .bg-accent { background-color: var(--accent); }
+        .hover\:bg-accent-hover:hover { background-color: var(--accent-hover); }
+        .border-accent { border-color: var(--accent); }
+        .ring-accent { --tw-ring-color: var(--accent); }
+        .section-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--text-heading);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .section-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            text-align: center;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .project-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .project-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px var(--accent);
+        }
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        .modal-backdrop.active .modal-content {
+            transform: scale(1);
+        }
+        .nav-link {
+            position: relative;
+            transition: color 0.2s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--accent);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-primary text-primary">
+
+    <header id="header" class="bg-secondary/80 backdrop-blur-lg fixed top-0 left-0 right-0 z-40 shadow-lg">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-xl font-bold text-heading">Miles Walters</a>
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="#about" class="nav-link text-secondary hover:text-primary">About</a>
+                <a href="#skills" class="nav-link text-secondary hover:text-primary">Skills</a>
+                <a href="#projects" class="nav-link text-secondary hover:text-primary">Projects</a>
+                <a href="#contact" class="nav-link text-secondary hover:text-primary">Contact</a>
+            </nav>
+            <button id="theme-toggle" class="p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-bg-secondary focus:ring-accent">
+                <span id="sun-icon" class="hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-heading" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                </span>
+                <span id="moon-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-heading" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                </span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="min-h-screen flex items-center justify-center pt-20">
+            <div class="container mx-auto px-6 text-center">
+                <div class="w-40 h-40 mx-auto mb-6 rounded-full overflow-hidden ring-4 ring-accent ring-offset-4 ring-offset-bg-primary">
+                    <img src="https://placehold.co/200x200/8b5cf6/ffffff?text=MW" alt="Miles Walters" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x200/8b5cf6/ffffff?text=MW';">
+                </div>
+                <h1 class="text-4xl md:text-6xl font-bold text-heading mb-4">Miles Walters</h1>
+                <p class="text-xl md:text-2xl text-secondary mb-8">17-year-old AI Researcher and Student</p>
+                <a href="#projects" class="bg-accent text-white font-bold py-3 px-8 rounded-full hover:bg-accent-hover transition-colors duration-300 text-lg">
+                    Explore My Work
+                </a>
+            </div>
+        </section>
+
+        <section id="about" class="py-20">
+            <div class="container mx-auto px-6">
+                <h2 class="section-title">About Me</h2>
+                <p class="section-subtitle">Hi, I'm Miles</p>
+                <div class="max-w-3xl mx-auto text-lg text-secondary leading-relaxed space-y-6">
+                    <p>
+                        I've always been facinated by how things work. Growing up, I would regularly disassemble toys to understand how and why they work. This directly translates to my aproach to technology. I will click every button and explore in order to understand. I've been coding since I was 8, starting with Python when I was 11.  
+                    </p>
+                    <p>
+                        Recently, I've become very interested in AI, recently exploring effective uses for tools like ChatGPT and Gemini in ways that are not to replace human work. I've also incorporated my skils in Computer Science with other science fields, such as Chemistry and Astrobiology. 
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="skills" class="py-20 bg-secondary">
+            <div class="container mx-auto px-6">
+                <h2 class="section-title">Technical Skills</h2>
+                <p class="section-subtitle">The languages and tools I use to explore my interests.</p>
+                <div class="max-w-4xl mx-auto">
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-heading mb-4">Programming Languages</h3>
+                        <div class="flex flex-wrap gap-3">
+                            <span class="bg-primary text-accent font-mono py-2 px-4 rounded-full">Python</span>
+                            <span class="bg-primary text-accent font-mono py-2 px-4 rounded-full">JavaScript</span>
+                            <span class="bg-primary text-accent font-mono py-2 px-4 rounded-full">SwiftUI</span>
+                            <span class="bg-primary text-accent font-mono py-2 px-4 rounded-full">Java</span>
+                            <span class="bg-primary text-accent font-mono py-2 px-4 rounded-full">HTML/CSS</span>
+                            <span class="bg-primary text-accent font-mono py-2 px-4 rounded-full">C++</span>
+                        </div>
+                    </div>
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-heading mb-4">AI Interests</h3>
+                        <div class="flex flex-wrap gap-3">
+                            <span class="bg-primary text-accent font-mono py-2 px-4 rounded-full">Machine Learning</span>
+                            <span class="bg-primary text-accent font-mono py-2 px-4 rounded-full">Generative AI</span>
+                            <span class="bg-primary text-accent font-mono py-2 px-4 rounded-full">Natural Language Processing</span>
+                            <span class="bg-primary text-accent font-mono py-2 px-4 rounded-full">Retrieval Augmented Generation</span>
+                            <span class="bg-primary text-accent font-mono py-2 px-4 rounded-full">Vector Embeddings</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-heading mb-4">Tools</h3>
+                        <div class="flex flex-wrap gap-3">
+                            <span class="bg-primary text-accent font-mono py-2 px-4 rounded-full">Google Gemini</span>
+                            <span class="bg-primary text-accent font-mono py-2 px-4 rounded-full">Transformers</span>
+                            <span class="bg-primary text-accent font-mono py-2 px-4 rounded-full">TensorFlow</span>
+                            <span class="bg-primary text-accent font-mono py-2 px-4 rounded-full">p5.js</span>
+                            <span class="bg-primary text-accent font-mono py-2 px-4 rounded-full">Arduino</span>
+                            <span class="bg-primary text-accent font-mono py-2 px-4 rounded-full">Lightspeed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="py-20">
+            <div class="container mx-auto px-6">
+                <h2 class="section-title">Projects</h2>
+                <p class="section-subtitle">A small portion of my work.</p>
+                <div id="project-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                </div>
+            </div>
+        </section>
+        
+        <section id="leadership" class="py-20 bg-secondary">
+            <div class="container mx-auto px-6">
+                <h2 class="section-title">Leadership & Extracurriculars</h2>
+                <p class="section-subtitle">Aside from having a 4.0/4.0 GPA, I am also a dedicated member of my community.</p>
+                <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
+                    <div class="bg-primary p-6 rounded-lg">
+                        <h3 class="text-xl font-bold text-heading mb-2">AI Club Co-Founder & Co-Leader</h3>
+                        <p class="text-secondary">Established a community for students to explore new AI advances, discuss the importance of responsible AI use, and learn about practical applications.</p>
+                    </div>
+                    <div class="bg-primary p-6 rounded-lg">
+                        <h3 class="text-xl font-bold text-heading mb-2">Computer Science Club Leader</h3>
+                        <p class="text-secondary">Lead club activities, organize coding challenges, and mentor fellow students in various computer science topics.</p>
+                    </div>
+                    <div class="bg-primary p-6 rounded-lg">
+                        <h3 class="text-xl font-bold text-heading mb-2">Varsity Rock Climbing Member/Future Captain</h3>
+                        <p class="text-secondary">Climb competitively through school, assist with technique and climb planning.</p>
+                    </div>
+                     <div class="bg-primary p-6 rounded-lg">
+                        <h3 class="text-xl font-bold text-heading mb-2">5-star Member of the International Thespian Society</h3>
+                        <p class="text-secondary">Act in productions through school (<i>The Crucible</i>-2022, <i>Frog and Toad the Musical</i>-2022, <i>Clue</i>-2023, <i>A Monster Calls</i>-2024), attend theatrical professional development through the International Thespian Society.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="py-20">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="section-title">Get In Touch</h2>
+                <p class="section-subtitle">Please let me know if you have any questions or comments, I'm most active on LinkedIn.</p>
+                <div class="flex justify-center items-center space-x-6">
+                    <a href="https://www.linkedin.com/in/miles-walters/" target="_blank" rel="noopener noreferrer" class="text-accent hover:text-primary transition-colors duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-secondary py-6">
+        <div class="container mx-auto px-6 text-center text-secondary">
+            <p>&copy; 2025 Miles Walters. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <div id="modal-backdrop" class="modal-backdrop">
+        <div id="modal-content" class="modal-content bg-secondary w-11/12 md:max-w-2xl max-h-[90vh] rounded-lg shadow-2xl p-6 md:p-8 relative overflow-y-auto">
+            <button id="modal-close" class="absolute top-4 right-4 text-secondary hover:text-primary transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggle = document.getElementById('theme-toggle');
+            const sunIcon = document.getElementById('sun-icon');
+            const moonIcon = document.getElementById('moon-icon');
+            const html = document.documentElement;
+
+            const applyTheme = (theme) => {
+                if (theme === 'dark') {
+                    html.classList.add('dark');
+                    html.classList.remove('light');
+                    moonIcon.classList.remove('hidden');
+                    sunIcon.classList.add('hidden');
+                } else {
+                    html.classList.add('light');
+                    html.classList.remove('dark');
+                    sunIcon.classList.remove('hidden');
+                    moonIcon.classList.add('hidden');
+                }
+            };
+
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            if (savedTheme) {
+                applyTheme(savedTheme);
+            } else {
+                applyTheme(systemPrefersDark ? 'dark' : 'light');
+            }
+
+            themeToggle.addEventListener('click', () => {
+                const isDark = html.classList.contains('dark');
+                const newTheme = isDark ? 'light' : 'dark';
+                applyTheme(newTheme);
+                localStorage.setItem('theme', newTheme);
+            });
+            
+
+            const projects = [
+                 {
+                    title: 'WIP',
+                    year: '(Work In Progress)',
+                    award: 'I\'m still working on this part of the site.',
+                    description: 'I\'ll update this with my project list.',
+                    methodology: "Nothing yet!",
+                    impact: "Nothing yet!",
+                    technologies: ['WIP'],
+                    github: "https://github.com/MilesWalters"
+                }
+
+            ]
+
+            const projectGrid = document.getElementById('project-grid');
+            const modalBackdrop = document.getElementById('modal-backdrop');
+            const modalBody = document.getElementById('modal-body');
+            const modalClose = document.getElementById('modal-close');
+
+            projects.forEach(project => {
+                const card = document.createElement('div');
+                card.className = 'project-card bg-secondary p-6 rounded-lg cursor-pointer flex flex-col';
+                card.innerHTML = `
+                    <h3 class="text-xl font-bold text-heading mb-2">${project.title} <span class="text-sm font-normal text-secondary">${project.year}</span></h3>
+                    ${project.award ? `<div class="mb-3"><span class="text-xs font-bold bg-accent/20 text-accent py-1 px-2 rounded-full">${project.award}</span></div>` : ''}
+                    <p class="text-secondary mb-4 flex-grow">${project.description.substring(0, 100)}...</p>
+                    <div class="flex flex-wrap gap-2 mt-auto">
+                        ${project.technologies.map(tech => `<span class="text-xs bg-primary text-accent font-mono py-1 px-3 rounded-full">${tech}</span>`).join('')}
+                    </div>
+                `;
+                card.addEventListener('click', () => openModal(project));
+                projectGrid.appendChild(card);
+            });
+
+            function openModal(project) {
+                modalBody.innerHTML = `
+                    <h2 class="text-3xl font-bold text-heading mb-2">${project.title} <span class="text-lg font-normal text-secondary">${project.year}</span></h2>
+                    ${project.award ? `<div class="mb-4"><span class="text-sm font-bold bg-primary text-accent py-1 px-3 rounded-full">${project.award}</span></div>` : ''}
+                    <div class="space-y-6 text-secondary leading-relaxed">
+                        <div>
+                            <h4 class="text-lg font-semibold text-heading mb-2">Description</h4>
+                            <p>${project.description}</p>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-heading mb-2">Methodology & Approach</h4>
+                            <p>${project.methodology}</p>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-heading mb-2">Impact & Learnings</h4>
+                            <p>${project.impact}</p>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-heading mb-2">Technologies Used</h4>
+                            <div class="flex flex-wrap gap-2">
+                                ${project.technologies.map(tech => `<span class="text-sm bg-primary text-accent font-mono py-1 px-3 rounded-full">${tech}</span>`).join('')}
+                            </div>
+                        </div>
+                        <div class="pt-4">
+                            <a href="${project.github}" target="_blank" rel="noopener noreferrer" class="inline-block bg-accent text-white font-bold py-2 px-6 rounded-full hover:bg-accent-hover transition-colors duration-300">
+                                View on GitHub
+                            </a>
+                        </div>
+                    </div>
+                `;
+                modalBackdrop.classList.add('active');
+            }
+
+            function closeModal() {
+                modalBackdrop.classList.remove('active');
+            }
+
+            modalClose.addEventListener('click', closeModal);
+            modalBackdrop.addEventListener('click', (e) => {
+                if (e.target === modalBackdrop) {
+                    closeModal();
+                }
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
