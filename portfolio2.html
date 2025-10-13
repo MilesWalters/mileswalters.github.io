@@ -39,6 +39,10 @@
                 </div>
 
                 <h2 class="text-lg font-bold text-gray-800 mt-4 mb-3 border-b pb-1">Statistics</h2>
+                <div id="statistics" class="text-sm font-mono space-y-1 mb-4">
+                    <p><span class="font-medium text-gray-600">R²:</span> <span id="rSquared">N/A</span></p>
+                </div>
+
                 <div id="hoverStats" class="text-xs font-mono bg-gray-50 p-3 rounded-lg border">
                     <p class="text-gray-500 mb-2">Hover over the graph to see values.</p>
                     <p><span class="font-medium text-gray-600">X:</span> <span id="statX">0.00</span></p>
@@ -62,6 +66,7 @@
         const coeffAEl = document.getElementById('coeffA');
         const coeffBEl = document.getElementById('coeffB');
         const coeffCEl = document.getElementById('coeffC');
+        const rSquaredEl = document.getElementById('rSquared'); 
         const statXEl = document.getElementById('statX');
         const statFXEl = document.getElementById('statFX');
         const statF1XEl = document.getElementById('statF1X');
@@ -69,7 +74,7 @@
         const resetButton = document.getElementById('resetButton');
 
         let points = [];
-        let coeffs = { a: 0, b: 0, c: 0 };
+        let coeffs = { a: 0, b: 0, c: 0, rSquared: 0 }; 
         let scale = 20;
         let isDrawing = false;
 
@@ -111,7 +116,7 @@
         function fitCurve(points) {
             if (points.length < 3) return null;
 
-            let Sxx4 = 0, Sxx3 = 0, Sxx2 = 0, Sxx = 0, Sx = 0;
+            let Sxx4 = 0, Sxx3 = 0, Sxx2 = 0, Sxx = 0;
             let Sxy2 = 0, Sxy = 0, Sy = 0;
             const N = points.length;
 
@@ -148,10 +153,10 @@
 
             const size = 3;
 
+            
             for (let i = 0; i < size; i++) {
                 let pivot = A[i][i];
-                if (Math.abs(pivot) < 1e-9) return null;
-
+                if (Math.abs(pivot) < 1e-9) return null; 
                 for (let j = i + 1; j < size; j++) {
                     const factor = A[j][i] / A[i][i];
                     for (let k = i; k < size + 1; k++) {
@@ -169,12 +174,40 @@
                 result[i] = (A[i][size] - sum) / A[i][i];
             }
 
-            return { a: result[0], b: result[1], c: result[2] };
+            const fittedCoeffs = { a: result[0], b: result[1], c: result[2] };
+
+            let sumY = 0;
+            for (const p of points) {
+                sumY += p.y;
+            }
+            const meanY = sumY / N;
+
+            let SStot = 0; 
+            let SSres = 0; 
+
+            for (const p of points) {
+                const fittedY = f(p.x, fittedCoeffs);
+                const residual = p.y - fittedY;
+                const totalVariation = p.y - meanY;
+                
+                SStot += totalVariation * totalVariation;
+                SSres += residual * residual;
+            }
+
+            let rSquared = 0;
+            if (SStot > 1e-9) { 
+                rSquared = 1 - (SSres / SStot);
+            }
+            
+            rSquared = Math.min(1.0, rSquared); 
+
+            return { ...fittedCoeffs, rSquared: rSquared };
         }
 
         function drawGraph() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+            // Draw Grid
             ctx.beginPath();
             ctx.strokeStyle = '#e5e7eb';
             ctx.lineWidth = 1;
@@ -188,6 +221,7 @@
             }
             ctx.stroke();
 
+            // Draw Axes
             ctx.beginPath();
             ctx.strokeStyle = '#4b5563';
             ctx.lineWidth = 2;
@@ -197,6 +231,7 @@
             ctx.lineTo(canvas.width / 2, canvas.height);
             ctx.stroke();
 
+            // Draw user-drawn points
             if (points.length > 0) {
                 ctx.beginPath();
                 ctx.strokeStyle = '#9ca3af';
@@ -232,35 +267,44 @@
             }
 
             if (points.length >= 3) {
-                plot(f, '#ef4444');
-                plot(f1, '#3b82f6');
-                plot(f2, '#10b981');
+                plot(f, '#ef4444'); 
+                plot(f1, '#3b82f6'); 
+                plot(f2, '#10b981'); 
             }
         }
 
         function updateCoefficients() {
             if (points.length >= 3) {
-                const newCoeffs = fitCurve(points);
-                if (newCoeffs) {
-                    coeffs = newCoeffs;
+                const fitResult = fitCurve(points);
+                if (fitResult && !isNaN(fitResult.a)) {
+                    coeffs = fitResult;
                     coeffAEl.textContent = coeffs.a.toFixed(4);
                     coeffBEl.textContent = coeffs.b.toFixed(4);
                     coeffCEl.textContent = coeffs.c.toFixed(4);
-                    statusEl.textContent = `Fitted curve to ${points.length} points!`;
-                    statusEl.classList.remove('bg-blue-100');
+                    rSquaredEl.textContent = coeffs.rSquared.toFixed(4); 
+
+                    statusEl.textContent = `Fitted curve to ${points.length} points! R²: ${coeffs.rSquared.toFixed(3)}`;
+                    statusEl.classList.remove('bg-blue-100', 'text-blue-800', 'bg-yellow-100', 'text-yellow-800', 'bg-red-100', 'text-red-800');
                     statusEl.classList.add('bg-green-100', 'text-green-800');
                 } else {
-                    coeffAEl.textContent = 'N/A (Collinear)';
-                    coeffBEl.textContent = 'N/A (Collinear)';
-                    coeffCEl.textContent = 'N/A (Collinear)';
-                    statusEl.textContent = 'Cannot fit curve (Points are nearly collinear).';
+                    coeffAEl.textContent = 'N/A (Error)';
+                    coeffBEl.textContent = 'N/A (Error)';
+                    coeffCEl.textContent = 'N/A (Error)';
+                    rSquaredEl.textContent = 'N/A';
+                    coeffs = { a: 0, b: 0, c: 0, rSquared: 0 };
+                    statusEl.textContent = 'Cannot fit curve (Math Error or Collinear points).';
+                    statusEl.classList.remove('bg-blue-100', 'text-blue-800', 'bg-yellow-100', 'text-yellow-800', 'bg-green-100', 'text-green-800');
+                    statusEl.classList.add('bg-red-100', 'text-red-800');
                 }
             } else {
                 coeffAEl.textContent = 'N/A';
                 coeffBEl.textContent = 'N/A';
                 coeffCEl.textContent = 'N/A';
-                coeffs = { a: 0, b: 0, c: 0 };
+                rSquaredEl.textContent = 'N/A'; 
+                coeffs = { a: 0, b: 0, c: 0, rSquared: 0 };
                 statusEl.textContent = 'Draw more than 3 points to fit a curve.';
+                statusEl.classList.remove('bg-green-100', 'text-green-800', 'bg-yellow-100', 'text-yellow-800', 'bg-red-100', 'text-red-800');
+                statusEl.classList.add('bg-blue-100');
             }
         }
 
@@ -284,7 +328,7 @@
             isDrawing = true;
             points = [];
             statusEl.textContent = 'Drawing... Release to fit curve.';
-            statusEl.classList.remove('bg-green-100', 'text-green-800');
+            statusEl.classList.remove('bg-blue-100', 'text-blue-800', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
             statusEl.classList.add('bg-yellow-100', 'text-yellow-800');
             canvas.style.cursor = 'crosshair';
             handlePointerMove(event);
@@ -337,8 +381,8 @@
         function handleReset() {
             points = [];
             statusEl.textContent = 'Start drawing your curve!';
-            statusEl.classList.remove('bg-green-100', 'text-green-800', 'bg-yellow-100', 'text-yellow-800');
-            statusEl.classList.add('bg-blue-100');
+            statusEl.classList.remove('bg-green-100', 'text-green-800', 'bg-yellow-100', 'text-yellow-800', 'bg-red-100', 'text-red-800');
+            statusEl.classList.add('bg-blue-100', 'text-blue-800');
             updateCoefficients();
             drawGraph();
         }
