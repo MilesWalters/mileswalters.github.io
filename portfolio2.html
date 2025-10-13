@@ -3,442 +3,359 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Polynomial Fit & Derivatives Visualizer</title>
+    <title>Exploration for Portfolio 2 - Miles Walters</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        #drawingCanvas {
-            border: 2px solid #3b82f6;
-            cursor: crosshair;
-            touch-action: none;
-            border-radius: 0.75rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-            background-color: #f9fafb;
-        }
-        .container-shadow {
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-        }
+        :root { font-family: 'Inter', sans-serif; }
+        canvas { touch-action: none; cursor: crosshair; border: 1px solid #e5e7eb; }
+        .info-box-hidden { display: none; }
     </style>
 </head>
-<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4 font-sans">
+<body class="bg-gray-50 flex flex-col items-center justify-center min-h-screen p-4">
 
-    <div class="w-full max-w-5xl bg-white p-8 rounded-2xl container-shadow">
-        <h1 class="text-4xl font-extrabold text-center text-gray-800 mb-2">Function & Derivative Plot for Portfolio 2</h1>
-        <p class="text-center text-gray-600 mb-8">Draw a curve below, then click 'Fit & Plot' to find the best-fit cubic polynomial (f(x)) and visualize its first (f'(x)) and second (f''(x)) derivatives.</p>
+    <div class="w-full max-w-4xl space-y-6">
+        <h1 class="text-3xl font-extrabold text-gray-900 text-center">
+            Draw a quadratic to see its derivatives
+        </h1>
+        <p class="text-center text-sm text-gray-600">
+            Click and drag (draw!) on the canvas to define a set of points. The best-fit parabola will appear.
+        </p>
 
-        <div class="flex flex-col lg:flex-row gap-8">
-            
-            <div class="lg:w-3/5 w-full">
-                <canvas id="drawingCanvas" width="600" height="350"></canvas>
+        <div class="flex flex-col md:flex-row bg-white p-6 rounded-xl shadow-2xl">
+            <div class="w-full md:w-3/4 relative">
+                <canvas id="graphCanvas" class="w-full h-96 rounded-lg"></canvas>
+                <div id="statusMessage" class="absolute top-2 left-2 px-3 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-lg shadow">
+                    Start drawing your curve!
+                </div>
             </div>
 
-            <div class="lg:w-2/5 w-full flex flex-col justify-start space-y-4">
-                <button onclick="clearCanvasAndData()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-xl transition duration-150 shadow-lg hover:shadow-xl transform hover:scale-[1.01]">
-                    <span class="text-lg">Clear All</span>
-                </button>
-                <button onclick="performRegressionAndDraw()" id="plotButton" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl transition duration-150 shadow-lg hover:shadow-xl transform hover:scale-[1.01]">
-                    <span class="text-lg">Fit & Plot Derivatives</span>
-                </button>
-                
-                <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl shadow-inner">
-                    <h3 class="font-bold text-blue-800 mb-2">Fitted Polynomial (f(x))</h3>
-                    <p id="formulaF" class="text-sm text-blue-700 font-mono break-words"></p>
+            <div id="statsContainer" class="w-full md:w-1/4 md:pl-6 pt-4 md:pt-0">
+                <h2 class="text-lg font-bold text-gray-800 mb-3 border-b pb-1">Coefficients</h2>
+                <div id="coefficients" class="text-sm font-mono space-y-1">
+                    <p><span class="font-medium text-gray-600">a:</span> <span id="coeffA">Draw something first!</span></p>
+                    <p><span class="font-medium text-gray-600">b:</span> <span id="coeffB">Draw something first!</span></p>
+                    <p><span class="font-medium text-gray-600">c:</span> <span id="coeffC">Draw something first!</span></p>
                 </div>
-                <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-xl shadow-inner">
-                    <h3 class="font-bold text-yellow-800 mb-2">First Derivative (f'(x))</h3>
-                    <p id="formulaFPrime" class="text-sm text-yellow-700 font-mono break-words"></p>
-                </div>
-                <div class="bg-purple-50 border border-purple-200 p-4 rounded-xl shadow-inner">
-                    <h3 class="font-bold text-purple-800 mb-2">Second Derivative (f''(x))</h3>
-                    <p id="formulaFDoublePrime" class="text-sm text-purple-700 font-mono break-words"></p>
+
+                <h2 class="text-lg font-bold text-gray-800 mt-4 mb-3 border-b pb-1">Statistics</h2>
+                <div id="hoverStats" class="text-xs font-mono bg-gray-50 p-3 rounded-lg border">
+                    <p class="text-gray-500 mb-2">Hover over the graph to see values.</p>
+                    <p><span class="font-medium text-gray-600">X:</span> <span id="statX">0.00</span></p>
+                    <p><span class="font-medium text-gray-600">f(X):</span> <span id="statFX">0.00</span> (Fit line, Red)</p>
+                    <p><span class="font-medium text-gray-600">f'(X):</span> <span id="statF1X">0.00</span> (1st Deriv., Blue)</p>
+                    <p><span class="font-medium text-gray-600">f''(X):</span> <span id="statF2X">0.00</span> (2nd Deriv., Green)</p>
                 </div>
             </div>
         </div>
 
-        <div class="mt-8 p-6 bg-gray-50 rounded-xl border border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-700 mb-3">Legend:</h3>
-            <ul class="list-none grid grid-cols-2 sm:grid-cols-4 gap-4 text-gray-600">
-                <li class="flex items-center"><span class="inline-block w-4 h-4 rounded-full mr-2" style="background-color: #ef4444;"></span> Drawn</li>
-                <li class="flex items-center"><span class="inline-block w-4 h-1 mr-2 rounded" style="background-color: #3b82f6;"></span> Fit Function f(x)</li>
-                <li class="flex items-center"><span class="inline-block w-4 h-1 mr-2 rounded" style="background-color: #f59e0b;"></span> First Derivative f'(x)</li>
-                <li class="flex items-center"><span class="inline-block w-4 h-1 mr-2 rounded" style="background-color: #9333ea;"></span> Second Derivative f''(x)</li>
-            </ul>
-        </div>
+        <button id="resetButton" class="w-full py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl shadow-lg transition duration-150">
+            Clear Drawing
+        </button>
+
     </div>
 
-    <script type="text/javascript">
-        const CANVAS_ID = 'drawingCanvas';
-        const DEGREE = 3;
-        
-        const MATH_X_MIN = -5;
-        const MATH_X_MAX = 5;
+    <script>
+        const canvas = document.getElementById('graphCanvas');
+        const ctx = canvas.getContext('2d');
+        const statusEl = document.getElementById('statusMessage');
+        const coeffAEl = document.getElementById('coeffA');
+        const coeffBEl = document.getElementById('coeffB');
+        const coeffCEl = document.getElementById('coeffC');
+        const statXEl = document.getElementById('statX');
+        const statFXEl = document.getElementById('statFX');
+        const statF1XEl = document.getElementById('statF1X');
+        const statF2XEl = document.getElementById('statF2X');
+        const resetButton = document.getElementById('resetButton');
 
-        let currentMathYMin = -5;
-        let currentMathYMax = 5;
-
-        const COEFFICIENT_TOLERANCE = 1e-4; 
-        
-
-        let canvas, ctx;
         let points = [];
+        let coeffs = { a: 0, b: 0, c: 0 };
+        let scale = 20;
         let isDrawing = false;
-        let polynomialCoefficients = null;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            canvas = document.getElementById(CANVAS_ID);
-            ctx = canvas.getContext('2d');
-            
-            canvas.addEventListener('mousedown', startDrawing);
-            canvas.addEventListener('mouseup', stopDrawing);
-            canvas.addEventListener('mousemove', draw);
-            
-            canvas.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                startDrawing(e.touches[0]);
-            });
-            canvas.addEventListener('touchend', stopDrawing);
-            canvas.addEventListener('touchmove', (e) => {
-                e.preventDefault();
-                draw(e.touches[0]);
-            });
-
-            clearCanvasAndData(false); 
-        });
-
-        function canvasToMathX(cx) {
-            return MATH_X_MIN + (cx / canvas.width) * (MATH_X_MAX - MATH_X_MIN);
+        function resizeCanvas() {
+            const rect = canvas.parentNode.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = 400;
+            drawGraph();
         }
 
-        function canvasToMathY(cy) {
-            const DEFAULT_Y_MIN = -5;
-            const DEFAULT_Y_MAX = 5;
-            return DEFAULT_Y_MAX - (cy / canvas.height) * (DEFAULT_Y_MAX - DEFAULT_Y_MIN);
+        function toGraphX(x) {
+            return (x - canvas.width / 2) / scale;
         }
 
-        function mathToCanvasX(mx) {
-            return ((mx - MATH_X_MIN) / (MATH_X_MAX - MATH_X_MIN)) * canvas.width;
+        function toGraphY(y) {
+            return -(y - canvas.height / 2) / scale;
         }
 
-        function mathToCanvasY_Dynamic(my) {
-            return canvas.height - ((my - currentMathYMin) / (currentMathYMax - currentMathYMin)) * canvas.height;
+        function toCanvasX(x) {
+            return x * scale + canvas.width / 2;
         }
 
+        function toCanvasY(y) {
+            return -y * scale + canvas.height / 2;
+        }
 
-        function getRelativeCoords(e) {
-            if (e.offsetX !== undefined && e.offsetY !== undefined) {
-                return { cx: e.offsetX, cy: e.offsetY };
+        function f(x, c) {
+            return c.a * x * x + c.b * x + c.c;
+        }
+
+        function f1(x, c) {
+            return 2 * c.a * x + c.b;
+        }
+
+        function f2(x, c) {
+            return 2 * c.a;
+        }
+
+        function fitCurve(points) {
+            if (points.length < 3) return null;
+
+            let Sxx4 = 0, Sxx3 = 0, Sxx2 = 0, Sxx = 0, Sx = 0;
+            let Sxy2 = 0, Sxy = 0, Sy = 0;
+            const N = points.length;
+
+            for (const p of points) {
+                const x = p.x;
+                const y = p.y;
+                const x2 = x * x;
+                const x3 = x * x2;
+                const x4 = x * x3;
+
+                Sxx4 += x4;
+                Sxx3 += x3;
+                Sxx2 += x2;
+                Sxx += x;
+
+                Sxy2 += x2 * y;
+                Sxy += x * y;
+                Sy += y;
             }
 
-            const rect = canvas.getBoundingClientRect();
-            const cx = e.clientX - rect.left;
-            const cy = e.clientY - rect.top;
-            return { cx, cy };
-        }
+            const M = [
+                [Sxx4, Sxx3, Sxx2],
+                [Sxx3, Sxx2, Sxx],
+                [Sxx2, Sxx, N]
+            ];
 
-        function startDrawing(e) {
-            isDrawing = true;
-            const { cx, cy } = getRelativeCoords(e);
-            addPoint(cx, cy);
-            
-            ctx.beginPath();
-            ctx.moveTo(cx, cy);
-        }
+            const V = [Sxy2, Sxy, Sy];
 
-        function stopDrawing() {
-            isDrawing = false;
-            ctx.beginPath();
-        }
+            const A = [
+                [M[0][0], M[0][1], M[0][2], V[0]],
+                [M[1][0], M[1][1], M[1][2], V[1]],
+                [M[2][0], M[2][1], M[2][2], V[2]]
+            ];
 
-        function draw(e) {
-            if (!isDrawing) return;
-            const { cx, cy } = getRelativeCoords(e);
+            const size = 3;
 
-            ctx.lineTo(cx, cy);
-            ctx.strokeStyle = '#ef4444';
-            ctx.lineWidth = 3;
-            ctx.stroke();
-            
-            ctx.beginPath();
-            ctx.moveTo(cx, cy);
+            for (let i = 0; i < size; i++) {
+                let pivot = A[i][i];
+                if (Math.abs(pivot) < 1e-9) return null;
 
-            addPoint(cx, cy);
-        }
-
-        function addPoint(cx, cy) {
-            if (!canvas) return;
-            
-            const mx = canvasToMathX(cx);
-            const my = canvasToMathY(cy);
-            
-            if (points.length === 0 || Math.hypot(points[points.length - 1].mx - mx) > 0.05) {
-                 points.push({ mx, my });
+                for (let j = i + 1; j < size; j++) {
+                    const factor = A[j][i] / A[i][i];
+                    for (let k = i; k < size + 1; k++) {
+                        A[j][k] -= factor * A[i][k];
+                    }
+                }
             }
+
+            const result = new Array(size);
+            for (let i = size - 1; i >= 0; i--) {
+                let sum = 0;
+                for (let j = i + 1; j < size; j++) {
+                    sum += A[i][j] * result[j];
+                }
+                result[i] = (A[i][size] - sum) / A[i][i];
+            }
+
+            return { a: result[0], b: result[1], c: result[2] };
         }
 
-        function clearCanvasAndData(resetCoefficients = true) {
+        function drawGraph() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            points = [];
-            
-            currentMathYMin = -5;
-            currentMathYMax = 5;
-            
-            if (resetCoefficients) {
-                polynomialCoefficients = null;
-                document.getElementById('formulaF').textContent = '';
-                document.getElementById('formulaFPrime').textContent = '';
-                document.getElementById('formulaFDoublePrime').textContent = '';
-            }
-            
-            drawAxes();
-        }
 
-        function drawAxes() {
-            ctx.save();
-            ctx.strokeStyle = '#cccccc';
-            ctx.lineWidth = 1;
-            ctx.setLineDash([5, 5]);
-
-            const cyZero = mathToCanvasY_Dynamic(0);
-            if (cyZero >= 0 && cyZero <= canvas.height) {
-                ctx.beginPath();
-                ctx.moveTo(0, cyZero);
-                ctx.lineTo(canvas.width, cyZero);
-                ctx.stroke();
-            }
-
-            const cxZero = mathToCanvasX(0);
-            if (cxZero >= 0 && cxZero <= canvas.width) {
-                ctx.beginPath();
-                ctx.moveTo(cxZero, 0);
-                ctx.lineTo(cxZero, canvas.height);
-                ctx.stroke();
-            }
-
-            ctx.setLineDash([]);
-            ctx.restore();
-        }
-
-        function drawGraph(func, color, lineWidth = 2) {
             ctx.beginPath();
-            ctx.strokeStyle = color;
-            ctx.lineWidth = lineWidth;
-
-            for (let i = 0; i <= canvas.width; i += 1) {
-                const mx = canvasToMathX(i);
-                const my = func(mx);
-                const cy = mathToCanvasY_Dynamic(my);
-
-                if (cy >= -100 && cy <= canvas.height + 100) { 
-                    if (i === 0) {
-                        ctx.moveTo(i, cy);
-                    } else {
-                        ctx.lineTo(i, cy);
-                    }
-                } else {
-                    ctx.moveTo(i, cy);
-                }
+            ctx.strokeStyle = '#e5e7eb';
+            ctx.lineWidth = 1;
+            for (let i = -canvas.width / 2; i < canvas.width / 2; i += scale) {
+                ctx.moveTo(i + canvas.width / 2, 0);
+                ctx.lineTo(i + canvas.width / 2, canvas.height);
+            }
+            for (let i = -canvas.height / 2; i < canvas.height / 2; i += scale) {
+                ctx.moveTo(0, i + canvas.height / 2);
+                ctx.lineTo(canvas.width, i + canvas.height / 2);
             }
             ctx.stroke();
-        }
 
-        function drawDataPoints() {
-            ctx.fillStyle = '#ef4444';
-            points.forEach(p => {
-                const cx = mathToCanvasX(p.mx);
-                const cy = mathToCanvasY_Dynamic(p.my);
-                
+            ctx.beginPath();
+            ctx.strokeStyle = '#4b5563';
+            ctx.lineWidth = 2;
+            ctx.moveTo(0, canvas.height / 2);
+            ctx.lineTo(canvas.width, canvas.height / 2);
+            ctx.moveTo(canvas.width / 2, 0);
+            ctx.lineTo(canvas.width / 2, canvas.height);
+            ctx.stroke();
+
+            if (points.length > 0) {
                 ctx.beginPath();
-                ctx.arc(cx, cy, 2, 0, Math.PI * 2); 
-                ctx.fill();
-            });
-        }
-
-        function calculateAutoZoomBounds(f, fPrime, fDoublePrime) {
-            let allYValues = [];
-            
-            points.forEach(p => allYValues.push(p.my));
-            
-            for (let i = 0; i <= canvas.width; i += 10) {
-                const mx = canvasToMathX(i);
-                allYValues.push(f(mx));
-                allYValues.push(fPrime(mx));
-                allYValues.push(fDoublePrime(mx));
-            }
-            
-            if (allYValues.length === 0) return;
-
-            let minY = Math.min(...allYValues);
-            let maxY = Math.max(...allYValues);
-
-            const range = maxY - minY;
-            const padding = (range > 0) ? range * 0.2 : 2;
-            
-            currentMathYMin = minY - padding;
-            currentMathYMax = maxY + padding;
-        }
-        
-        function solveSystem(A, B) {
-            const n = B.length;
-            const matrix = [];
-            for (let i = 0; i < n; i++) {
-                matrix[i] = [...A[i], B[i]];
+                ctx.strokeStyle = '#9ca3af';
+                ctx.lineWidth = 1;
+                ctx.moveTo(toCanvasX(points[0].x), toCanvasY(points[0].y));
+                for (let i = 1; i < points.length; i++) {
+                    ctx.lineTo(toCanvasX(points[i].x), toCanvasY(points[i].y));
+                }
+                ctx.stroke();
             }
 
-            for (let i = 0; i < n; i++) {
-                let maxRow = i;
-                for (let k = i + 1; k < n; k++) {
-                    if (Math.abs(matrix[k][i]) > Math.abs(matrix[maxRow][i])) {
-                        maxRow = k;
+            function plot(func, color) {
+                ctx.beginPath();
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 3;
+
+                let first = true;
+                const step = 0.5;
+
+                for (let px = 0; px <= canvas.width; px += step) {
+                    const x = toGraphX(px);
+                    const y = func(x, coeffs);
+                    const py = toCanvasY(y);
+
+                    if (first) {
+                        ctx.moveTo(px, py);
+                        first = false;
+                    } else {
+                        ctx.lineTo(px, py);
                     }
                 }
-                [matrix[i], matrix[maxRow]] = [matrix[maxRow], matrix[i]];
-
-                const divisor = matrix[i][i];
-                if (Math.abs(divisor) < 1e-9) { 
-                    console.error("Matrix is singular or ill-conditioned. Cannot find unique solution.");
-                    return null; 
-                }
-                for (let j = i; j < n + 1; j++) {
-                    matrix[i][j] /= divisor;
-                }
-
-                for (let k = 0; k < n; k++) {
-                    if (k !== i) {
-                        const factor = matrix[k][i];
-                        for (let j = i; j < n + 1; j++) {
-                            matrix[k][j] -= factor * matrix[i][j];
-                        }
-                    }
-                }
+                ctx.stroke();
             }
 
-            return matrix.map(row => row[n]);
+            if (points.length >= 3) {
+                plot(f, '#ef4444');
+                plot(f1, '#3b82f6');
+                plot(f2, '#10b981');
+            }
         }
 
-
-        function performRegression() {
-            if (points.length < DEGREE + 1) {
-                console.warn(`Need at least ${DEGREE + 1} points for a degree ${DEGREE} fit.`);
-                return null;
-            }
-
-            const n = DEGREE + 1; 
-            
-            const sumXPowers = new Array(2 * DEGREE + 1).fill(0); 
-            const sumYXPowers = new Array(DEGREE + 1).fill(0);    
-
-            points.forEach(p => {
-                for (let k = 0; k <= 2 * DEGREE; k++) {
-                    sumXPowers[k] += Math.pow(p.mx, k);
-                }
-                for (let k = 0; k <= DEGREE; k++) {
-                    sumYXPowers[k] += p.my * Math.pow(p.mx, k);
-                }
-            });
-
-            const A = []; 
-            const B = sumYXPowers; 
-
-            for (let i = 0; i < n; i++) {
-                A[i] = [];
-                for (let j = 0; j < n; j++) {
-                    A[i][j] = sumXPowers[i + j];
-                }
-            }
-
-            const coefficients = solveSystem(A, B);
-            
-            if (coefficients) {
-                return coefficients.reverse(); 
-            }
-            return null;
-        }
-
-        function getPolynomialFunc(coeffs) {
-            return (x) => {
-                return coeffs.reduce((sum, coeff, i) => sum + coeff * Math.pow(x, coeffs.length - 1 - i), 0);
-            };
-        }
-
-        function calculateDerivativeCoeffs(coeffs, order) {
-            let derivativeCoeffs = [...coeffs];
-            
-            for (let k = 0; k < order; k++) {
-                let newCoeffs = [];
-                for (let i = 1; i < derivativeCoeffs.length; i++) {
-                    const originalPower = derivativeCoeffs.length - 1 - i;
-                    const newCoeff = derivativeCoeffs[i] * originalPower;
-                    newCoeffs.push(newCoeff);
-                }
-                derivativeCoeffs = newCoeffs.reverse();
-            }
-            
-            return derivativeCoeffs;
-        }
-
-        function formatPolynomial(coeffs, degreeOffset = 0) {
-            if (!coeffs || coeffs.length === 0) return '0.0000';
-            
-            const terms = [];
-            
-            for (let i = 0; i < coeffs.length; i++) {
-                const coeff = coeffs[i];
-                const power = coeffs.length - 1 - i + degreeOffset;
-
-                if (Math.abs(coeff) < COEFFICIENT_TOLERANCE) continue;
-
-                const absCoeff = Math.abs(coeff);
-                let termStr = absCoeff.toFixed(4);
-                
-                if (power === 1) {
-                    termStr += 'x';
-                } else if (power > 1) {
-                    termStr += 'x^' + power;
-                }
-
-                if (terms.length === 0) {
-                    if (coeff < 0) termStr = '-' + termStr;
+        function updateCoefficients() {
+            if (points.length >= 3) {
+                const newCoeffs = fitCurve(points);
+                if (newCoeffs) {
+                    coeffs = newCoeffs;
+                    coeffAEl.textContent = coeffs.a.toFixed(4);
+                    coeffBEl.textContent = coeffs.b.toFixed(4);
+                    coeffCEl.textContent = coeffs.c.toFixed(4);
+                    statusEl.textContent = `Fitted curve to ${points.length} points!`;
+                    statusEl.classList.remove('bg-blue-100');
+                    statusEl.classList.add('bg-green-100', 'text-green-800');
                 } else {
-                    termStr = (coeff < 0 ? ' - ' : ' + ') + termStr;
+                    coeffAEl.textContent = 'N/A (Collinear)';
+                    coeffBEl.textContent = 'N/A (Collinear)';
+                    coeffCEl.textContent = 'N/A (Collinear)';
+                    statusEl.textContent = 'Cannot fit curve (Points are nearly collinear).';
                 }
-                
-                terms.push(termStr);
+            } else {
+                coeffAEl.textContent = 'N/A';
+                coeffBEl.textContent = 'N/A';
+                coeffCEl.textContent = 'N/A';
+                coeffs = { a: 0, b: 0, c: 0 };
+                statusEl.textContent = 'Draw more than 3 points to fit a curve.';
             }
-
-            if (terms.length === 0) return '0.0000';
-            return terms.join(' ').trim();
         }
 
+        function getCoords(event) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = event.clientX || (event.touches ? event.touches[0].clientX : null);
+            const clientY = event.clientY || (event.touches ? event.touches[0].clientY : null);
 
-        function performRegressionAndDraw() {
-            if (points.length < DEGREE + 1) {
-                alert(`Please draw a function with at least ${DEGREE + 1} points before calculating the fit. (You currently have ${points.length} points.)`);
+            if (clientX === null || clientY === null) return null;
+
+            const canvasX = clientX - rect.left;
+            const canvasY = clientY - rect.top;
+
+            return { canvasX, canvasY, x: toGraphX(canvasX), y: toGraphY(canvasY) };
+        }
+
+        function handlePointerDown(event) {
+            const coords = getCoords(event);
+            if (!coords) return;
+
+            isDrawing = true;
+            points = [];
+            statusEl.textContent = 'Drawing... Release to fit curve.';
+            statusEl.classList.remove('bg-green-100', 'text-green-800');
+            statusEl.classList.add('bg-yellow-100', 'text-yellow-800');
+            canvas.style.cursor = 'crosshair';
+            handlePointerMove(event);
+        }
+
+        function handlePointerMove(event) {
+            const coords = getCoords(event);
+            if (!coords) return;
+
+            if (isDrawing) {
+                event.preventDefault();
+                points.push({ x: coords.x, y: coords.y });
+                drawGraph();
                 return;
             }
-            
-            const coeffs = performRegression(); 
-            if (!coeffs) return; 
-            polynomialCoefficients = coeffs;
 
-            const fPrimeCoeffs = calculateDerivativeCoeffs(coeffs, 1);
-            const fDoublePrimeCoeffs = calculateDerivativeCoeffs(coeffs, 2);
+            const x = coords.x;
+            const fx = f(x, coeffs);
+            const f1x = f1(x, coeffs);
+            const f2x = f2(x, coeffs);
 
-            const f = getPolynomialFunc(coeffs);
-            const fPrime = getPolynomialFunc(fPrimeCoeffs);
-            const fDoublePrime = getPolynomialFunc(fDoublePrimeCoeffs);
-            
-            calculateAutoZoomBounds(f, fPrime, fDoublePrime);
+            statXEl.textContent = x.toFixed(3);
+            statFXEl.textContent = fx.toFixed(3);
+            statF1XEl.textContent = f1x.toFixed(3);
+            statF2XEl.textContent = f2x.toFixed(3);
 
-            clearCanvasAndData(false); 
+            if (points.length >= 3) {
+                drawGraph();
 
-            document.getElementById('formulaF').textContent = formatPolynomial(coeffs, 0); 
-            document.getElementById('formulaFPrime').textContent = formatPolynomial(fPrimeCoeffs, 0); 
-            document.getElementById('formulaFDoublePrime').textContent = formatPolynomial(fDoublePrimeCoeffs, 0); 
-
-            drawDataPoints();
-            drawGraph(f, '#3b82f6', 3);      
-            drawGraph(fPrime, '#f59e0b', 2);  
-            drawGraph(fDoublePrime, '#9333ea', 2); 
+                ctx.beginPath();
+                ctx.strokeStyle = '#4b5563';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([5, 5]);
+                ctx.moveTo(coords.canvasX, 0);
+                ctx.lineTo(coords.canvasX, canvas.height);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
         }
+
+        function handlePointerUp() {
+            if (isDrawing) {
+                isDrawing = false;
+                canvas.style.cursor = 'crosshair';
+                updateCoefficients();
+                drawGraph();
+            }
+        }
+
+        function handleReset() {
+            points = [];
+            statusEl.textContent = 'Start drawing your curve!';
+            statusEl.classList.remove('bg-green-100', 'text-green-800', 'bg-yellow-100', 'text-yellow-800');
+            statusEl.classList.add('bg-blue-100');
+            updateCoefficients();
+            drawGraph();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        canvas.addEventListener('mousedown', handlePointerDown);
+        canvas.addEventListener('touchstart', handlePointerDown);
+        canvas.addEventListener('mousemove', handlePointerMove);
+        canvas.addEventListener('touchmove', handlePointerMove);
+        document.addEventListener('mouseup', handlePointerUp);
+        document.addEventListener('touchend', handlePointerUp);
+        resetButton.addEventListener('click', handleReset);
+
+        window.onload = () => {
+            resizeCanvas();
+            handleReset();
+        };
 
     </script>
 </body>
