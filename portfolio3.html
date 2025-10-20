@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exploration for Portfolio 2 - Miles Walters (Generalized)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { font-family: 'Roboto', sans-serif; }
+        canvas { touch-action: none; cursor: crosshair; border: 1px solid #e5e7eb; }
+        .color-0 { color: #ef4444; } /* Red (Fit) */
+        .color-1 { color: #3b82f6; } /* Blue (1st Deriv) */
+        .color-2 { color: #10b981; } /* Green (2nd Deriv) */
+        .color-3 { color: #f97316; } /* Orange */
+        .color-4 { color: #a855f7; } /* Purple */
+        .color-5 { color: #06b6d4; } /* Cyan */
+    </style>
+</head>
+<body class="bg-gray-50 flex flex-col items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-4xl space-y-6">
+        <h1 class="text-3xl font-extrabold text-gray-900 text-center">
+            Draw a Curve to See Polynomial Fit and Derivatives
+        </h1>
+        <p class="text-center text-sm text-gray-600">
+            Click and drag (draw!) on the canvas to define a set of points. The best-fit polynomial of the selected order will appear along with its derivatives.
+        </p>
+
+        <div class="flex flex-col md:flex-row bg-white p-6 rounded-xl shadow-2xl">
+            <div class="w-full md:w-3/4 relative">
+                <canvas id="graphCanvas" class="w-full h-96 rounded-lg"></canvas>
+                <div id="statusMessage" class="absolute top-2 left-2 px-3 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-lg shadow">
+                    Start drawing your curve!
+                </div>
+            </div>
+
+            <div id="statsContainer" class="w-full md:w-1/4 md:pl-6 pt-4 md:pt-0">
+
+                <h2 class="text-lg font-bold text-gray-800 mb-3 border-b pb-1">Polynomial Order (N)</h2>
+                <select id="orderSelector" class="w-full p-2 border rounded-lg mb-4 text-sm font-semibold text-gray-700 bg-gray-50">
+                    <option value="2">2 (Quadratic)</option>
+                    <option value="3">3 (Cubic)</option>
+                    <option value="4">4 (Quartic)</option>
+                    <option value="5">5 (Quintic)</option>
+                </select>
+
+                <h2 class="text-lg font-bold text-gray-800 mb-3 border-b pb-1">Coefficients</h2>
+                <div id="coefficients" class="text-sm font-mono space-y-1">
+                    <p class="text-gray-500">Draw something first!</p>
+                </div>
+
+                <h2 class="text-lg font-bold text-gray-800 mt-4 mb-3 border-b pb-1">Statistics</h2>
+                <div id="statistics" class="text-sm font-mono space-y-1 mb-4">
+                    <p><span class="font-medium text-gray-600">R²:</span> <span id="rSquared">N/A</span></p>
+                </div>
+
+                <div id="hoverStats" class="text-xs font-mono bg-gray-50 p-3 rounded-lg border space-y-1">
+                    <p class="text-gray-500 mb-1 font-semibold">Hover over the graph to see values.</p>
+                    <p><span class="font-medium text-gray-600">X:</span> <span id="statX">0.00</span></p>
+                    </div>
+            </div>
+        </div>
+
+        <button id="resetButton" class="w-full py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl shadow-lg transition duration-150">
+            Clear Drawing
+        </button>
+
+    </div>
+
+    <script>
+        const canvas = document.getElementById('graphCanvas');
+        const ctx = canvas.getContext('2d');
+        const statusEl = document.getElementById('statusMessage');
+        const coefficientsEl = document.getElementById('coefficients');
+        const rSquaredEl = document.getElementById('rSquared');
+        const hoverStatsEl = document.getElementById('hoverStats');
+        const statXEl = document.getElementById('statX');
+        const resetButton = document.getElementById('resetButton');
+        const orderSelector = document.getElementById('orderSelector');
+
+        let points = [];
+        let coeffs = { rSquared: 0, N: 0, coefficients: [] };
+        let scale = 20;
+        let isDrawing = false;
+        let currentOrder = parseInt(orderSelector.value); // Initial value
+
+        // Derivative line colors
+        const derivativeColors = ['#ef4444', '#3b82f6', '#10b981', '#f97316', '#a855f7', '#06b6d4'];
+
+        /* --- Coordinate Transformations (unchanged) --- */
+
+        function resizeCanvas() {
+            const rect = canvas.parentNode.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = 400;
+            drawGraph();
+        }
+
+        function toGraphX(x) { return (x - canvas.width / 2) / scale; }
+        function toGraphY(y) { return -(y - canvas.height / 2) / scale; }
+        function toCanvasX(x) { return x * scale + canvas.width / 2; }
+        function toCanvasY(y) { return -y * scale + canvas.height / 2; }
+
+        /* --- Generalized Polynomial and Derivative Function --- */
+
+        /**
+         * Calculates the value of the k-th derivative of the fitted polynomial P(x) at x.
+         * P(x) = c[0]*x^N + c[1]*x^(N-1) + ... + c[N].
+         * Coefficients are stored from highest power (N) to lowest (0).
+         */
+        function P_k(x, c, k) {
+            if (k < 0 || k > c.N) return 0;
+
+            let result = 0;
+            const N = c.N;
+            const currentCoeffs = c.coefficients;
+
+            // Iterate through polynomial terms: currentCoeffs[i] * x^(N-i)
+            for (let i = 0; i <= N - k; i++) {
+                const exponent = N - i;
+                const initialCoeff = currentCoeffs[i];
+
+                // Calculate the coefficient multiplier for the k-th derivative: exponent * (exponent-1) * ... * (exponent-k+1)
+                let multiplier = initialCoeff;
+                for (let j = 0; j < k; j++) {
+                    multiplier *= (exponent - j);
+                }
+
+                // Add the term: (multiplier) * x^(exponent - k)
+                result += multiplier * Math.pow(x, exponent - k);
+            }
+            return result;
+        }
+
+        /* --- Generalized Curve Fitting (Least Squares Regression) --- */
+
+        /**
+         * Fits an N-th degree polynomial using Least Squares (Gaussian Elimination).
+         */
+        function fitCurve(points, N) {
+            if (points.length < N + 1) return null;
+
+            const matrixSize = N + 1;
+            const S_x = new Array(2 * N + 1).fill(0); // S_x[k] = sum(x^k)
+            const S_yx = new Array(N + 1).fill(0);   // S_yx[k] = sum(y*x^k)
+            const totalPoints = points.length;
+
+            // 1. Calculate the necessary sums
+            for (const p of points) {
+                const x = p.x;
+                const y = p.y;
+                let x_pow = 1; // x^0
+                for (let k = 0; k <= 2 * N; k++) {
+                    S_x[k] += x_pow;
+                    if (k <= N) {
+                        S_yx[k] += y * x_pow;
+                    }
+                    x_pow *= x;
+                }
+            }
+
+            // 2. Build the Augmented Matrix A
+            const A = [];
+            for (let i = 0; i < matrixSize; i++) {
+                A[i] = [];
+                for (let j = 0; j < matrixSize; j++) {
+                    // M[i][j] = S_x^(2N - i - j)
+                    A[i][j] = S_x[2 * N - i - j];
+                }
+                // V[i] = S_yx^(N - i)
+                A[i][matrixSize] = S_yx[N - i];
+            }
+
+            // 3. Solve using Gaussian Elimination
+            for (let i = 0; i < matrixSize; i++) {
+                // Partial Pivoting for stability
+                let maxRow = i;
+                for (let k = i + 1; k < matrixSize; k++) {
+                    if (Math.abs(A[k][i]) > Math.abs(A[maxRow][i])) {
+                        maxRow = k;
+                    }
+                }
+                [A[i], A[maxRow]] = [A[maxRow], A[i]];
+
+                if (Math.abs(A[i][i]) < 1e-9) return null; // Singular matrix/cannot solve
+
+                // Elimination
+                for (let j = i + 1; j < matrixSize; j++) {
+                    const factor = A[j][i] / A[i][i];
+                    for (let k = i; k < matrixSize + 1; k++) {
+                        A[j][k] -= factor * A[i][k];
+                    }
+                }
+            }
+
+            // 4. Back Substitution
+            const resultCoeffs = new Array(matrixSize); // Coefficients for x^N down to x^0
+            for (let i = matrixSize - 1; i >= 0; i--) {
+                let sum = 0;
+                for (let j = i + 1; j < matrixSize; j++) {
+                    sum += A[i][j] * resultCoeffs[j];
+                }
+                resultCoeffs[i] = (A[i][matrixSize] - sum) / A[i][i];
+            }
+
+            // 5. Calculate R-squared (Coefficient of Determination)
+            let sumY = 0;
+            for (const p of points) sumY += p.y;
+            const meanY = sumY / totalPoints;
+
+            let SStot = 0;
+            let SSres = 0;
+
+            const fittedCoeffs = { N: N, coefficients: resultCoeffs };
+
+            for (const p of points) {
+                const fittedY = P_k(p.x, fittedCoeffs, 0); // Original function (k=0)
+                const residual = p.y - fittedY;
+                const totalVariation = p.y - meanY;
+
+                SStot += totalVariation * totalVariation;
+                SSres += residual * residual;
+            }
+
+            let rSquared = (SStot > 1e-9) ? 1 - (SSres / SStot) : 0;
+            rSquared = Math.min(1.0, rSquared);
+
+            return { N: N, coefficients: resultCoeffs, rSquared: rSquared };
+        }
+
+        /* --- Drawing Functions (Modified) --- */
+
+        function drawGraph() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Grid and Axes (Standard)
+            ctx.beginPath();
+            ctx.strokeStyle = '#e5e7eb';
+            ctx.lineWidth = 1;
+            for (let i = -canvas.width / 2; i < canvas.width / 2; i += scale) {
+                ctx.moveTo(i + canvas.width / 2, 0); ctx.lineTo(i + canvas.width / 2, canvas.height);
+            }
+            for (let i = -canvas.height / 2; i < canvas.height / 2; i += scale) {
+                ctx.moveTo(0, i + canvas.height / 2); ctx.lineTo(canvas.width, i + canvas.height / 2);
+            }
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#4b5563';
+            ctx.lineWidth = 2;
+            ctx.moveTo(0, canvas.height / 2); ctx.lineTo(canvas.width, canvas.height / 2);
+            ctx.moveTo(canvas.width / 2, 0); ctx.lineTo(canvas.width / 2, canvas.height);
+            ctx.stroke();
+
+            // Draw user-drawn points (Standard)
+            if (points.length > 0) {
+                ctx.beginPath();
+                ctx.strokeStyle = '#9ca3af';
+                ctx.lineWidth = 1;
+                ctx.moveTo(toCanvasX(points[0].x), toCanvasY(points[0].y));
+                for (let i = 1; i < points.length; i++) {
+                    ctx.lineTo(toCanvasX(points[i].x), toCanvasY(points[i].y));
+                }
+                ctx.stroke();
+            }
+
+            // Plot function for all derivatives
+            function plot(k, color) {
+                ctx.beginPath();
+                ctx.strokeStyle = color;
+                ctx.lineWidth = k === 0 ? 3 : 2; // Original function is thicker
+
+                let first = true;
+                const step = 0.5;
+
+                for (let px = 0; px <= canvas.width; px += step) {
+                    const x = toGraphX(px);
+                    const y = P_k(x, coeffs, k);
+                    const py = toCanvasY(y);
+
+                    if (first) {
+                        ctx.moveTo(px, py);
+                        first = false;
+                    } else {
+                        ctx.lineTo(px, py);
+                    }
+                }
+                ctx.stroke();
+            }
+
+            if (points.length >= coeffs.N + 1) {
+                // Plot all derivatives from 0 (original function) up to N
+                for (let k = 0; k <= coeffs.N; k++) {
+                    plot(k, derivativeColors[k % derivativeColors.length]);
+                }
+            }
+        }
+
+        /* --- UI Update Functions (Modified) --- */
+
+        function updateCoefficients() {
+            currentOrder = parseInt(orderSelector.value);
+
+            // Reset coefficients display
+            coefficientsEl.innerHTML = '<p class="text-gray-500">Draw something first!</p>';
+            rSquaredEl.textContent = 'N/A';
+            coeffs = { rSquared: 0, N: currentOrder, coefficients: [] };
+
+            if (points.length >= currentOrder + 1) {
+                const fitResult = fitCurve(points, currentOrder);
+                
+                if (fitResult && !fitResult.coefficients.some(c => isNaN(c))) {
+                    coeffs = fitResult;
+
+                    // Update Coefficients display dynamically
+                    coefficientsEl.innerHTML = '';
+                    // Coefficients are c[0]*x^N + c[1]*x^(N-1) + ... + c[N]
+                    for (let i = 0; i <= coeffs.N; i++) {
+                        const power = coeffs.N - i;
+                        const coeffName = power > 1 ? `c${power}` : (power === 1 ? 'c1' : 'c0');
+                        const term = power === 0 ? '' : (power === 1 ? 'x' : `x^${power}`);
+
+                        coefficientsEl.innerHTML += `
+                            <p>
+                                <span class="font-medium text-gray-600">${coeffName}${term ? ` (${term})` : ''}:</span>
+                                <span>${coeffs.coefficients[i].toFixed(4)}</span>
+                            </p>
+                        `;
+                    }
+
+                    rSquaredEl.textContent = coeffs.rSquared.toFixed(4);
+                    statusEl.textContent = `Fitted degree ${currentOrder} curve to ${points.length} points! R²: ${coeffs.rSquared.toFixed(3)}`;
+                    statusEl.classList.remove('bg-blue-100', 'text-blue-800', 'bg-yellow-100', 'text-yellow-800', 'bg-red-100', 'text-red-800');
+                    statusEl.classList.add('bg-green-100', 'text-green-800');
+
+                } else {
+                    statusEl.textContent = `Cannot fit degree ${currentOrder} curve (Math Error or Collinear points).`;
+                    statusEl.classList.remove('bg-blue-100', 'text-blue-800', 'bg-yellow-100', 'text-yellow-800', 'bg-green-100', 'text-green-800');
+                    statusEl.classList.add('bg-red-100', 'text-red-800');
+                }
+            } else {
+                statusEl.textContent = `Draw more than ${currentOrder} points to fit a degree ${currentOrder} curve.`;
+                statusEl.classList.remove('bg-green-100', 'text-green-800', 'bg-yellow-100', 'text-yellow-800', 'bg-red-100', 'text-red-800');
+                statusEl.classList.add('bg-blue-100', 'text-blue-800');
+            }
+        }
+
+        function updateHoverStats(canvasX) {
+            const x = toGraphX(canvasX);
+
+            // Base X stat
+            let html = `
+                <p class="text-gray-500 mb-1 font-semibold">Hover over the graph to see values.</p>
+                <p><span class="font-medium text-gray-600">X:</span> <span id="statX">${x.toFixed(3)}</span></p>
+            `;
+
+            if (points.length >= coeffs.N + 1) {
+                for (let k = 0; k <= coeffs.N; k++) {
+                    const value = P_k(x, coeffs, k);
+                    const orderText = k === 0 ? 'Fit' : k === 1 ? '1st' : k === 2 ? '2nd' : `${k}th`;
+                    const name = k === 0 ? 'f(X)' : `f${'\''.repeat(k)}(X)`;
+                    const lineLabel = k === 0 ? 'Fit Line' : `${orderText} Deriv.`;
+                    const color = derivativeColors[k % derivativeColors.length];
+
+                    html += `
+                        <p>
+                            <span class="font-medium text-gray-600">${name}:</span>
+                            <span style="color:${color};">${value.toFixed(3)}</span>
+                            <span class="text-xs text-gray-400">(${lineLabel})</span>
+                        </p>
+                    `;
+                }
+            } else {
+                html += '<p class="text-xs text-gray-400">Draw a curve to see derivatives.</p>';
+            }
+
+            hoverStatsEl.innerHTML = html;
+        }
+
+        /* --- Event Handlers (Modified) --- */
+
+        function getCoords(event) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = event.clientX || (event.touches ? event.touches[0].clientX : null);
+            const clientY = event.clientY || (event.touches ? event.touches[0].clientY : null);
+
+            if (clientX === null || clientY === null) return null;
+
+            const canvasX = clientX - rect.left;
+            const canvasY = clientY - rect.top;
+
+            return { canvasX, canvasY, x: toGraphX(canvasX), y: toGraphY(canvasY) };
+        }
+
+        function handlePointerDown(event) {
+            const coords = getCoords(event);
+            if (!coords) return;
+
+            isDrawing = true;
+            points = [];
+            statusEl.textContent = 'Drawing... Release to fit curve.';
+            statusEl.classList.remove('bg-blue-100', 'text-blue-800', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
+            statusEl.classList.add('bg-yellow-100', 'text-yellow-800');
+            canvas.style.cursor = 'crosshair';
+            handlePointerMove(event);
+        }
+
+        function handlePointerMove(event) {
+            const coords = getCoords(event);
+            if (!coords) return;
+
+            if (isDrawing) {
+                event.preventDefault();
+                points.push({ x: coords.x, y: coords.y });
+                drawGraph();
+                return;
+            }
+
+            // Hover functionality
+            if (points.length >= coeffs.N + 1) {
+                drawGraph(); // Redraw without hover line first
+
+                // Draw hover line
+                ctx.beginPath();
+                ctx.strokeStyle = '#4b5563';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([5, 5]);
+                ctx.moveTo(coords.canvasX, 0);
+                ctx.lineTo(coords.canvasX, canvas.height);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                updateHoverStats(coords.canvasX); // Update hover stats
+            }
+        }
+
+        function handlePointerUp() {
+            if (isDrawing) {
+                isDrawing = false;
+                canvas.style.cursor = 'crosshair';
+                updateCoefficients(); // This recalculates the fit based on the points
+                drawGraph();
+            }
+        }
+
+        function handleReset() {
+            points = [];
+            currentOrder = parseInt(orderSelector.value);
+            coeffs = { rSquared: 0, N: currentOrder, coefficients: [] };
+            statusEl.textContent = 'Start drawing your curve!';
+            statusEl.classList.remove('bg-green-100', 'text-green-800', 'bg-yellow-100', 'text-yellow-800', 'bg-red-100', 'text-red-800');
+            statusEl.classList.add('bg-blue-100', 'text-blue-800');
+            updateCoefficients();
+            updateHoverStats(canvas.width / 2); // Reset hover stats to origin
+            drawGraph();
+        }
+
+        // --- Event Listeners ---
+        window.addEventListener('resize', resizeCanvas);
+        canvas.addEventListener('mousedown', handlePointerDown);
+        canvas.addEventListener('touchstart', handlePointerDown);
+        canvas.addEventListener('mousemove', handlePointerMove);
+        canvas.addEventListener('touchmove', handlePointerMove);
+        document.addEventListener('mouseup', handlePointerUp);
+        document.addEventListener('touchend', handlePointerUp);
+        resetButton.addEventListener('click', handleReset);
+
+        // NEW: Event listener for the order selector
+        orderSelector.addEventListener('change', () => {
+            currentOrder = parseInt(orderSelector.value);
+            updateCoefficients(); // Recalculate fit for the new order
+            drawGraph();
+        });
+
+        window.onload = () => {
+            resizeCanvas();
+            handleReset();
+        };
+
+    </script>
+</body>
+</html>
