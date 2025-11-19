@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moreauisms - Quotes Out of Context</title>
+    <!-- Load Tailwind CSS -->
+    <!-- Gemini written -->
+  
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles to enhance the "chalkboard" math theme */
+        body {
+            font-family: 'Inter', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #1a1a1a; /* Very dark background */
+        }
+        .chalkboard-bg {
+            background-color: #2c3e50; /* Dark blue/green for the board */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), 0 0 100px rgba(0, 150, 0, 0.1);
+        }
+        .math-text {
+            /* Chalk-like color */
+            color: #ccffcc; 
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+            font-size: clamp(1.5rem, 5vw, 2.5rem); /* Responsive font size */
+        }
+        .quote-container {
+            min-height: 120px; /* Ensure container size doesn't jump */
+        }
+    </style>
+</head>
+<body class="p-4">
+
+    <!-- Main Content Card -->
+    <div class="chalkboard-bg w-full max-w-2xl mx-auto rounded-xl p-8 md:p-12 text-center border-4 border-gray-700">
+
+        <!-- Image Added Here -->
+        <img src="i.png" 
+             alt="Mr. Moreau's iconic math symbol" 
+             class="h-24 w-24 mx-auto mb-6 p-2 rounded-full border-4 border-emerald-400 bg-white shadow-xl object-cover"
+             onerror="this.onerror=null; this.src='https://placehold.co/96x96/ccffcc/1a1a1a?text=%E2%88%AB'" 
+        >
+        
+        <!-- Header -->
+        <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-2">
+            Moreauisms
+        </h1>
+        <p class="text-lg text-emerald-300 mb-8">
+            Mr. Moreau, out of context.
+        </p>
+
+        <!-- Quote Display Area -->
+        <div id="quote-container" class="quote-container flex items-center justify-center p-4 mb-8 bg-gray-900/50 rounded-lg transition-all duration-300 ease-in-out">
+            <blockquote class="math-text italic font-mono transition-opacity duration-500" id="current-quote">
+                Press the button to solve for the first Moreauism.
+            </blockquote>
+        </div>
+
+        <!-- Author Tag -->
+        <p class="text-sm text-gray-400 mb-8">
+            — Mr. Moreau
+        </p>
+
+        <!-- Button to Get New Quote -->
+        <button id="next-quote-button" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-full transition duration-300 transform hover:scale-105 shadow-lg shadow-emerald-800/50 focus:outline-none focus:ring-4 focus:ring-emerald-500 focus:ring-opacity-50">
+            Derive a New Quote
+        </button>
+
+    </div>
+
+    <!-- JavaScript for Logic -->
+    <script>
+        // --- 1. THE QUOTE DATA ---
+        // Changed to a single, line-separated string as requested.
+        // ADD YOUR QUOTES HERE! Separate each quote with a new line.
+        const quotesString = `1. Oh my gowash 
+2. SKEELS
+3. NO!
+4. Illogicàl
+5. I have found X
+6. I have found i
+7. Careful
+8. Notation?
+9. Intooitive/COUNTERintooitive (on the x)
+10. I can smell _________ and it smells _______
+11. BB gone
+12. Retakes due today. EOM
+13. Miles? No retake
+14. Chello and whelcOme to hooners funkshun
+15. Gooooohd Mourning guhys!
+16. We are poooling the carpet back and vat do ve see? De complex plane
+17. EXPHAND IT
+18. Dee average was not gooohd
+19. Leemits
+20. TOHAHNE? (It’s actually pronounced Twon)
+21. cahhrteeshon plane
+22. bEbE? 
+23. tear-ass you zid not zo your HHHomewhork
+24. Formulah
+25. eFF oF eXx wHY
+26. Trahnzlate 
+27. Zis vil be on da exzham 
+28. todays lesson is very simpole
+29. 🥬 (kahhhvish)
+30. any question on de asshignment guhys? It shood have been ohkay.
+31. It is vhery TECKNICKAL
+32. Seeeerooooohh
+33. Ohh nǒ you chan nöt zo zat 
+34. You NHEEEEED to khnow dis forhmuhlah
+35. Ve are vorking vith COHMPLEX NUMBER
+36. Dis is VHERRRY eempohrtant
+37. SHIMPLHIFFYY
+38. Rhooots
+39. DIHFRHINCE QWOHTIENT
+40. Eief, theeere4
+41. fohr dat, jou need CAAHHLLCOOHLUS
+42. Rhadįkals
+43. Rhoots
+44. Ve cahnot prove dat
+45. Dahrrrk chohcolut
+46. PAHROOF 
+47. Direeeeeehvahtives
+48. If you shtudy enjuhneering, jou will leahrn abouht the QWAHTEEEHHRNEEONS (4D)
+49. Siihhhnneee chaauuuhhhrttt
+50. De rheeeeelll numbuhr
+51. noh. Yehs! NOH! YEHS!
+52. The Yoohclihdian Deehvishon
+53. Řufinis Ruhle
+54. Dis chehkpoihnt shuhd be dohne in Threeeeh minoohtes
+55. CHOMPLHETE DA SQUHARE 
+56. I kheep ze mathmehticul sweaht of my sthudehnts in a mahsohn jAHr
+57. I thihnkh ze prohblehm is too hard but I rehmembher that zis is Honhors Funkshon
+58. You nééd to ghraf zis phrehsihsisly 
+59. To exphahnd dat, ve vill goh to Wohlfie
+60. ZhÅYnah 
+61. EEENtAHjur
+62. DeEFferAhHnce of tOO skvAhres
+63. YOUGELY EEMPHORTANT
+64. Nohtebuk el em
+65. OOHMMM CHOHKOHLAHTE
+66. Zat is on ze DEEHTAIHLED COHRRRRRECTIOHNS
+67. Kahhhvish, deed jou fahll in ze toihleht?
+68. Ohhhhhhhhh yheeeeheeeheesh
+69. I shohuhld ave mhade zat a fhunkshun
+70. OIh OIh OIh
+71. Whonce jou UHHNDERZSTAHND evehrhy kwehshton on ze exham review, jou need to CLOHZE ZE MATH
+72. Ze cohefvicients are talking to me
+73. Zis ihs how you ehvhade thaksiz 
+74. I LHIKE ZIZ
+75. I LHIIIIIKE ZIZ
+76. I zont zlike ziz 
+77. Oh I RHEAHHLY LHIKE ZIZ NHOW
+78. No hezhithashon zere, cohmphlehte ze sqhuahre 
+79. Ehl ehn
+80. Eehn mathh, jou ohnly ‘uhse OHNE bahse - we uhse bahse E
+81. Tahck Tahck Tahck
+82. Heepohtohnoose
+83. Zat is ze FIIHRHST SEHT of Trihgohnohmetric defeenishohns
+84. Jhuse youhr EENTOOIHSHON
+85. Ahmbeehgyouhuhs cahse`.trim(); 
+
+        // --- 2. LOGIC ---
+        const quoteElement = document.getElementById('current-quote');
+        const nextQuoteButton = document.getElementById('next-quote-button');
+        let lastIndex = -1;
+        let quotesArray = []; // Array to hold the parsed quotes
+
+        /**
+         * Selects a random quote that isn't the current one.
+         */
+        function getRandomQuote() {
+            if (quotesArray.length === 0) return "No Moreauisms available.";
+            if (quotesArray.length === 1) return quotesArray[0];
+
+            let newIndex;
+            do {
+                newIndex = Math.floor(Math.random() * quotesArray.length);
+            } while (newIndex === lastIndex);
+
+            lastIndex = newIndex;
+            return quotesArray[newIndex];
+        }
+
+        /**
+         * Updates the display with a new quote using a simple fade effect.
+         */
+        function displayNewQuote() {
+            // Fade out
+            quoteElement.style.opacity = '0';
+            nextQuoteButton.disabled = true; // Disable button during transition
+
+            setTimeout(() => {
+                // Update text
+                quoteElement.textContent = getRandomQuote();
+
+                // Fade in
+                quoteElement.style.opacity = '1';
+                nextQuoteButton.disabled = false; // Re-enable button
+            }, 500); // Duration matches the CSS transition
+        }
+
+        // --- 3. EVENT LISTENERS AND INITIALIZATION ---
+        nextQuoteButton.addEventListener('click', displayNewQuote);
+
+        // Display the initial quote on load (replacing the placeholder text)
+        window.onload = function() {
+            // Parse the string into an array, filter out any empty lines.
+            quotesArray = quotesString.split('\n')
+                                      .map(quote => quote.trim())
+                                      .filter(quote => quote.length > 0);
+            
+            if (quotesArray.length > 0) {
+                 // Immediately show the first random quote without the fade-in effect on load
+                 lastIndex = Math.floor(Math.random() * quotesArray.length);
+                 quoteElement.textContent = quotesArray[lastIndex];
+            }
+        };
+
+    </script>
+
+</body>
+</html>
