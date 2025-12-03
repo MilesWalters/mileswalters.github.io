@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mr. Cloud's Lottery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;700&family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(180deg, #87CEEB 0%, #E0F7FA 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Floating Clouds Background Animation */
+        .bg-cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            z-index: -1;
+            animation: floatCloud 20s linear infinite;
+        }
+
+        @keyframes floatCloud {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(100vw); }
+        }
+
+        .main-container {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 8px solid white;
+            box-shadow: 0 20px 40px rgba(0, 168, 255, 0.2);
+            border-radius: 40px;
+        }
+
+        .slot-window {
+            background: #fff;
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.1);
+            border: 4px solid #B3E5FC;
+            overflow: hidden;
+            position: relative;
+            transform-style: preserve-3d;
+            border-radius: 20px;
+        }
+
+        .digit {
+            font-family: 'Fredoka One', cursive; /* Fun, chunky font for numbers */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            width: 100%;
+            font-size: 4rem;
+            color: #0288D1;
+            text-shadow: 2px 2px 0px #B3E5FC;
+        }
+
+        /* Animation for the spinning face */
+        @keyframes bounceSpin {
+            0% { transform: translateY(0); opacity: 1; }
+            50% { transform: translateY(-50px); opacity: 0.5; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .spinning .spinner-content {
+            animation: bounceSpin 0.3s ease-in-out infinite;
+        }
+
+        .btn-sunny {
+            background: #FFCA28; /* Sun Yellow */
+            border: none;
+            color: #5D4037;
+            box-shadow: 0 6px 0 #F57F17, 0 10px 10px rgba(0,0,0,0.1);
+            transition: all 0.1s;
+            font-family: 'Fredoka One', cursive;
+            letter-spacing: 1px;
+        }
+
+        .btn-sunny:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 #F57F17;
+        }
+
+        .btn-sunny:disabled {
+            background: #E0E0E0;
+            color: #9E9E9E;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .btn-yes {
+            background: #66BB6A;
+            color: white;
+            box-shadow: 0 6px 0 #2E7D32;
+        }
+        
+        .btn-no {
+            background: #EF5350;
+            color: white;
+            box-shadow: 0 6px 0 #C62828;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 2px solid #E1F5FE;
+        }
+
+        h1 {
+            font-family: 'Fredoka One', cursive;
+            color: #0277BD;
+            text-shadow: 2px 2px 0px white, 4px 4px 0px rgba(2, 119, 189, 0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 relative z-0">
+
+    <!-- Decorative Background Clouds -->
+    <div class="bg-cloud w-32 h-32 top-10 left-0 opacity-50"></div>
+    <div class="bg-cloud w-48 h-48 bottom-20 right-10 opacity-40" style="animation-duration: 35s"></div>
+    <div class="bg-cloud w-24 h-24 top-1/2 left-10 opacity-30" style="animation-duration: 25s"></div>
+
+    <div class="w-full max-w-4xl z-10 relative">
+        <!-- Header -->
+        <div class="text-center mb-6">
+            <h1 class="text-4xl md:text-6xl mb-2">
+                Mr. Cloud's Lottery
+            </h1>
+            <div class="inline-block bg-white/60 px-4 py-1 rounded-full backdrop-blur-sm">
+                <p class="text-sky-700 font-bold">AP Statistics Experiment</p>
+            </div>
+        </div>
+
+        <!-- Main Machine Container -->
+        <div class="main-container p-6 md:p-10">
+            
+            <!-- Sun Icon Deco -->
+            <div class="absolute -top-12 -right-8 w-24 h-24 hidden md:block">
+                <div class="w-full h-full bg-yellow-400 rounded-full shadow-[0_0_40px_rgba(255,215,0,0.6)] flex items-center justify-center animate-pulse">
+                    <span class="text-4xl">☀️</span>
+                </div>
+            </div>
+
+            <!-- Slots Container -->
+            <div class="grid grid-cols-3 gap-4 mb-8">
+                <!-- Slot 1 -->
+                <div id="slot-1" class="slot-window h-32 md:h-48 flex items-center justify-center">
+                    <div class="spinner-content w-full h-full flex items-center justify-center p-4">
+                        <img src="/cloud.png" alt="Mr. Cloud" class="w-full h-full object-contain drop-shadow-md" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzg3Q0VFQiIgc3Ryb2tlPSIjMDI4OEQxIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTE3LjUgMTlhMy41IDMuNSAwIDAgMCAwLTdoLTVhNC41IDQuNSAwIDAgMC05IDloMTR6Ij48L3BhdGg+PC9zdmc+'">
+                    </div>
+                </div>
+                <!-- Slot 2 -->
+                <div id="slot-2" class="slot-window h-32 md:h-48 flex items-center justify-center">
+                    <div class="spinner-content w-full h-full flex items-center justify-center p-4">
+                        <img src="/cloud.png" alt="Mr. Cloud" class="w-full h-full object-contain drop-shadow-md" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzg3Q0VFQiIgc3Ryb2tlPSIjMDI4OEQxIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTE3LjUgMTlhMy41IDMuNSAwIDAgMCAwLTdoLTVhNC41IDQuNSAwIDAgMC05IDloMTR6Ij48L3BhdGg+PC9zdmc+'">
+                    </div>
+                </div>
+                <!-- Slot 3 -->
+                <div id="slot-3" class="slot-window h-32 md:h-48 flex items-center justify-center">
+                    <div class="spinner-content w-full h-full flex items-center justify-center p-4">
+                        <img src="/cloud.png" alt="Mr. Cloud" class="w-full h-full object-contain drop-shadow-md" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzg3Q0VFQiIgc3Ryb2tlPSIjMDI4OEQxIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTE3LjUgMTlhMy41IDMuNSAwIDAgMCAwLTdoLTVhNC41IDQuNSAwIDAgMC05IDloMTR6Ij48L3BhdGg+PC9zdmc+'">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls Area -->
+            <!-- Added h-48 and justify-center to fix the height and prevent layout shifting -->
+            <div class="flex flex-col items-center justify-center h-48">
+                
+                <!-- Game Action Button -->
+                <div id="btn-container" class="w-full flex justify-center">
+                    <button id="main-btn" onclick="handleMainAction()" class="btn-sunny text-xl md:text-2xl py-4 px-12 rounded-full w-full md:w-auto min-w-[200px] uppercase">
+                        Start Game
+                    </button>
+                </div>
+
+                <!-- Winner Decision Panel (Hidden by default) -->
+                <!-- Removed mb-4 from button container to center things better within the fixed height -->
+                <div id="winner-panel" class="hidden flex flex-col items-center justify-center w-full animate-fade-in-up">
+                    <div class="bg-white/50 p-6 rounded-2xl border-2 border-dashed border-sky-300 w-full text-center">
+                        <p class="text-2xl font-bold text-sky-800 mb-4 font-fredoka">Did you win?</p>
+                        <div class="flex justify-center space-x-4">
+                            <button onclick="recordResult(true)" class="btn-sunny btn-yes text-lg py-3 px-8 rounded-xl transform active:scale-95 transition">
+                                Yes!
+                            </button>
+                            <button onclick="recordResult(false)" class="btn-sunny btn-no text-lg py-3 px-8 rounded-xl transform active:scale-95 transition">
+                                No
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Panel -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="stat-card p-6">
+                <h3 class="text-sky-400 font-bold text-sm uppercase tracking-widest mb-2">Class Statistics</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-xs text-gray-500 font-bold">TRIALS</p>
+                        <p id="stats-trials" class="text-3xl text-gray-700 font-mono">000</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 font-bold">WINNERS</p>
+                        <p id="stats-winners" class="text-3xl text-gray-700 font-mono">000</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card p-6">
+                <h3 class="text-sky-400 font-bold text-sm uppercase tracking-widest mb-2">Experimental Probability</h3>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-gray-500 font-bold">P(WIN)</p>
+                        <p id="stats-prob" class="text-4xl text-sky-600 font-mono">0.00%</p>
+                    </div>
+                    <button onclick="clearStats()" class="text-xs text-gray-400 border border-gray-200 px-3 py-1 rounded-full hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition">
+                        Reset Data
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-6 text-sky-700/40 text-xs font-mono">
+            Cookie Status: <span id="cookie-status">Active</span>
+        </div>
+    </div>
+
+    <script>
+        // --- Configuration ---
+        const CLOUD_IMG_SRC = '/cloud.png'; // Path to Mr. Cloud's face
+        // Updated fallback to be a blue/sky friendly cloud SVG
+        const FALLBACK_SVG = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzg3Q0VFQiIgc3Ryb2tlPSIjMDI4OEQxIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTE3LjUgMTlhMy41IDMuNSAwIDAgMCAwLTdoLTVhNC41IDQuNSAwIDAgMC05IDloMTR6Ij48L3BhdGg+PC9zdmc+";
+        
+        // --- State Management ---
+        const GameState = {
+            IDLE: 'IDLE',
+            READY_FOR_1: 'READY_FOR_1',
+            READY_FOR_2: 'READY_FOR_2',
+            READY_FOR_3: 'READY_FOR_3',
+            DECIDING: 'DECIDING'
+        };
+
+        let currentState = GameState.IDLE;
+        let generatedNumbers = [null, null, null];
+        let stats = { trials: 0, winners: 0 };
+
+        // --- DOM Elements ---
+        const slots = [
+            document.getElementById('slot-1'),
+            document.getElementById('slot-2'),
+            document.getElementById('slot-3')
+        ];
+        const mainBtn = document.getElementById('main-btn');
+        const winnerPanel = document.getElementById('winner-panel');
+        const statsTrials = document.getElementById('stats-trials');
+        const statsWinners = document.getElementById('stats-winners');
+        const statsProb = document.getElementById('stats-prob');
+
+        // --- Cookie Helpers ---
+        function setCookie(cname, cvalue, exdays) {
+            const d = new Date();
+            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+            let expires = "expires=" + d.toUTCString();
+            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        }
+
+        function getCookie(cname) {
+            let name = cname + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        function loadStats() {
+            const savedStats = getCookie("mrCloudStats");
+            if (savedStats) {
+                try {
+                    stats = JSON.parse(savedStats);
+                } catch (e) {
+                    console.error("Cookie parse error", e);
+                }
+            }
+            updateStatsUI();
+        }
+
+        function saveStats() {
+            setCookie("mrCloudStats", JSON.stringify(stats), 365);
+            updateStatsUI();
+        }
+
+        function clearStats() {
+            if(confirm("Are you sure you want to reset all experiment data?")) {
+                stats = { trials: 0, winners: 0 };
+                saveStats();
+            }
+        }
+
+        function updateStatsUI() {
+            statsTrials.innerText = stats.trials.toString().padStart(3, '0');
+            statsWinners.innerText = stats.winners.toString().padStart(3, '0');
+            
+            let prob = 0;
+            if (stats.trials > 0) {
+                prob = (stats.winners / stats.trials) * 100;
+            }
+            statsProb.innerText = prob.toFixed(2) + "%";
+        }
+
+        // --- Game Logic ---
+
+        function init() {
+            loadStats();
+            resetSlots();
+        }
+
+        function resetSlots() {
+            slots.forEach(slot => {
+                slot.classList.remove('spinning');
+                slot.innerHTML = `
+                    <div class="spinner-content w-full h-full flex items-center justify-center p-4">
+                        <img src="${CLOUD_IMG_SRC}" class="w-full h-full object-contain drop-shadow-md" onerror="this.onerror=null; this.src='${FALLBACK_SVG}'">
+                    </div>`;
+            });
+            winnerPanel.classList.add('hidden');
+            // Ensure the container for the button is visible
+            document.getElementById('btn-container').classList.remove('hidden');
+        }
+
+        function handleMainAction() {
+            switch (currentState) {
+                case GameState.IDLE:
+                    resetSlots();
+                    currentState = GameState.READY_FOR_1;
+                    mainBtn.innerText = "Spin 1st Number";
+                    break;
+
+                case GameState.READY_FOR_1:
+                    generateNumber(0);
+                    currentState = GameState.READY_FOR_2;
+                    mainBtn.innerText = "Spin 2nd Number";
+                    break;
+
+                case GameState.READY_FOR_2:
+                    generateNumber(1);
+                    currentState = GameState.READY_FOR_3;
+                    mainBtn.innerText = "Spin 3rd Number";
+                    break;
+
+                case GameState.READY_FOR_3:
+                    generateNumber(2);
+                    currentState = GameState.DECIDING;
+                    // Hide the entire button container to prevent layout issues within the flex parent
+                    document.getElementById('btn-container').classList.add('hidden');
+                    
+                    // No timeout needed for layout stability, but keeping small delay for effect
+                    setTimeout(() => {
+                        winnerPanel.classList.remove('hidden'); // Show Winner Choice
+                    }, 200);
+                    break;
+            }
+        }
+
+        function generateNumber(slotIndex) {
+            const slot = slots[slotIndex];
+            
+            // Visual Effect: Spin briefly
+            slot.classList.add('spinning');
+            
+            // Disable button briefly to prevent double clicks
+            mainBtn.disabled = true;
+
+            setTimeout(() => {
+                const num = Math.floor(Math.random() * 10);
+                generatedNumbers[slotIndex] = num;
+                
+                slot.classList.remove('spinning');
+                // Removed 'animate-bounce' class here
+                slot.innerHTML = `<div class="digit">${num}</div>`;
+                
+                mainBtn.disabled = false;
+            }, 600); 
+        }
+
+        function recordResult(isWinner) {
+            stats.trials++;
+            if (isWinner) {
+                stats.winners++;
+                playWinEffect();
+            }
+            
+            saveStats();
+            
+            // Reset Game Loop
+            currentState = GameState.IDLE;
+            winnerPanel.classList.add('hidden');
+            document.getElementById('btn-container').classList.remove('hidden');
+            mainBtn.innerText = "Play Again";
+        }
+
+        function playWinEffect() {
+            // Flash sky blue/green happy color
+            const body = document.body;
+            // We use a small overlay or just change background briefly
+            const originalBg = body.style.background;
+            
+            // Create a confetti-like burst using an overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'fixed inset-0 bg-yellow-300/50 z-50 pointer-events-none flex items-center justify-center';
+            overlay.innerHTML = '<h1 class="text-6xl font-black text-white drop-shadow-lg animate-bounce">WIN!</h1>';
+            document.body.appendChild(overlay);
+
+            setTimeout(() => {
+                overlay.remove();
+            }, 800);
+        }
+
+        // Initialize on load
+        window.onload = init;
+
+    </script>
+</body>
+</html>
