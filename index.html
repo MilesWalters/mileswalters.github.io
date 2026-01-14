@@ -38,6 +38,12 @@
           --accent-hover-light: #5b21b6;
   
           /* --- On wednesdays we wear pink --- */
+          --bg-primary-dark-pink: #160015;
+          --bg-secondary-dark-pink: #22001f;
+          
+          --bg-primary-light-pink: #fff1f5;
+          --bg-secondary-light-pink: #ffffff;
+          
           --text-heading-dark-pink: #fbcfe8; 
           --accent-dark-pink: #ec4899;     
           --accent-hover-dark-pink: #db2777; 
@@ -190,12 +196,16 @@
       }
 
       html.theme-pink.dark {
+          --bg-primary: var(--bg-primary-dark-pink);
+          --bg-secondary: var(--bg-secondary-dark-pink);
           --text-heading: var(--text-heading-dark-pink);
           --accent: var(--accent-dark-pink);
           --accent-hover: var(--accent-hover-dark-pink);
       }
-
+      
       html.theme-pink.light {
+          --bg-primary: var(--bg-primary-light-pink);
+          --bg-secondary: var(--bg-secondary-light-pink);
           --text-heading: var(--text-heading-light-pink);
           --accent: var(--accent-light-pink);
           --accent-hover: var(--accent-hover-light-pink);
