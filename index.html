@@ -20,133 +20,183 @@
     <link rel="icon" href="https://placehold.co/200x200/8b5cf6/ffffff?text=MW" type="image/png">
     <!--- Hi there! You like my code so far? --->
     <style>
-        :root {
-            --bg-primary-dark: #120024;
-            --bg-secondary-dark: #1a0a35;
-            --text-primary-dark: #e0e0e0;
-            --text-secondary-dark: #a89cc8;
-            --text-heading-dark: #d8b4fe;
-            --accent-dark: #8b5cf6;
-            --accent-hover-dark: #7c3aed;
-
-            --bg-primary-light: #f8f7fa;
-            --bg-secondary-light: #ffffff;
-            --text-primary-light: #2d3748;
-            --text-secondary-light: #718096;
-            --text-heading-light: #4c1d95;
-            --accent-light: #6d28d9;
-            --accent-hover-light: #5b21b6;
-        }
-        html {
-            scroll-behavior: smooth;
-        }
-        body {
-            font-family: 'Poppins', sans-serif;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        .font-mono {
-            font-family: 'Roboto Mono', monospace;
-        }
-        .dark {
-            --bg-primary: var(--bg-primary-dark);
-            --bg-secondary: var(--bg-secondary-dark);
-            --text-primary: var(--text-primary-dark);
-            --text-secondary: var(--text-secondary-dark);
-            --text-heading: var(--text-heading-dark);
-            --accent: var(--accent-dark);
-            --accent-hover: var(--accent-hover-dark);
-        }
-        .light {
-            --bg-primary: var(--bg-primary-light);
-            --bg-secondary: var(--bg-secondary-light);
-            --text-primary: var(--text-primary-light);
-            --text-secondary: var(--text-secondary-light);
-            --text-heading: var(--text-heading-light);
-            --accent: var(--accent-light);
-            --accent-hover: var(--accent-hover-light);
-        }
-        body {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-        }
-        .bg-primary { background-color: var(--bg-primary); }
-        .bg-secondary { background-color: var(--bg-secondary); }
-        .text-primary { color: var(--text-primary); }
-        .text-secondary { color: var(--text-secondary); }
-        .text-heading { color: var(--text-heading); }
-        .text-accent { color: var(--accent); }
-        .bg-accent { background-color: var(--accent); }
-        .hover\:bg-accent-hover:hover { background-color: var(--accent-hover); }
-        .border-accent { border-color: var(--accent); }
-        .ring-accent { --tw-ring-color: var(--accent); }
-        .section-title {
-            font-size: 2.25rem;
-            font-weight: 700;
-            color: var(--text-heading);
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-        .section-subtitle {
-            font-size: 1.125rem;
-            color: var(--text-secondary);
-            margin-bottom: 3rem;
-            text-align: center;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .project-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .project-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px var(--accent);
-        }
-        .modal-backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 50;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-        .modal-backdrop.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        .modal-content {
-            transform: scale(0.95);
-            transition: transform 0.3s ease;
-        }
-        .modal-backdrop.active .modal-content {
-            transform: scale(1);
-        }
-        .nav-link {
-            position: relative;
-            transition: color 0.2s ease;
-        }
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -4px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: var(--accent);
-            transition: width 0.3s ease;
-        }
-        .nav-link:hover::after {
-            width: 100%;
-        }
-    </style>
+      :root {
+          /* --- ORIGINAL PURPLE VARIABLES --- */
+          --bg-primary-dark: #120024;
+          --bg-secondary-dark: #1a0a35;
+          --text-primary-dark: #e0e0e0;
+          --text-secondary-dark: #a89cc8;
+          --text-heading-dark: #d8b4fe;
+          --accent-dark: #8b5cf6;
+          --accent-hover-dark: #7c3aed;
+  
+          --bg-primary-light: #f8f7fa;
+          --bg-secondary-light: #ffffff;
+          --text-primary-light: #2d3748;
+          --text-secondary-light: #718096;
+          --text-heading-light: #4c1d95;
+          --accent-light: #6d28d9;
+          --accent-hover-light: #5b21b6;
+  
+          /* --- NEW: WEDNESDAY PINK VARIABLES --- */
+          /* Dark Mode Pink Options */
+          --text-heading-dark-pink: #fbcfe8; /* Light Pastel Pink */
+          --accent-dark-pink: #ec4899;       /* Bright Pink */
+          --accent-hover-dark-pink: #db2777; /* Darker Pink */
+  
+          /* Light Mode Pink Options */
+          --text-heading-light-pink: #831843; /* Deep Pink */
+          --accent-light-pink: #db2777;       /* Bright Pink */
+          --accent-hover-light-pink: #be185d; /* Darker Pink */
+      }
+  
+      html {
+          scroll-behavior: smooth;
+      }
+  
+      body {
+          font-family: 'Poppins', sans-serif;
+          transition: background-color 0.3s ease, color 0.3s ease;
+      }
+  
+      .font-mono {
+          font-family: 'Roboto Mono', monospace;
+      }
+  
+      /* --- STANDARD THEME LOGIC --- */
+      
+      .dark {
+          --bg-primary: var(--bg-primary-dark);
+          --bg-secondary: var(--bg-secondary-dark);
+          --text-primary: var(--text-primary-dark);
+          --text-secondary: var(--text-secondary-dark);
+          --text-heading: var(--text-heading-dark);
+          --accent: var(--accent-dark);
+          --accent-hover: var(--accent-hover-dark);
+      }
+  
+      .light {
+          --bg-primary: var(--bg-primary-light);
+          --bg-secondary: var(--bg-secondary-light);
+          --text-primary: var(--text-primary-light);
+          --text-secondary: var(--text-secondary-light);
+          --text-heading: var(--text-heading-light);
+          --accent: var(--accent-light);
+          --accent-hover: var(--accent-hover-light);
+      }
+  
+      /* --- WEDNESDAY PINK OVERRIDES --- */
+  
+      /* If 'theme-pink' is added to body AND we are in dark mode */
+      body.theme-pink.dark {
+          --text-heading: var(--text-heading-dark-pink);
+          --accent: var(--accent-dark-pink);
+          --accent-hover: var(--accent-hover-dark-pink);
+      }
+  
+      /* If 'theme-pink' is added to body AND we are in light mode */
+      body.theme-pink.light {
+          --text-heading: var(--text-heading-light-pink);
+          --accent: var(--accent-light-pink);
+          --accent-hover: var(--accent-hover-light-pink);
+      }
+  
+      /* --- COMPONENT STYLES --- */
+  
+      body {
+          background-color: var(--bg-primary);
+          color: var(--text-primary);
+      }
+  
+      .bg-primary { background-color: var(--bg-primary); }
+      .bg-secondary { background-color: var(--bg-secondary); }
+      .text-primary { color: var(--text-primary); }
+      .text-secondary { color: var(--text-secondary); }
+      .text-heading { color: var(--text-heading); }
+      .text-accent { color: var(--accent); }
+      .bg-accent { background-color: var(--accent); }
+      .hover\:bg-accent-hover:hover { background-color: var(--accent-hover); }
+      .border-accent { border-color: var(--accent); }
+      .ring-accent { --tw-ring-color: var(--accent); }
+  
+      .section-title {
+          font-size: 2.25rem;
+          font-weight: 700;
+          color: var(--text-heading);
+          margin-bottom: 1rem;
+          text-align: center;
+      }
+  
+      .section-subtitle {
+          font-size: 1.125rem;
+          color: var(--text-secondary);
+          margin-bottom: 3rem;
+          text-align: center;
+          max-width: 600px;
+          margin-left: auto;
+          margin-right: auto;
+      }
+  
+      .project-card {
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+  
+      .project-card:hover {
+          transform: translateY(-8px);
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px var(--accent);
+      }
+  
+      .modal-backdrop {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0,0,0,0.7);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 50;
+          opacity: 0;
+          visibility: hidden;
+          transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+  
+      .modal-backdrop.active {
+          opacity: 1;
+          visibility: visible;
+      }
+  
+      .modal-content {
+          transform: scale(0.95);
+          transition: transform 0.3s ease;
+      }
+  
+      .modal-backdrop.active .modal-content {
+          transform: scale(1);
+      }
+  
+      .nav-link {
+          position: relative;
+          transition: color 0.2s ease;
+      }
+  
+      .nav-link::after {
+          content: '';
+          position: absolute;
+          width: 0;
+          height: 2px;
+          bottom: -4px;
+          left: 50%;
+          transform: translateX(-50%);
+          background-color: var(--accent);
+          transition: width 0.3s ease;
+      }
+  
+      .nav-link:hover::after {
+          width: 100%;
+      }
+</style>
 </head>
 <body class="bg-primary text-primary">
 
@@ -311,6 +361,15 @@
     </div>
 
     <script>
+        (function() {
+            const today = new Date();
+            const dayOfWeek = today.getDay(); // 0=Sunday, 1=Monday... 3=Wednesday
+    
+            // 3 represents Wednesday
+            if (dayOfWeek === 3) {
+                document.body.classList.add('theme-pink');
+            }
+        })();
         document.addEventListener('DOMContentLoaded', () => {
             const themeToggle = document.getElementById('theme-toggle');
             const sunIcon = document.getElementById('sun-icon');
