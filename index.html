@@ -21,7 +21,6 @@
     <!--- Hi there! You like my code so far? --->
     <style>
       :root {
-          /* --- ORIGINAL PURPLE VARIABLES --- */
           --bg-primary-dark: #120024;
           --bg-secondary-dark: #1a0a35;
           --text-primary-dark: #e0e0e0;
@@ -38,16 +37,14 @@
           --accent-light: #6d28d9;
           --accent-hover-light: #5b21b6;
   
-          /* --- NEW: WEDNESDAY PINK VARIABLES --- */
-          /* Dark Mode Pink Options */
-          --text-heading-dark-pink: #fbcfe8; /* Light Pastel Pink */
-          --accent-dark-pink: #ec4899;       /* Bright Pink */
-          --accent-hover-dark-pink: #db2777; /* Darker Pink */
+          /* --- On wednesdays we wear pink --- */
+          --text-heading-dark-pink: #fbcfe8; 
+          --accent-dark-pink: #ec4899;     
+          --accent-hover-dark-pink: #db2777; 
   
-          /* Light Mode Pink Options */
-          --text-heading-light-pink: #831843; /* Deep Pink */
-          --accent-light-pink: #db2777;       /* Bright Pink */
-          --accent-hover-light-pink: #be185d; /* Darker Pink */
+          --text-heading-light-pink: #831843; 
+          --accent-light-pink: #db2777;       
+          --accent-hover-light-pink: #be185d; 
       }
   
       html {
@@ -62,8 +59,7 @@
       .font-mono {
           font-family: 'Roboto Mono', monospace;
       }
-  
-      /* --- STANDARD THEME LOGIC --- */
+
       
       .dark {
           --bg-primary: var(--bg-primary-dark);
@@ -84,24 +80,20 @@
           --accent: var(--accent-light);
           --accent-hover: var(--accent-hover-light);
       }
-  
-      /* --- WEDNESDAY PINK OVERRIDES --- */
-  
-      /* If 'theme-pink' is added to body AND we are in dark mode */
+
+
       body.theme-pink.dark {
           --text-heading: var(--text-heading-dark-pink);
           --accent: var(--accent-dark-pink);
           --accent-hover: var(--accent-hover-dark-pink);
       }
   
-      /* If 'theme-pink' is added to body AND we are in light mode */
       body.theme-pink.light {
           --text-heading: var(--text-heading-light-pink);
           --accent: var(--accent-light-pink);
           --accent-hover: var(--accent-hover-light-pink);
       }
-  
-      /* --- COMPONENT STYLES --- */
+
   
       body {
           background-color: var(--bg-primary);
@@ -228,7 +220,7 @@
                     <img src="https://placehold.co/200x200/8b5cf6/ffffff?text=MW" alt="Miles Walters" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x200/8b5cf6/ffffff?text=MW';">
                 </div>
                 <h1 class="text-4xl md:text-6xl font-bold text-heading mb-4">Miles Walters</h1>
-                <p class="text-xl md:text-2xl text-secondary mb-8">17-year-old AI Researcher and Student</p>
+                <p class="text-xl md:text-2xl text-secondary mb-8">AI Researcher and Student</p>
                 <a href="#projects" class="bg-accent text-white font-bold py-3 px-8 rounded-full hover:bg-accent-hover transition-colors duration-300 text-lg">
                     My work
                 </a>
@@ -363,10 +355,8 @@
     <script>
         (function() {
             const today = new Date();
-            const dayOfWeek = today.getDay(); // 0=Sunday, 1=Monday... 3=Wednesday
-    
-            // 3 represents Wednesday
-            if (dayOfWeek === 3) {
+            const dayOfWeek = today.getDay();
+            if (dayOfWeek === 3) { // October 3rd
                 document.body.classList.add('theme-pink');
             }
         })();
