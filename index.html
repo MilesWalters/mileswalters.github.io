@@ -188,6 +188,18 @@
       .nav-link:hover::after {
           width: 100%;
       }
+
+      html.theme-pink.dark {
+          --text-heading: var(--text-heading-dark-pink);
+          --accent: var(--accent-dark-pink);
+          --accent-hover: var(--accent-hover-dark-pink);
+      }
+
+      html.theme-pink.light {
+          --text-heading: var(--text-heading-light-pink);
+          --accent: var(--accent-light-pink);
+          --accent-hover: var(--accent-hover-light-pink);
+      }
 </style>
 </head>
 <body class="bg-primary text-primary">
@@ -313,7 +325,7 @@
                         <p class="text-secondary">Lead club activities, organize coding challenges, and mentor fellow students in various computer science topics.</p>
                     </div>
                     <div class="bg-primary p-6 rounded-lg">
-                        <h3 class="text-xl font-bold text-heading mb-2">Varsity Rock Climbing Captian</h3>
+                        <h3 class="text-xl font-bold text-heading mb-2">Varsity Rock Climbing Captain</h3>
                         <p class="text-secondary">Climb competitively through school, assist with technique and climb planning. Lead warm-ups and skill-development.</p>
                     </div>
                      <div class="bg-primary p-6 rounded-lg">
@@ -353,13 +365,12 @@
     </div>
 
     <script>
-        (function() {
-            const today = new Date();
-            const dayOfWeek = today.getDay();
-            if (dayOfWeek === 3) { // October 3rd
-                document.body.classList.add('theme-pink');
+        (function () {
+            const today = new Date()
+            if (today.getDay() === 3) {
+              document.documentElement.classList.add('theme-pink')
             }
-        })();
+        })()
         document.addEventListener('DOMContentLoaded', () => {
             const themeToggle = document.getElementById('theme-toggle');
             const sunIcon = document.getElementById('sun-icon');
