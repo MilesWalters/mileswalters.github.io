@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mandelbrot Text Finder</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-primary-dark: #120024;
+            --bg-secondary-dark: #1a0a35;
+            --text-primary-dark: #e0e0e0;
+            --text-secondary-dark: #a89cc8;
+            --text-heading-dark: #d8b4fe;
+            --accent-dark: #8b5cf6;
+            --accent-hover-dark: #7c3aed;
+    
+            --bg-primary-light: #f8f7fa;
+            --bg-secondary-light: #ffffff;
+            --text-primary-light: #2d3748;
+            --text-secondary-light: #718096;
+            --text-heading-light: #4c1d95;
+            --accent-light: #6d28d9;
+            --accent-hover-light: #5b21b6;
+    
+            /* --- On wednesdays we wear pink --- */
+            --bg-primary-dark-pink: #160015;
+            --bg-secondary-dark-pink: #22001f;
+            --bg-primary-light-pink: #fff1f5;
+            --bg-secondary-light-pink: #ffffff;
+            --text-heading-dark-pink: #fbcfe8; 
+            --accent-dark-pink: #ec4899;     
+            --accent-hover-dark-pink: #db2777; 
+            --text-heading-light-pink: #831843; 
+            --accent-light-pink: #db2777;       
+            --accent-hover-light-pink: #be185d; 
+        }
+    
+        html { scroll-behavior: smooth; }
+    
+        body {
+            font-family: 'Poppins', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            margin: 0; overflow: hidden; height: 100vh; width: 100vw;
+        }
+    
+        .font-mono { font-family: 'Roboto Mono', monospace; }
+        
+        html.dark {
+            --bg-primary: var(--bg-primary-dark);
+            --bg-secondary: var(--bg-secondary-dark);
+            --text-primary: var(--text-primary-dark);
+            --text-secondary: var(--text-secondary-dark);
+            --text-heading: var(--text-heading-dark);
+            --accent: var(--accent-dark);
+            --accent-hover: var(--accent-hover-dark);
+        }
+    
+        html.light {
+            --bg-primary: var(--bg-primary-light);
+            --bg-secondary: var(--bg-secondary-light);
+            --text-primary: var(--text-primary-light);
+            --text-secondary: var(--text-secondary-light);
+            --text-heading: var(--text-heading-light);
+            --accent: var(--accent-light);
+            --accent-hover: var(--accent-hover-light);
+        }
+  
+        html.theme-pink.dark {
+            --bg-primary: var(--bg-primary-dark-pink);
+            --bg-secondary: var(--bg-secondary-dark-pink);
+            --text-heading: var(--text-heading-dark-pink);
+            --accent: var(--accent-dark-pink);
+            --accent-hover: var(--accent-hover-dark-pink);
+        }
+        
+        html.theme-pink.light {
+            --bg-primary: var(--bg-primary-light-pink);
+            --bg-secondary: var(--bg-secondary-light-pink);
+            --text-heading: var(--text-heading-light-pink);
+            --accent: var(--accent-light-pink);
+            --accent-hover: var(--accent-hover-light-pink);
+        }
+
+        body { background-color: var(--bg-primary); color: var(--text-primary); }
+        .bg-primary { background-color: var(--bg-primary); }
+        .bg-secondary { background-color: var(--bg-secondary); }
+        .text-primary { color: var(--text-primary); }
+        .text-secondary { color: var(--text-secondary); }
+        .text-heading { color: var(--text-heading); }
+        .text-accent { color: var(--accent); }
+        .bg-accent { background-color: var(--accent); }
+        .hover\:bg-accent-hover:hover { background-color: var(--accent-hover); }
+        .border-accent { border-color: var(--accent); }
+        
+        #glcanvas {
+            position: absolute; top: 0; left: 0; z-index: 0;
+            width: 100%; height: 100%; display: block;
+        }
+
+        #ui-panel {
+            position: absolute; top: 20px; left: 20px; z-index: 10;
+            width: 400px; max-height: calc(100vh - 40px); overflow-y: auto;
+            padding: 24px; border-radius: 12px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--accent);
+            opacity: 0.95; backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .section-title { font-size: 1.5rem; font-weight: 700; color: var(--text-heading); margin: 0 0 0.5rem 0; }
+        .section-subtitle { font-size: 0.9rem; color: var(--text-secondary); margin: 0 0 1.5rem 0; line-height: 1.4; }
+
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        input[type="text"] {
+            flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--accent);
+            outline: none; font-size: 1rem; transition: all 0.2s;
+        }
+        input[type="text"]:focus { box-shadow: 0 0 0 2px var(--accent-hover); }
+        
+        button {
+            padding: 12px 16px; border-radius: 8px; border: none;
+            font-weight: 600; font-family: 'Poppins', sans-serif; cursor: pointer;
+            color: #fff; transition: all 0.2s ease;
+        }
+        button:active { transform: scale(0.97); }
+
+        .explanation-box {
+            padding: 15px; border-radius: 8px; font-size: 0.85rem;
+            border-left: 4px solid var(--accent); margin-bottom: 20px; line-height: 1.5;
+        }
+
+        .process-box {
+            font-size: 0.8rem; padding: 15px; border-radius: 8px;
+            border: 1px dashed var(--text-secondary); display: none;
+            word-wrap: break-word; line-height: 1.6;
+        }
+
+        .process-step { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid rgba(128,128,128,0.2); }
+        .process-step:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+        .process-label { font-weight: bold; color: var(--text-secondary); display: block; margin-bottom: 2px;}
+
+        /* Scrollbar styles for UI panel */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+
+        /* Theme controls */
+        .theme-controls {
+            position: absolute; bottom: 20px; right: 20px; z-index: 10;
+            display: flex; gap: 10px;
+        }
+        .theme-btn {
+            padding: 8px 12px; font-size: 0.8rem; border-radius: 20px;
+            background: var(--bg-secondary); color: var(--text-primary);
+            border: 1px solid var(--accent);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- WebGL Canvas -->
+    <canvas id="glcanvas"></canvas>
+
+    <!-- UI Panel -->
+    <div id="ui-panel" class="bg-secondary">
+        <h1 class="section-title">Fractal Addresses</h1>
+        <p class="section-subtitle">Find the unique mathematical coordinate of your text on the Mandelbrot set.</p>
+        
+        <div class="explanation-box bg-primary text-primary">
+            <strong class="text-heading">Why this works:</strong><br>
+            The main body of the Mandelbrot set is a perfect <em>Cardioid</em> (which, according to <a href="https://www.google.com/search?q=cardioid+definition">the dictionary</a>, is a heart-shaped curve traced by a point on the circumference of a circle as it rolls around another identical circle). Every mathematical fraction between 0 and 1 represents a unique angle (0° to 360°) around this shape. By turning your text into binary, we create a fraction, which creates an angle, giving your text an exact (X, Y) physical address on the fractal!
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="inputText" class="bg-primary text-primary border-accent" placeholder="e.g. Hello" autocomplete="off" maxlength="12">
+            <button class="bg-accent hover:bg-accent-hover" onclick="processText()">Locate</button>
+        </div>
+        <button class="bg-primary border-accent text-secondary" style="border: 1px solid; width: 100%; margin-bottom: 20px;" onclick="resetView()">Reset View</button>
+
+        <!-- Dynamic Process Breakdown -->
+        <div id="processBox" class="process-box bg-primary font-mono text-primary">
+            <div class="process-step">
+                <span class="process-label">1. Text to Binary</span>
+                <span id="outBinary" class="text-accent"></span>
+            </div>
+            <div class="process-step">
+                <span class="process-label">2. Binary Fraction</span>
+                <span id="outFraction" class="text-heading"></span>
+            </div>
+            <div class="process-step">
+                <span class="process-label">3. Fraction to External Angle</span>
+                <span id="outAngle" class="text-accent"></span>
+            </div>
+            <div class="process-step">
+                <span class="process-label">4. Cardioid Map: X = 0.5cos(θ) - 0.25cos(2θ)</span>
+                <span id="outCoords" class="text-heading"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="theme-controls">
+        <button class="theme-btn hover:bg-accent-hover" onclick="setTheme('dark')">Dark</button>
+        <button class="theme-btn hover:bg-accent-hover" onclick="setTheme('light')">Light</button>
+        <button class="theme-btn hover:bg-accent-hover" onclick="setTheme('pink')">Pink</button>
+    </div>
+
+    <script>
+        function setTheme(theme) {
+            const html = document.documentElement;
+            html.className = ''; // Reset
+            if (theme === 'dark') html.classList.add('dark');
+            if (theme === 'light') html.classList.add('light');
+            if (theme === 'pink') { html.classList.add('theme-pink'); html.classList.add('dark'); }
+        }
+
+        function processText() {
+            let text = document.getElementById('inputText').value;
+            if (!text) return;
+
+            const safeText = text.substring(0, 6); 
+            
+            let binaryString = "";
+            let fraction = 0;
+            let weight = 1;
+
+            for (let i = 0; i < safeText.length; i++) {
+                let code = safeText.charCodeAt(i);
+                let charBin = "";
+                for (let b = 7; b >= 0; b--) {
+                    weight *= 0.5;
+                    let bit = (code >> b) & 1;
+                    charBin += bit;
+                    if (bit) fraction += weight;
+                }
+                binaryString += charBin + " ";
+            }
+
+            if (text.length > 6) binaryString += "...";
+
+            const theta = fraction * 2 * Math.PI;
+            const degrees = fraction * 360;
+
+            // c = (e^(i*theta)/2) - (e^(i*2*theta)/4)
+            const x = 0.5 * Math.cos(theta) - 0.25 * Math.cos(2 * theta);
+            const y = 0.5 * Math.sin(theta) - 0.25 * Math.sin(2 * theta);
+
+            document.getElementById('processBox').style.display = 'block';
+            document.getElementById('outBinary').innerText = "0." + binaryString.replace(/ /g, "");
+            document.getElementById('outFraction').innerText = fraction.toPrecision(15);
+            document.getElementById('outAngle').innerText = `${degrees.toFixed(3)}° (${theta.toFixed(4)} rad)`;
+            document.getElementById('outCoords').innerHTML = `X: ${x.toFixed(6)}<br>Y: ${y.toFixed(6)}`;
+
+            triggerZoom(x, y);
+        }
+
+        const canvas = document.getElementById('glcanvas');
+        const gl = canvas.getContext('webgl');
+
+        const vsSource = `
+            attribute vec2 a_position;
+            varying vec2 vUv;
+            void main() {
+                vUv = a_position * 0.5 + 0.5;
+                gl_Position = vec4(a_position, 0.0, 1.0);
+            }
+        `;
+
+        const fsSource = `
+            precision highp float;
+            varying vec2 vUv;
+            uniform vec2 u_center;
+            uniform float u_zoom;
+            uniform int u_maxIter;
+            uniform float u_aspect;
+
+            vec3 hsl2rgb(vec3 c) {
+                vec3 rgb = clamp(abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),6.0)-3.0)-1.0, 0.0, 1.0);
+                return c.z + c.y * (rgb-0.5)*(1.0-abs(2.0*c.z-1.0));
+            }
+
+            void main() {
+                vec2 c = u_center + (vUv - 0.5) * vec2(u_aspect, 1.0) * (3.0 / u_zoom);
+                vec2 z = vec2(0.0);
+                int iter = 0;
+                float iterFloat = 0.0;
+                
+                // Iteration calculation
+                for(int i = 0; i < 3000; i++) {
+                    if (i >= u_maxIter) break;
+                    float x2 = z.x * z.x;
+                    float y2 = z.y * z.y;
+                    if (x2 + y2 > 4.0) break;
+                    z.y = 2.0 * z.x * z.y + c.y;
+                    z.x = x2 - y2 + c.x;
+                    iter++;
+                    iterFloat += 1.0;
+                }
+
+                if (iter == u_maxIter) {
+                    gl_FragColor = vec4(0.02, 0.0, 0.05, 1.0); // Inside the set (Deep purple/black)
+                } else {
+                    float smoothIter = iterFloat - log2(max(1.0, log2(z.x*z.x + z.y*z.y) / 2.0));
+                    // Dynamic coloring based on zoom level to ensure beautiful bands
+                    float hue = fract(smoothIter / 60.0 - log(u_zoom) * 0.05);
+                    vec3 color = hsl2rgb(vec3(hue, 0.75, 0.5));
+                    gl_FragColor = vec4(color, 1.0);
+                }
+            }
+        `;
+
+        function compileShader(type, source) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+            return shader;
+        }
+
+        const shaderProgram = gl.createProgram();
+        gl.attachShader(shaderProgram, compileShader(gl.VERTEX_SHADER, vsSource));
+        gl.attachShader(shaderProgram, compileShader(gl.FRAGMENT_SHADER, fsSource));
+        gl.linkProgram(shaderProgram);
+        gl.useProgram(shaderProgram);
+
+        const vertices = new Float32Array([-1, -1,  1, -1,  -1, 1,  1, 1]);
+        const buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+        const posAttr = gl.getAttribLocation(shaderProgram, 'a_position');
+        gl.enableVertexAttribArray(posAttr);
+        gl.vertexAttribPointer(posAttr, 2, gl.FLOAT, false, 0, 0);
+
+        const uniforms = {
+            center: gl.getUniformLocation(shaderProgram, 'u_center'),
+            zoom: gl.getUniformLocation(shaderProgram, 'u_zoom'),
+            maxIter: gl.getUniformLocation(shaderProgram, 'u_maxIter'),
+            aspect: gl.getUniformLocation(shaderProgram, 'u_aspect')
+        };
+
+        let currentX = -0.65, currentY = 0.0, currentZoom = 0.8;
+        let startX = -0.65, startY = 0.0, startZoom = 0.8;
+        let targetX = -0.65, targetY = 0.0, targetZoom = 0.8;
+        
+        let animationTime = 0;
+        let isAnimating = false;
+        const DURATION = 6.7;
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            gl.viewport(0, 0, canvas.width, canvas.height);
+            render();
+        }
+        window.addEventListener('resize', resize);
+
+        function render() {
+            gl.uniform2f(uniforms.center, currentX, currentY);
+            gl.uniform1f(uniforms.zoom, currentZoom);
+            
+            // Robustness: Dynamically increase detail ONLY when zoomed in to save GPU
+            let dynamicIter = Math.floor(150 + Math.sqrt(currentZoom) * 8);
+            if (dynamicIter > 3000) dynamicIter = 3000;
+            gl.uniform1i(uniforms.maxIter, dynamicIter);
+            
+            gl.uniform1f(uniforms.aspect, canvas.width / canvas.height);
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        }
+
+        function animate(timestamp) {
+            if (!isAnimating) return;
+            if (!animationTime) animationTime = timestamp;
+            const elapsed = (timestamp - animationTime) / 1000;
+            let t = Math.min(elapsed / DURATION, 1.0);
+
+            const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+            currentX = startX + (targetX - startX) * ease;
+            currentY = startY + (targetY - startY) * ease;
+            currentZoom = startZoom * Math.pow(targetZoom / startZoom, ease);
+
+            render();
+
+            if (t < 1.0) {
+                requestAnimationFrame(animate);
+            } else {
+                isAnimating = false;
+            }
+        }
+
+        function triggerZoom(x, y) {
+            startX = currentX; startY = currentY; startZoom = currentZoom;
+            targetX = x; targetY = y; 
+            targetZoom = 18000; 
+            animationTime = 0;
+            isAnimating = true;
+            requestAnimationFrame(animate);
+        }
+
+        function resetView() {
+            startX = currentX; startY = currentY; startZoom = currentZoom;
+            targetX = -0.65; targetY = 0.0; targetZoom = 0.8;
+            
+            document.getElementById('inputText').value = '';
+            document.getElementById('processBox').style.display = 'none';
+            
+            animationTime = 0;
+            isAnimating = true;
+            requestAnimationFrame(animate);
+        }
+
+        resize();
+    </script>
+</body>
+</html>
