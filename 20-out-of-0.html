@@ -143,12 +143,10 @@
         .process-step:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
         .process-label { font-weight: bold; color: var(--text-secondary); display: block; margin-bottom: 2px;}
 
-        /* Scrollbar styles for UI panel */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--bg-primary); border-radius: 4px; }
         ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
 
-        /* Theme controls */
         .theme-controls {
             position: absolute; bottom: 20px; right: 20px; z-index: 10;
             display: flex; gap: 10px;
@@ -158,14 +156,26 @@
             background: var(--bg-secondary); color: var(--text-primary);
             border: 1px solid var(--accent);
         }
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        a:hover {
+            color: var(--accent-hover);
+            text-decoration: underline;
+            text-decoration-thickness: 2px;
+            text-underline-offset: 4px;
+        }
+
     </style>
 </head>
 <body>
 
-    <!-- WebGL Canvas -->
     <canvas id="glcanvas"></canvas>
 
-    <!-- UI Panel -->
     <div id="ui-panel" class="bg-secondary">
         <h1 class="section-title">Fractal Addresses</h1>
         <p class="section-subtitle">Find the unique mathematical coordinate of your text on the Mandelbrot set.</p>
@@ -176,12 +186,12 @@
         </div>
 
         <div class="input-group">
-            <input type="text" id="inputText" class="bg-primary text-primary border-accent" placeholder="e.g. Hello" autocomplete="off" maxlength="12">
+            <input type="text" id="inputText" class="bg-primary text-primary border-accent" placeholder="e.g. Mr. Marshall" autocomplete="off" maxlength="12">
             <button class="bg-accent hover:bg-accent-hover" onclick="processText()">Locate</button>
+            <p class="section-subtitle">May take a second to load, please wait!</p>
         </div>
         <button class="bg-primary border-accent text-secondary" style="border: 1px solid; width: 100%; margin-bottom: 20px;" onclick="resetView()">Reset View</button>
 
-        <!-- Dynamic Process Breakdown -->
         <div id="processBox" class="process-box bg-primary font-mono text-primary">
             <div class="process-step">
                 <span class="process-label">1. Text to Binary</span>
@@ -211,7 +221,7 @@
     <script>
         function setTheme(theme) {
             const html = document.documentElement;
-            html.className = ''; // Reset
+            html.className = '';
             if (theme === 'dark') html.classList.add('dark');
             if (theme === 'light') html.classList.add('light');
             if (theme === 'pink') { html.classList.add('theme-pink'); html.classList.add('dark'); }
@@ -361,7 +371,6 @@
             gl.uniform2f(uniforms.center, currentX, currentY);
             gl.uniform1f(uniforms.zoom, currentZoom);
             
-            // Robustness: Dynamically increase detail ONLY when zoomed in to save GPU
             let dynamicIter = Math.floor(150 + Math.sqrt(currentZoom) * 8);
             if (dynamicIter > 3000) dynamicIter = 3000;
             gl.uniform1i(uniforms.maxIter, dynamicIter);
