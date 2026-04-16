@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Normal Distribution Challenge</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+
+        :root {
+            --bg-color: #0f172a;
+            --canvas-bg: #1e293b;
+            --accent: #38bdf8;
+            --accent-hover: #0284c7;
+            --success: #22c55e;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 800px;
+            padding: 1rem 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .score-box {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem 2rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            min-width: 150px;
+        }
+
+        .score-box h3 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .score-box .value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--accent);
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+            transition: color 0.3s;
+        }
+
+        #high-score-val {
+            color: #fbbf24;
+            text-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+        }
+
+        .canvas-container {
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.05);
+        }
+
+        canvas {
+            background-color: var(--canvas-bg);
+            display: block;
+            cursor: crosshair;
+            touch-action: none;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+        }
+
+        button:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.4);
+        }
+
+        button.outline {
+            background: transparent;
+            border: 2px solid var(--text-muted);
+            color: var(--text-main);
+            box-shadow: none;
+        }
+
+        button.outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--text-main);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .new-high-score {
+            animation: pulse 0.5s ease-in-out 2;
+            color: #fbbf24 !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="score-box">
+            <h3>Score</h3>
+            <div class="value" id="current-score">0.0</div>
+        </div>
+        <div class="score-box">
+            <h3>High Score</h3>
+            <div class="value" id="high-score-val">0.0</div>
+        </div>
+    </div>
+
+    <div class="canvas-container">
+        <canvas id="drawingCanvas" width="800" height="500"></canvas>
+    </div>
+
+    <div class="controls">
+        <button class="outline" id="clearBtn">Clear</button>
+        <button id="gradeBtn">Grade</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('drawingCanvas');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        const currentScoreEl = document.getElementById('current-score');
+        const highScoreEl = document.getElementById('high-score-val');
+        
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+        let userCurve = new Array(canvas.width).fill(null);
+        let isGraded = false;
+
+        // Load High Score
+        let highScore = parseFloat(localStorage.getItem('apStatsHighScore')) || 0.0;
+        highScoreEl.innerText = highScore.toFixed(1);
+
+        // Mathematical properties of the perfect curve
+        const baseline = 450;
+        const amplitude = 350;
+        const mu = 400;
+        const sigma = 100;
+
+        function initCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw x-axis baseline
+            ctx.beginPath();
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
+            ctx.lineWidth = 2;
+            ctx.moveTo(0, baseline);
+            ctx.lineTo(canvas.width, baseline);
+            ctx.stroke();
+
+            userCurve.fill(null);
+            isGraded = false;
+            currentScoreEl.innerText = "0.0";
+            currentScoreEl.classList.remove('new-high-score');
+            currentScoreEl.style.color = "var(--accent)";
+        }
+
+        function getPerfectY(x) {
+            return baseline - amplitude * Math.exp(-Math.pow(x - mu, 2) / (2 * Math.pow(sigma, 2)));
+        }
+
+        function getCoordinates(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            let clientX = e.clientX;
+            let clientY = e.clientY;
+
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            }
+
+            return {
+                x: (clientX - rect.left) * scaleX,
+                y: (clientY - rect.top) * scaleY
+            };
+        }
+
+        function startDrawing(e) {
+            if (isGraded) initCanvas();
+            isDrawing = true;
+            const pos = getCoordinates(e);
+            lastX = pos.x;
+            lastY = pos.y;
+            recordPoint(lastX, lastY);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault(); // Prevent scrolling on touch
+            const pos = getCoordinates(e);
+
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.strokeStyle = "#38bdf8";
+            ctx.lineWidth = 6;
+            ctx.lineCap = "round";
+            ctx.lineJoin = "round";
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = "#38bdf8";
+            ctx.stroke();
+            ctx.shadowBlur = 0; // Reset shadow for performance
+
+            // Interpolate points to fill array gaps
+            const steps = Math.max(Math.abs(pos.x - lastX), Math.abs(pos.y - lastY));
+            for (let i = 0; i <= steps; i++) {
+                let x = Math.round(lastX + (pos.x - lastX) * (i / steps));
+                let y = lastY + (pos.y - lastY) * (i / steps);
+                recordPoint(x, y);
+            }
+
+            lastX = pos.x;
+            lastY = pos.y;
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        function recordPoint(x, y) {
+            let intX = Math.round(x);
+            if (intX >= 0 && intX < canvas.width) {
+                if (userCurve[intX] === null) {
+                    userCurve[intX] = y;
+                } else {
+                    // Keep the highest visual point (lowest y value) if they redraw
+                    userCurve[intX] = Math.min(userCurve[intX], y);
+                }
+            }
+        }
+
+        function drawPerfectCurve() {
+            ctx.beginPath();
+            ctx.strokeStyle = "rgba(34, 197, 94, 0.6)"; // Glowing green
+            ctx.lineWidth = 4;
+            ctx.setLineDash([15, 15]);
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = "#22c55e";
+
+            for (let x = 0; x < canvas.width; x++) {
+                let y = getPerfectY(x);
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            
+            // Reset
+            ctx.setLineDash([]);
+            ctx.shadowBlur = 0;
+        }
+
+        function gradeDrawing() {
+            if (isGraded) return;
+            isGraded = true;
+
+            let totalError = 0;
+            const maxPenaltyPerPixel = 120; // Tolerance threshold for scoring
+
+            for (let x = 0; x < canvas.width; x++) {
+                let perfectY = getPerfectY(x);
+                
+                if (userCurve[x] === null) {
+                    // Penalty for not drawing in this x-coordinate region
+                    totalError += maxPenaltyPerPixel; 
+                } else {
+                    totalError += Math.abs(userCurve[x] - perfectY);
+                }
+            }
+
+            let avgError = totalError / canvas.width;
+            
+            // Score calculation: 0 if avg error >= maxPenaltyPerPixel, else scale to 100
+            let score = Math.max(0, 100 - (avgError / maxPenaltyPerPixel) * 100);
+            
+            animateScore(score);
+            drawPerfectCurve();
+
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('apStatsHighScore', highScore);
+                setTimeout(() => {
+                    highScoreEl.innerText = highScore.toFixed(1);
+                    currentScoreEl.classList.add('new-high-score');
+                }, 1000);
+            }
+        }
+
+        function animateScore(targetScore) {
+            let current = 0;
+            const duration = 1000;
+            const fps = 60;
+            const increment = targetScore / (duration / (1000 / fps));
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= targetScore) {
+                    current = targetScore;
+                    clearInterval(timer);
+                    
+                    // Color code the final score
+                    if(targetScore >= 90) currentScoreEl.style.color = "#22c55e"; // Green
+                    else if(targetScore >= 70) currentScoreEl.style.color = "#fbbf24"; // Yellow
+                    else currentScoreEl.style.color = "#ef4444"; // Red
+                }
+                currentScoreEl.innerText = current.toFixed(1);
+            }, 1000 / fps);
+        }
+
+        // Event Listeners
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        window.addEventListener('mouseup', stopDrawing);
+
+        canvas.addEventListener('touchstart', startDrawing, {passive: false});
+        canvas.addEventListener('touchmove', draw, {passive: false});
+        window.addEventListener('touchend', stopDrawing);
+
+        document.getElementById('clearBtn').addEventListener('click', initCanvas);
+        document.getElementById('gradeBtn').addEventListener('click', gradeDrawing);
+
+        // Initialize on load
+        initCanvas();
+    </script>
+</body>
+</html>
