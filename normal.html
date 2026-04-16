@@ -174,36 +174,16 @@
         let userCurve = new Array(canvas.width).fill(null);
         let isGraded = false;
 
-        // Load High Score
         let highScore = parseFloat(localStorage.getItem('apStatsHighScore')) || 0.0;
         highScoreEl.innerText = highScore.toFixed(1);
 
-        // Mathematical properties of the perfect curve
-        const baseline = 450;
-        const amplitude = 350;
-        const mu = 400;
-        const sigma = 100;
-
         function initCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw x-axis baseline
-            ctx.beginPath();
-            ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
-            ctx.lineWidth = 2;
-            ctx.moveTo(0, baseline);
-            ctx.lineTo(canvas.width, baseline);
-            ctx.stroke();
-
             userCurve.fill(null);
             isGraded = false;
             currentScoreEl.innerText = "0.0";
             currentScoreEl.classList.remove('new-high-score');
             currentScoreEl.style.color = "var(--accent)";
-        }
-
-        function getPerfectY(x) {
-            return baseline - amplitude * Math.exp(-Math.pow(x - mu, 2) / (2 * Math.pow(sigma, 2)));
         }
 
         function getCoordinates(e) {
@@ -235,7 +215,7 @@
 
         function draw(e) {
             if (!isDrawing) return;
-            e.preventDefault(); // Prevent scrolling on touch
+            e.preventDefault(); 
             const pos = getCoordinates(e);
 
             ctx.beginPath();
@@ -248,9 +228,8 @@
             ctx.shadowBlur = 15;
             ctx.shadowColor = "#38bdf8";
             ctx.stroke();
-            ctx.shadowBlur = 0; // Reset shadow for performance
+            ctx.shadowBlur = 0; 
 
-            // Interpolate points to fill array gaps
             const steps = Math.max(Math.abs(pos.x - lastX), Math.abs(pos.y - lastY));
             for (let i = 0; i <= steps; i++) {
                 let x = Math.round(lastX + (pos.x - lastX) * (i / steps));
@@ -272,57 +251,102 @@
                 if (userCurve[intX] === null) {
                     userCurve[intX] = y;
                 } else {
-                    // Keep the highest visual point (lowest y value) if they redraw
-                    userCurve[intX] = Math.min(userCurve[intX], y);
+                    userCurve[intX] = Math.min(userCurve[intX], y); 
                 }
             }
         }
 
-        function drawPerfectCurve() {
+        function drawPerfectCurve(baseline, mu, sigma, amplitude, startX, endX) {
             ctx.beginPath();
-            ctx.strokeStyle = "rgba(34, 197, 94, 0.6)"; // Glowing green
+            ctx.strokeStyle = "rgba(34, 197, 94, 0.8)"; 
             ctx.lineWidth = 4;
-            ctx.setLineDash([15, 15]);
-            ctx.shadowBlur = 10;
+            ctx.setLineDash([15, 10]);
+            ctx.shadowBlur = 15;
             ctx.shadowColor = "#22c55e";
 
-            for (let x = 0; x < canvas.width; x++) {
-                let y = getPerfectY(x);
-                if (x === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
+            let first = true;
+            for (let x = startX; x <= endX; x++) {
+                let y = baseline - amplitude * Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2));
+                if (first) {
+                    ctx.moveTo(x, y);
+                    first = false;
+                } else {
+                    ctx.lineTo(x, y);
+                }
             }
             ctx.stroke();
             
-            // Reset
             ctx.setLineDash([]);
             ctx.shadowBlur = 0;
         }
 
         function gradeDrawing() {
             if (isGraded) return;
-            isGraded = true;
+            
+            let minX = canvas.width, maxX = 0;
+            let maxDrawnY = 0; 
 
-            let totalError = 0;
-            const maxPenaltyPerPixel = 120; // Tolerance threshold for scoring
-
-            for (let x = 0; x < canvas.width; x++) {
-                let perfectY = getPerfectY(x);
-                
-                if (userCurve[x] === null) {
-                    // Penalty for not drawing in this x-coordinate region
-                    totalError += maxPenaltyPerPixel; 
-                } else {
-                    totalError += Math.abs(userCurve[x] - perfectY);
+            for(let x = 0; x < canvas.width; x++) {
+                if(userCurve[x] !== null) {
+                    if(x < minX) minX = x;
+                    if(x > maxX) maxX = x;
+                    if(userCurve[x] > maxDrawnY) maxDrawnY = userCurve[x];
                 }
             }
 
-            let avgError = totalError / canvas.width;
+            if(maxX - minX < 30) {
+                animateScore(0);
+                return;
+            }
+
+            isGraded = true;
+
+            let baseline = maxDrawnY; 
+            let area = 0;
+
+            for(let x = minX; x <= maxX; x++) {
+                let y = userCurve[x] !== null ? Math.max(0, baseline - userCurve[x]) : 0;
+                area += y;
+            }
+
+            if(area === 0) {
+                animateScore(0);
+                return;
+            }
+
+            let mu = 0;
+            for(let x = minX; x <= maxX; x++) {
+                let y = userCurve[x] !== null ? Math.max(0, baseline - userCurve[x]) : 0;
+                mu += x * (y / area);
+            }
+
+            let variance = 0;
+            for(let x = minX; x <= maxX; x++) {
+                let y = userCurve[x] !== null ? Math.max(0, baseline - userCurve[x]) : 0;
+                variance += Math.pow(x - mu, 2) * (y / area);
+            }
+
+            let sigma = Math.max(Math.sqrt(variance), 1);
+            let amplitude = area / (sigma * Math.sqrt(2 * Math.PI));
+
+            let drawMinX = Math.floor(Math.max(0, mu - 4 * sigma));
+            let drawMaxX = Math.ceil(Math.min(canvas.width, mu + 4 * sigma));
             
-            // Score calculation: 0 if avg error >= maxPenaltyPerPixel, else scale to 100
-            let score = Math.max(0, 100 - (avgError / maxPenaltyPerPixel) * 100);
+            let evalStartX = Math.min(minX, drawMinX);
+            let evalEndX = Math.max(maxX, drawMaxX);
+            
+            let totalError = 0;
+
+            for(let x = evalStartX; x <= evalEndX; x++) {
+                let userY = userCurve[x] !== null ? Math.max(0, baseline - userCurve[x]) : 0;
+                let perfectY = amplitude * Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2));
+                totalError += Math.abs(userY - perfectY);
+            }
+
+            let score = Math.max(0, 100 - (totalError / area) * 50);
             
             animateScore(score);
-            drawPerfectCurve();
+            drawPerfectCurve(baseline, mu, sigma, amplitude, drawMinX, drawMaxX);
 
             if (score > highScore) {
                 highScore = score;
@@ -340,22 +364,26 @@
             const fps = 60;
             const increment = targetScore / (duration / (1000 / fps));
             
+            if (targetScore === 0) {
+                currentScoreEl.innerText = "0.0";
+                currentScoreEl.style.color = "#ef4444";
+                return;
+            }
+
             const timer = setInterval(() => {
                 current += increment;
                 if (current >= targetScore) {
                     current = targetScore;
                     clearInterval(timer);
                     
-                    // Color code the final score
-                    if(targetScore >= 90) currentScoreEl.style.color = "#22c55e"; // Green
-                    else if(targetScore >= 70) currentScoreEl.style.color = "#fbbf24"; // Yellow
-                    else currentScoreEl.style.color = "#ef4444"; // Red
+                    if(targetScore >= 90) currentScoreEl.style.color = "#22c55e"; 
+                    else if(targetScore >= 70) currentScoreEl.style.color = "#fbbf24"; 
+                    else currentScoreEl.style.color = "#ef4444"; 
                 }
                 currentScoreEl.innerText = current.toFixed(1);
             }, 1000 / fps);
         }
 
-        // Event Listeners
         canvas.addEventListener('mousedown', startDrawing);
         canvas.addEventListener('mousemove', draw);
         window.addEventListener('mouseup', stopDrawing);
@@ -367,7 +395,6 @@
         document.getElementById('clearBtn').addEventListener('click', initCanvas);
         document.getElementById('gradeBtn').addEventListener('click', gradeDrawing);
 
-        // Initialize on load
         initCanvas();
     </script>
 </body>
