@@ -229,7 +229,7 @@
     <div>
       <label>Number of sections</label>
       <div class="count-row">
-        <input type="range" id="numSlider" min="2" max="200" value="8" step="1">
+        <input type="range" id="numSlider" min="2" max="20" value="8" step="1">
         <span class="count-display" id="numDisplay">8</span>
       </div>
     </div>
@@ -520,10 +520,10 @@ function drawPreview() {
     ctx.beginPath();
     sec.poly.forEach((pt, j) => j === 0 ? ctx.moveTo(px(pt.x), py(pt.y)) : ctx.lineTo(px(pt.x), py(pt.y)));
     ctx.closePath();
-    ctx.fillStyle = `hsl(152, 18%, ${88 + (i / n) * 8}%)`;
+    ctx.fillStyle = '#ffffff';
     ctx.fill();
-    ctx.strokeStyle = 'hsl(152, 15%, 52%)';
-    ctx.lineWidth = 0.6;
+    ctx.strokeStyle = '#222222';
+    ctx.lineWidth = 0.7;
     ctx.stroke();
   });
 
@@ -532,7 +532,7 @@ function drawPreview() {
   ctx.ellipse(px(CX), py(CY), OVAL_RX * sc, OVAL_RY * sc, 0, 0, 2 * Math.PI);
   ctx.fillStyle = ovalFill ? 'rgba(238,248,242,0.96)' : '#fff';
   ctx.fill();
-  ctx.strokeStyle = '#2d5a3d';
+  ctx.strokeStyle = '#222222';
   ctx.lineWidth = 1.4;
   ctx.stroke();
 
@@ -541,7 +541,7 @@ function drawPreview() {
     ctx.textBaseline = 'middle';
     const fs = Math.max(7, Math.min(11, sc * 0.16));
     ctx.font = `500 ${fs}px 'DM Mono', monospace`;
-    ctx.fillStyle = '#2d4a35';
+    ctx.fillStyle = '#222222';
     sections.forEach((sec, i) => {
       const { x, y, angle } = sec.label;
       const flip = (angle > Math.PI / 2 && angle < 3 * Math.PI / 2) ? Math.PI : 0;
@@ -593,9 +593,8 @@ function generatePDF() {
   const sections = buildSections(n);
 
   sections.forEach((sec, i) => {
-    const g = Math.round(220 + (i / n) * 20);
-    doc.setFillColor(g, Math.min(255, g + 3), Math.max(0, g - 2));
-    doc.setDrawColor(160, 180, 165);
+    doc.setFillColor(255, 255, 255);
+    doc.setDrawColor(30, 30, 30);
     doc.setLineWidth(0.008);
     const pts = sec.poly;
     doc.lines(
@@ -605,12 +604,12 @@ function generatePDF() {
   });
 
   doc.setFillColor(...(ovalFill ? [238, 248, 242] : [255, 255, 255]));
-  doc.setDrawColor(45, 90, 61);
+  doc.setDrawColor(30, 30, 30);
   doc.setLineWidth(0.015);
   doc.ellipse(CX, CY, OVAL_RX, OVAL_RY, 'FD');
 
   if (showNumbers) {
-    doc.setTextColor(45, 74, 53);
+    doc.setTextColor(30, 30, 30);
     doc.setFontSize(7);
     doc.setFont('helvetica', 'bold');
     sections.forEach((sec, i) => {
@@ -654,12 +653,11 @@ function generateSVG() {
   svg += `<rect width="${W}" height="${H}" fill="white"/>\n`;
 
   sections.forEach((sec, i) => {
-    const g = Math.round(220 + (i / n) * 20);
     const pts = sec.poly.map(p => `${(p.x * DPI).toFixed(2)},${(p.y * DPI).toFixed(2)}`).join(' ');
-    svg += `<polygon points="${pts}" fill="rgb(${g},${Math.min(255,g+3)},${Math.max(0,g-2)})" stroke="rgb(160,180,165)" stroke-width="0.8"/>\n`;
+    svg += `<polygon points="${pts}" fill="white" stroke="rgb(30,30,30)" stroke-width="0.8"/>\n`;
   });
 
-  svg += `<ellipse cx="${(CX*DPI).toFixed(2)}" cy="${(CY*DPI).toFixed(2)}" rx="${OVAL_RX*DPI}" ry="${OVAL_RY*DPI}" fill="${ovalFill?'rgb(238,248,242)':'white'}" stroke="rgb(45,90,61)" stroke-width="1.5"/>\n`;
+  svg += `<ellipse cx="${(CX*DPI).toFixed(2)}" cy="${(CY*DPI).toFixed(2)}" rx="${OVAL_RX*DPI}" ry="${OVAL_RY*DPI}" fill="${ovalFill?'rgb(238,248,242)':'white'}" stroke="rgb(30,30,30)" stroke-width="1.5"/>\n`;
 
   if (showNumbers) {
     sections.forEach((sec, i) => {
@@ -667,7 +665,7 @@ function generateSVG() {
       const flip = (angle > Math.PI / 2 && angle < 3 * Math.PI / 2) ? 180 : 0;
       const rot = -(angle * 180 / Math.PI + flip);
       const lx = (x * DPI).toFixed(2), ly = (y * DPI).toFixed(2);
-      svg += `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" font-family="Helvetica,sans-serif" font-size="7" font-weight="bold" fill="rgb(45,74,53)" transform="rotate(${rot.toFixed(2)},${lx},${ly})">${i+1}</text>\n`;
+      svg += `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" font-family="Helvetica,sans-serif" font-size="7" font-weight="bold" fill="rgb(30,30,30)" transform="rotate(${rot.toFixed(2)},${lx},${ly})">${i+1}</text>\n`;
     });
   }
 
