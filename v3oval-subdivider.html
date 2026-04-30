@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oval Subdivision PDF Generator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:wght@400;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1a1a18;
+    --ink-mid: #4a4a44;
+    --ink-light: #8a8a82;
+    --paper: #f7f5ef;
+    --paper-warm: #ede9df;
+    --accent: #2d5a3d;
+    --accent-light: #4a8a60;
+    --line: rgba(26,26,24,0.12);
+    --mono: 'DM Mono', monospace;
+    --serif: 'Playfair Display', Georgia, serif;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--mono);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem 1.5rem 4rem;
+  }
+
+  header { text-align: center; margin-bottom: 3rem; }
+
+  header h1 {
+    font-family: var(--serif);
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+  }
+
+  header p {
+    font-size: 0.78rem;
+    color: var(--ink-light);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    width: 100%;
+    max-width: 960px;
+    padding: 2rem 2.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  @media (max-width: 680px) {
+    .card { grid-template-columns: 1fr; padding: 1.5rem; }
+  }
+
+  .controls { display: flex; flex-direction: column; gap: 1.5rem; }
+
+  label {
+    display: block;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-mid);
+    margin-bottom: 0.5rem;
+  }
+
+  .count-row { display: flex; align-items: center; gap: 1rem; }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    flex: 1;
+    height: 2px;
+    background: var(--paper-warm);
+    outline: none;
+    cursor: pointer;
+    border-radius: 0;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px; height: 16px;
+    background: var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+  input[type="range"]::-moz-range-thumb {
+    width: 16px; height: 16px;
+    background: var(--accent);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+  }
+  input[type="range"]::-moz-range-track { height: 2px; background: var(--paper-warm); }
+
+  .count-display {
+    font-size: 1.8rem;
+    font-family: var(--serif);
+    font-weight: 700;
+    color: var(--ink);
+    min-width: 2.5rem;
+    text-align: right;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  .stat {
+    background: var(--paper);
+    padding: 0.75rem;
+    border: 1px solid var(--line);
+  }
+
+  .stat-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+
+  .stat-val { font-size: 0.88rem; font-weight: 500; color: var(--ink); }
+
+  .options { display: flex; flex-direction: column; gap: 0.8rem; }
+
+  .option-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+  }
+
+  .option-row input[type="checkbox"] {
+    width: 14px; height: 14px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+
+  .option-row span { font-size: 0.75rem; color: var(--ink-mid); letter-spacing: 0.03em; }
+
+  .btn-group { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem; }
+
+  button {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid;
+    border-radius: 1px;
+    transition: all 0.15s;
+  }
+
+  .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn-primary:hover { background: var(--accent-light); border-color: var(--accent-light); }
+  .btn-primary:active { transform: scale(0.98); }
+
+  .btn-secondary { background: transparent; color: var(--ink-mid); border-color: var(--line); }
+  .btn-secondary:hover { border-color: var(--ink-mid); color: var(--ink); }
+
+  .preview-panel { display: flex; flex-direction: column; gap: 1rem; }
+
+  .preview-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+  }
+
+  .canvas-wrap {
+    border: 1px solid var(--line);
+    background: #fff;
+    aspect-ratio: 11 / 8.5;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  canvas#preview { width: 100%; height: 100%; display: block; }
+
+  .dim-hint {
+    font-size: 0.65rem;
+    color: var(--ink-light);
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+
+  footer {
+    margin-top: 3rem;
+    font-size: 0.65rem;
+    color: var(--ink-light);
+    letter-spacing: 0.05em;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Oval Subdivision</h1>
+  <p>Printable 11 × 8.5 inch landscape PDFs — equal-area sections</p>
+</header>
+
+<div class="card">
+  <div class="controls">
+    <div>
+      <label>Number of sections</label>
+      <div class="count-row">
+        <input type="range" id="numSlider" min="2" max="200" value="8" step="1">
+        <span class="count-display" id="numDisplay">8</span>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <span class="stat-label">Area per section</span>
+        <span class="stat-val" id="statArea">—</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Area cv (lower=better)</span>
+        <span class="stat-val" id="statVariance">—</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Total sections</span>
+        <span class="stat-val" id="statTotal">8</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Orientation</span>
+        <span class="stat-val">Landscape</span>
+      </div>
+    </div>
+
+    <div>
+      <label>Display options</label>
+      <div class="options">
+        <label class="option-row">
+          <input type="checkbox" id="optNumbers" checked>
+          <span>Number the sections</span>
+        </label>
+        <label class="option-row">
+          <input type="checkbox" id="optGuides">
+          <span>Show center crosshairs</span>
+        </label>
+        <label class="option-row">
+          <input type="checkbox" id="optOvalFill">
+          <span>Light fill inside oval</span>
+        </label>
+        <label class="option-row">
+          <input type="checkbox" id="optOutline" checked>
+          <span>Page border</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn-primary" id="btnPDF">Download PDF</button>
+      <button class="btn-secondary" id="btnSVG">Download SVG</button>
+    </div>
+  </div>
+
+  <div class="preview-panel">
+    <span class="preview-label">Live preview</span>
+    <div class="canvas-wrap">
+      <canvas id="preview"></canvas>
+    </div>
+    <p class="dim-hint">11 × 8.5 in landscape — 4 × 3 in oval, long axis horizontal (parallel to 11" side)</p>
+  </div>
+</div>
+
+<footer>Equal-area boundaries computed via trapezoid-area CDF &amp; numerical bisection</footer>
+
+<script>
+// ─── CONSTANTS — LANDSCAPE PAGE ───────────────────────────────────────────────
+// Page: 11" wide × 8.5" tall (landscape)
+// Oval: 4" wide (RX=2) × 3" tall (RY=1.5) — long axis is horizontal
+const PAGE_W = 11, PAGE_H = 8.5;
+const OVAL_RX = 2;   // semi-axis along X (horizontal) → 4" total width
+const OVAL_RY = 1.5; // semi-axis along Y (vertical)   → 3" total height
+const CX = PAGE_W / 2; // 5.5"
+const CY = PAGE_H / 2; // 4.25"
+
+// ─── GEOMETRY ────────────────────────────────────────────────────────────────
+
+function ovalPt(theta) {
+  return { x: CX + OVAL_RX * Math.cos(theta), y: CY + OVAL_RY * Math.sin(theta) };
+}
+
+// Outward unit normal of ellipse at theta
+function ovalNormal(theta) {
+  const nx = Math.cos(theta) / OVAL_RX;
+  const ny = Math.sin(theta) / OVAL_RY;
+  const len = Math.sqrt(nx * nx + ny * ny);
+  return { x: nx / len, y: ny / len };
+}
+
+function clamp(v, lo, hi) { return v < lo ? lo : v > hi ? hi : v; }
+
+// Intersect forward ray from (ox,oy) in direction (dx,dy) with page rect; t>0 only
+function rayPageHit(ox, oy, dx, dy) {
+  const cands = [];
+  if (Math.abs(dx) > 1e-12) { cands.push((0 - ox) / dx); cands.push((PAGE_W - ox) / dx); }
+  if (Math.abs(dy) > 1e-12) { cands.push((0 - oy) / dy); cands.push((PAGE_H - oy) / dy); }
+  let best = null, bt = Infinity;
+  for (const t of cands) {
+    if (t < 1e-9) continue;
+    const hx = ox + t * dx, hy = oy + t * dy;
+    if (hx >= -1e-5 && hx <= PAGE_W + 1e-5 && hy >= -1e-5 && hy <= PAGE_H + 1e-5) {
+      if (t < bt) { bt = t; best = { x: clamp(hx, 0, PAGE_W), y: clamp(hy, 0, PAGE_H) }; }
+    }
+  }
+  return best || { x: ox + dx * 100, y: oy + dy * 100 };
+}
+
+// Scalar position along the page boundary (CW from TL): 0..perimeter
+function boundaryPos(p) {
+  const eps = 1e-4;
+  if (Math.abs(p.y) < eps)          return p.x;                          // top edge
+  if (Math.abs(p.x - PAGE_W) < eps) return PAGE_W + p.y;                 // right edge
+  if (Math.abs(p.y - PAGE_H) < eps) return PAGE_W + PAGE_H + (PAGE_W - p.x); // bottom edge
+  return 2 * PAGE_W + PAGE_H + (PAGE_H - p.y);                            // left edge
+}
+
+const PERIM = 2 * (PAGE_W + PAGE_H);
+
+// All four corners as boundary positions
+const CORNER_PTS = [
+  { x: 0,      y: 0      }, // pos = 0
+  { x: PAGE_W, y: 0      }, // pos = PAGE_W
+  { x: PAGE_W, y: PAGE_H }, // pos = PAGE_W + PAGE_H
+  { x: 0,      y: PAGE_H }, // pos = 2*PAGE_W + PAGE_H
+];
+const CORNER_POS = CORNER_PTS.map(boundaryPos);
+
+// Return page-boundary points strictly between posA and posB going CW
+// (i.e. increasing boundary position, wrapping if needed)
+function cornersBetween(posA, posB) {
+  const pts = [];
+  for (let i = 0; i < 4; i++) {
+    let cp = CORNER_POS[i];
+    // shift cp so it's measured from posA going CW
+    let rel = (cp - posA + PERIM) % PERIM;
+    const span = (posB - posA + PERIM) % PERIM;
+    if (rel > 1e-6 && rel < span - 1e-6) {
+      pts.push({ pos: rel, pt: CORNER_PTS[i] });
+    }
+  }
+  pts.sort((a, b) => a.pos - b.pos);
+  return pts.map(p => p.pt);
+}
+
+// Build the polygon for one section spanning [theta1..theta2].
+//
+// Strategy: sweep RAY_STEPS rays uniformly along the arc, hitting the page boundary.
+// This gives an ordered sequence of page-boundary hit points. Between consecutive
+// hits we insert any page corners that lie along that boundary segment (CW order).
+// The inner edge is the arc itself (sampled). Result is always a valid polygon.
+function sectionPolygon(theta1, theta2) {
+  const RAY_STEPS = 48; // enough for smooth boundary even for n=2
+
+  // Inner arc points (oval side), theta1 → theta2
+  const arcPts = [];
+  for (let i = 0; i <= RAY_STEPS; i++) {
+    arcPts.push(ovalPt(theta1 + (theta2 - theta1) * i / RAY_STEPS));
+  }
+
+  // Outer boundary: cast a ray from each arc sample outward, collect page hits
+  const hits = arcPts.map((op, i) => {
+    const t = theta1 + (theta2 - theta1) * i / RAY_STEPS;
+    const n = ovalNormal(t);
+    return rayPageHit(op.x, op.y, n.x, n.y);
+  });
+
+  // Build outer boundary: connect hits[RAY_STEPS] → hits[RAY_STEPS-1] → ... → hits[0]
+  // going CCW along the page boundary (i.e. decreasing boundary position).
+  // cornersBetween(posA, posB) returns corners going CW from posA to posB,
+  // so for CCW we swap: go CW from posB to posA and reverse.
+  const outerPts = [];
+  for (let i = RAY_STEPS; i >= 1; i--) {
+    outerPts.push(hits[i]);
+    const posA = boundaryPos(hits[i]);
+    const posB = boundaryPos(hits[i - 1]);
+    // Going CCW from hits[i] to hits[i-1] = going CW from hits[i-1] to hits[i], reversed
+    const corners = cornersBetween(posB, posA).reverse();
+    outerPts.push(...corners);
+  }
+  outerPts.push(hits[0]);
+
+  // Full polygon: inner arc (theta1→theta2) then outer boundary back (theta2→theta1 side)
+  return [...arcPts, ...outerPts];
+}
+
+// Shoelace area
+function polyArea(pts) {
+  let a = 0, n = pts.length;
+  for (let i = 0; i < n; i++) {
+    const j = (i + 1) % n;
+    a += pts[i].x * pts[j].y - pts[j].x * pts[i].y;
+  }
+  return Math.abs(a) / 2;
+}
+
+// ─── EQUAL-AREA THETA BOUNDARIES ─────────────────────────────────────────────
+// Build a CDF of cumulative trapezoid area around the oval, then invert to
+// find theta values that split the total area into n equal parts.
+
+// Fast single-ray polygon for CDF sampling (tiny slices don't need swept rays)
+function tinySlicePoly(t1, t2) {
+  const p1 = ovalPt(t1), p2 = ovalPt(t2);
+  const nm = ovalNormal((t1 + t2) / 2);
+  const e1 = rayPageHit(p1.x, p1.y, nm.x, nm.y);
+  const e2 = rayPageHit(p2.x, p2.y, nm.x, nm.y);
+  return [p1, p2, e2, e1];
+}
+
+function buildEqualAreaThetas(n) {
+  const SAMPLES = 3600;
+  const dT = (2 * Math.PI) / SAMPLES;
+
+  // Build cumulative area array using fast tiny-slice polygons
+  const cumArea = new Float64Array(SAMPLES + 1);
+  for (let i = 0; i < SAMPLES; i++) {
+    cumArea[i + 1] = cumArea[i] + polyArea(tinySlicePoly(i * dT, (i + 1) * dT));
+  }
+
+  const total = cumArea[SAMPLES];
+  const target = total / n;
+
+  const thetas = [0];
+  for (let k = 1; k < n; k++) {
+    const tgt = k * target;
+    // Binary search for the sample interval containing tgt
+    let lo = 0, hi = SAMPLES;
+    while (hi - lo > 1) {
+      const mid = (lo + hi) >> 1;
+      cumArea[mid] < tgt ? (lo = mid) : (hi = mid);
+    }
+    // Linear interpolate within that interval
+    const span = cumArea[hi] - cumArea[lo];
+    const frac = span > 1e-15 ? (tgt - cumArea[lo]) / span : 0;
+    thetas.push((lo + frac) * dT);
+  }
+  thetas.push(2 * Math.PI);
+  return thetas;
+}
+
+// ─── BUILD SECTIONS ───────────────────────────────────────────────────────────
+function buildSections(n) {
+  const thetas = buildEqualAreaThetas(n);
+  return thetas.slice(0, -1).map((t1, i) => {
+    const t2 = thetas[i + 1];
+    const poly = sectionPolygon(t1, t2);
+    const mid = (t1 + t2) / 2;
+    const op = ovalPt(mid);
+    const nm = ovalNormal(mid);
+    const ep = rayPageHit(op.x, op.y, nm.x, nm.y);
+    return {
+      poly,
+      area: polyArea(poly),
+      label: {
+        x: (op.x + ep.x) / 2,
+        y: (op.y + ep.y) / 2,
+        angle: Math.atan2(nm.y, nm.x),
+      }
+    };
+  });
+}
+
+// ─── DRAW ─────────────────────────────────────────────────────────────────────
+const previewCanvas = document.getElementById('preview');
+
+function drawPreview() {
+  const n            = +document.getElementById('numSlider').value;
+  const showNumbers  = document.getElementById('optNumbers').checked;
+  const showGuides   = document.getElementById('optGuides').checked;
+  const ovalFill     = document.getElementById('optOvalFill').checked;
+  const showOutline  = document.getElementById('optOutline').checked;
+
+  const W = previewCanvas.offsetWidth, H = previewCanvas.offsetHeight;
+  previewCanvas.width  = W * devicePixelRatio;
+  previewCanvas.height = H * devicePixelRatio;
+  const ctx = previewCanvas.getContext('2d');
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+
+  const sc = Math.min(W / PAGE_W, H / PAGE_H);
+  const tx = (W - PAGE_W * sc) / 2, ty = (H - PAGE_H * sc) / 2;
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(tx, ty, PAGE_W * sc, PAGE_H * sc);
+
+  const px = x => tx + x * sc;
+  const py = y => ty + y * sc;
+
+  const sections = buildSections(n);
+
+  sections.forEach((sec, i) => {
+    ctx.beginPath();
+    sec.poly.forEach((pt, j) => j === 0 ? ctx.moveTo(px(pt.x), py(pt.y)) : ctx.lineTo(px(pt.x), py(pt.y)));
+    ctx.closePath();
+    ctx.fillStyle = `hsl(152, 18%, ${88 + (i / n) * 8}%)`;
+    ctx.fill();
+    ctx.strokeStyle = 'hsl(152, 15%, 52%)';
+    ctx.lineWidth = 0.6;
+    ctx.stroke();
+  });
+
+  // Oval — drawn last so it sits on top
+  ctx.beginPath();
+  ctx.ellipse(px(CX), py(CY), OVAL_RX * sc, OVAL_RY * sc, 0, 0, 2 * Math.PI);
+  ctx.fillStyle = ovalFill ? 'rgba(238,248,242,0.96)' : '#fff';
+  ctx.fill();
+  ctx.strokeStyle = '#2d5a3d';
+  ctx.lineWidth = 1.4;
+  ctx.stroke();
+
+  if (showNumbers) {
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const fs = Math.max(7, Math.min(11, sc * 0.16));
+    ctx.font = `500 ${fs}px 'DM Mono', monospace`;
+    ctx.fillStyle = '#2d4a35';
+    sections.forEach((sec, i) => {
+      const { x, y, angle } = sec.label;
+      const flip = (angle > Math.PI / 2 && angle < 3 * Math.PI / 2) ? Math.PI : 0;
+      ctx.save();
+      ctx.translate(px(x), py(y));
+      ctx.rotate(angle + flip);
+      ctx.fillText(i + 1, 0, 0);
+      ctx.restore();
+    });
+  }
+
+  if (showGuides) {
+    ctx.setLineDash([3, 3]);
+    ctx.strokeStyle = 'rgba(80,140,100,0.35)';
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    ctx.moveTo(px(CX), py(0)); ctx.lineTo(px(CX), py(PAGE_H));
+    ctx.moveTo(px(0), py(CY)); ctx.lineTo(px(PAGE_W), py(CY));
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  if (showOutline) {
+    ctx.strokeStyle = '#bbb';
+    ctx.lineWidth = 0.8;
+    ctx.strokeRect(tx, ty, PAGE_W * sc, PAGE_H * sc);
+  }
+
+  // Stats
+  const areas = sections.map(s => s.area);
+  const mean  = areas.reduce((a, b) => a + b, 0) / areas.length;
+  const cv    = Math.sqrt(areas.reduce((a, b) => a + (b - mean) ** 2, 0) / areas.length) / mean;
+  document.getElementById('statArea').textContent     = mean.toFixed(3) + ' in²';
+  document.getElementById('statVariance').textContent = (cv * 100).toFixed(3) + '%';
+  document.getElementById('statTotal').textContent    = n;
+}
+
+// ─── PDF ──────────────────────────────────────────────────────────────────────
+function generatePDF() {
+  const { jsPDF } = window.jspdf;
+  const n = +document.getElementById('numSlider').value;
+  const showNumbers = document.getElementById('optNumbers').checked;
+  const showGuides  = document.getElementById('optGuides').checked;
+  const ovalFill    = document.getElementById('optOvalFill').checked;
+  const showOutline = document.getElementById('optOutline').checked;
+
+  // jsPDF landscape: pass [height, width] as format when orientation='landscape'
+  const doc = new jsPDF({ unit: 'in', format: [PAGE_H, PAGE_W], orientation: 'landscape' });
+  const sections = buildSections(n);
+
+  sections.forEach((sec, i) => {
+    const g = Math.round(220 + (i / n) * 20);
+    doc.setFillColor(g, Math.min(255, g + 3), Math.max(0, g - 2));
+    doc.setDrawColor(160, 180, 165);
+    doc.setLineWidth(0.008);
+    const pts = sec.poly;
+    doc.lines(
+      pts.slice(1).map((p, j) => [p.x - pts[j].x, p.y - pts[j].y]),
+      pts[0].x, pts[0].y, [1, 1], 'FD', true
+    );
+  });
+
+  doc.setFillColor(...(ovalFill ? [238, 248, 242] : [255, 255, 255]));
+  doc.setDrawColor(45, 90, 61);
+  doc.setLineWidth(0.015);
+  doc.ellipse(CX, CY, OVAL_RX, OVAL_RY, 'FD');
+
+  if (showNumbers) {
+    doc.setTextColor(45, 74, 53);
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'bold');
+    sections.forEach((sec, i) => {
+      const { x, y, angle } = sec.label;
+      const flip = (angle > Math.PI / 2 && angle < 3 * Math.PI / 2) ? 180 : 0;
+      doc.text(String(i + 1), x, y, { align: 'center', baseline: 'middle', angle: -(angle * 180 / Math.PI + flip) });
+    });
+  }
+
+  if (showGuides) {
+    doc.setDrawColor(180, 210, 190);
+    doc.setLineWidth(0.005);
+    doc.setLineDashPattern([0.05, 0.05], 0);
+    doc.line(CX, 0, CX, PAGE_H);
+    doc.line(0, CY, PAGE_W, CY);
+    doc.setLineDashPattern([], 0);
+  }
+
+  if (showOutline) {
+    doc.setDrawColor(180, 180, 180);
+    doc.setLineWidth(0.01);
+    doc.rect(0, 0, PAGE_W, PAGE_H, 'S');
+  }
+
+  doc.save(`oval-${n}sections-landscape.pdf`);
+}
+
+// ─── SVG ──────────────────────────────────────────────────────────────────────
+function generateSVG() {
+  const n = +document.getElementById('numSlider').value;
+  const showNumbers = document.getElementById('optNumbers').checked;
+  const showGuides  = document.getElementById('optGuides').checked;
+  const ovalFill    = document.getElementById('optOvalFill').checked;
+  const showOutline = document.getElementById('optOutline').checked;
+
+  const DPI = 96;
+  const W = PAGE_W * DPI, H = PAGE_H * DPI;
+  const sections = buildSections(n);
+
+  let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">\n`;
+  svg += `<rect width="${W}" height="${H}" fill="white"/>\n`;
+
+  sections.forEach((sec, i) => {
+    const g = Math.round(220 + (i / n) * 20);
+    const pts = sec.poly.map(p => `${(p.x * DPI).toFixed(2)},${(p.y * DPI).toFixed(2)}`).join(' ');
+    svg += `<polygon points="${pts}" fill="rgb(${g},${Math.min(255,g+3)},${Math.max(0,g-2)})" stroke="rgb(160,180,165)" stroke-width="0.8"/>\n`;
+  });
+
+  svg += `<ellipse cx="${(CX*DPI).toFixed(2)}" cy="${(CY*DPI).toFixed(2)}" rx="${OVAL_RX*DPI}" ry="${OVAL_RY*DPI}" fill="${ovalFill?'rgb(238,248,242)':'white'}" stroke="rgb(45,90,61)" stroke-width="1.5"/>\n`;
+
+  if (showNumbers) {
+    sections.forEach((sec, i) => {
+      const { x, y, angle } = sec.label;
+      const flip = (angle > Math.PI / 2 && angle < 3 * Math.PI / 2) ? 180 : 0;
+      const rot = -(angle * 180 / Math.PI + flip);
+      const lx = (x * DPI).toFixed(2), ly = (y * DPI).toFixed(2);
+      svg += `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" font-family="Helvetica,sans-serif" font-size="7" font-weight="bold" fill="rgb(45,74,53)" transform="rotate(${rot.toFixed(2)},${lx},${ly})">${i+1}</text>\n`;
+    });
+  }
+
+  if (showGuides) {
+    svg += `<line x1="${CX*DPI}" y1="0" x2="${CX*DPI}" y2="${H}" stroke="rgb(180,210,190)" stroke-width="0.5" stroke-dasharray="5,5"/>\n`;
+    svg += `<line x1="0" y1="${CY*DPI}" x2="${W}" y2="${CY*DPI}" stroke="rgb(180,210,190)" stroke-width="0.5" stroke-dasharray="5,5"/>\n`;
+  }
+
+  if (showOutline) {
+    svg += `<rect width="${W}" height="${H}" fill="none" stroke="rgb(180,180,180)" stroke-width="1"/>\n`;
+  }
+
+  svg += `</svg>`;
+
+  const blob = new Blob([svg], { type: 'image/svg+xml' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = `oval-${n}sections-landscape.svg`; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ─── EVENTS ───────────────────────────────────────────────────────────────────
+const slider = document.getElementById('numSlider');
+
+function onUpdate() {
+  document.getElementById('numDisplay').textContent = slider.value;
+  drawPreview();
+}
+
+slider.addEventListener('input', onUpdate);
+['optNumbers','optGuides','optOvalFill','optOutline'].forEach(id =>
+  document.getElementById(id).addEventListener('change', drawPreview)
+);
+document.getElementById('btnPDF').addEventListener('click', generatePDF);
+document.getElementById('btnSVG').addEventListener('click', generateSVG);
+window.addEventListener('resize', drawPreview);
+onUpdate();
+</script>
+</body>
+</html>
