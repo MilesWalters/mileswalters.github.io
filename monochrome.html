@@ -57,7 +57,6 @@
             gap: 8px;
         }
 
-        /* Apple/Mobile friendly touch targets */
         input[type="file"] {
             font-size: 16px;
             padding: 10px 0;
@@ -66,21 +65,21 @@
         input[type="range"] {
             cursor: pointer;
             width: 100%;
-            height: 40px; /* Taller touch area for thumb */
+            height: 40px; 
         }
 
         button {
             background-color: var(--primary);
             color: white;
             border: none;
-            padding: 15px; /* Bigger tap target for mobile */
+            padding: 15px; 
             border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
             font-weight: bold;
             transition: background 0.3s;
             width: 100%;
-            -webkit-appearance: none; /* Removes iOS default styling */
+            -webkit-appearance: none; 
         }
 
         button:hover:not(:disabled), button:active:not(:disabled) {
@@ -98,7 +97,6 @@
             border: 2px dashed #ccc;
             background: white;
             position: relative;
-            /* Prevents the page from scrolling when you try to tap the image */
             touch-action: none; 
             border-radius: 8px;
             overflow: hidden;
@@ -130,9 +128,11 @@
             background-color: transparent;
         }
         
-        #rgbValues {
+        #colorValues {
             font-family: monospace;
             font-size: 14px;
+            display: flex;
+            flex-direction: column;
         }
     </style>
 </head>
@@ -148,15 +148,17 @@
         </div>
 
         <div class="control-group">
-            <label for="tolerance"><strong>2. Adjust Variance: <span id="toleranceValue">60</span></strong></label>
-            <input type="range" id="tolerance" min="0" max="255" value="60">
+            <label for="tolerance"><strong>2. Adjust Variance: <span id="toleranceValue">25</span></strong></label>
+            <input type="range" id="tolerance" min="0" max="100" value="25">
         </div>
 
         <div class="control-group">
             <label><strong>Selected Color</strong></label>
             <div class="color-preview-wrapper">
                 <div id="colorPreview"></div>
-                <span id="rgbValues">Tap the image!</span>
+                <div id="colorValues">
+                    <span id="rgbValues">Tap the image!</span>
+                </div>
             </div>
         </div>
 
@@ -179,10 +181,30 @@
 
         let originalImage = new Image();
         let originalImageData = null;
-        let selectedColor = null;
+        let selectedColorHSL = null; 
         
-        // Mobile safeguard: scale down images larger than this to prevent iOS Safari crashes
         const MAX_IMAGE_DIMENSION = 1200; 
+
+        // --- Helper: Convert RGB to HSL ---
+        function rgbToHsl(r, g, b) {
+            r /= 255; g /= 255; b /= 255;
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+
+            if (max === min) {
+                h = s = 0; // achromatic (grays)
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+            return [h * 360, s * 100, l * 100];
+        }
 
         // Handle Image Upload
         imageUpload.addEventListener('change', function(e) {
@@ -192,8 +214,6 @@
             const reader = new FileReader();
             reader.onload = function(event) {
                 originalImage.onload = function() {
-                    
-                    // Calculate scaling if the image is too large for mobile browsers
                     let width = originalImage.width;
                     let height = originalImage.height;
 
@@ -203,18 +223,13 @@
                         height = Math.floor(height * ratio);
                     }
 
-                    // Set canvas dimensions to the scaled sizes
                     canvas.width = width;
                     canvas.height = height;
                     
-                    // Draw original image (scaled if necessary)
                     ctx.drawImage(originalImage, 0, 0, width, height);
-                    
-                    // Store original pixel data for processing
                     originalImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
                     
-                    // Reset selections
-                    selectedColor = null;
+                    selectedColorHSL = null;
                     colorPreview.style.backgroundColor = 'transparent';
                     rgbValues.innerText = 'Tap the image!';
                     downloadBtn.disabled = false;
@@ -224,11 +239,10 @@
             reader.readAsDataURL(file);
         });
 
-        // Use pointerdown instead of click for reliable touch tracking on iOS/Android
+        // Handle Image Tap
         canvas.addEventListener('pointerdown', function(e) {
             if (!originalImageData) return;
 
-            // Get exact coordinates accounting for CSS scaling on responsive screens
             const rect = canvas.getBoundingClientRect();
             const scaleX = canvas.width / rect.width;
             const scaleY = canvas.height / rect.height;
@@ -236,37 +250,32 @@
             const x = Math.floor((e.clientX - rect.left) * scaleX);
             const y = Math.floor((e.clientY - rect.top) * scaleY);
 
-            // Ensure out-of-bounds taps don't crash it
             if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) return;
 
-            // Get color at clicked pixel from original data
             const index = (y * canvas.width + x) * 4;
             const r = originalImageData.data[index];
             const g = originalImageData.data[index + 1];
             const b = originalImageData.data[index + 2];
 
-            selectedColor = { r, g, b };
+            // Convert selected pixel to HSL
+            selectedColorHSL = rgbToHsl(r, g, b);
             
-            // Update UI
             colorPreview.style.backgroundColor = `rgb(${r},${g},${b})`;
             rgbValues.innerText = `RGB(${r}, ${g}, ${b})`;
 
-            // Process Image
             processImage();
         });
 
-        // Handle Tolerance Slider Change
         toleranceSlider.addEventListener('input', function() {
             toleranceValue.innerText = this.value;
-            if (selectedColor) {
-                // Request animation frame keeps sliders smoother on mobile
+            if (selectedColorHSL) {
                 requestAnimationFrame(processImage); 
             }
         });
 
-        // Process the Image (Isolate Color)
+        // --- Core Image Processing Engine ---
         function processImage() {
-            if (!originalImageData || !selectedColor) return;
+            if (!originalImageData || !selectedColorHSL) return;
 
             const tolerance = parseInt(toleranceSlider.value);
             
@@ -277,17 +286,33 @@
             );
             const data = currentImageData.data;
 
+            const [targetH, targetS, targetL] = selectedColorHSL;
+
             for (let i = 0; i < data.length; i += 4) {
                 const r = data[i];
                 const g = data[i + 1];
                 const b = data[i + 2];
 
+                const [h, s, l] = rgbToHsl(r, g, b);
+
+                // 1. Calculate Hue Difference (Circular)
+                let hDiff = Math.abs(h - targetH);
+                if (hDiff > 180) hDiff = 360 - hDiff;
+
+                // 2. Adjust for Grays/Blacks/Whites
+                // If a color has no saturation, its hue is meaningless. 
+                // We multiply the hue difference by the average saturation to account for this.
+                const saturationWeight = (s + targetS) / 200; // 0.0 to 1.0
+
+                // 3. Calculate Weighted Distance
+                // Heavily weight the Hue, moderately weight Saturation, largely ignore Lightness
                 const distance = Math.sqrt(
-                    Math.pow(r - selectedColor.r, 2) + 
-                    Math.pow(g - selectedColor.g, 2) + 
-                    Math.pow(b - selectedColor.b, 2)
+                    Math.pow(hDiff * saturationWeight * 3.0, 2) + 
+                    Math.pow(Math.abs(s - targetS), 2) + 
+                    Math.pow(Math.abs(l - targetL) * 0.2, 2) 
                 );
 
+                // If outside the variance, turn it grayscale
                 if (distance > tolerance) {
                     const gray = (r * 0.299) + (g * 0.587) + (b * 0.114);
                     data[i] = gray;     
@@ -299,10 +324,8 @@
             ctx.putImageData(currentImageData, 0, 0);
         }
 
-        // Handle Download
         downloadBtn.addEventListener('click', function() {
             if (!originalImageData) return;
-            
             const link = document.createElement('a');
             link.download = 'color-isolated-image.png';
             link.href = canvas.toDataURL('image/png');
