@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Splash / Isolate Color Tool</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --bg: #f4f7f6;
+            --text: #333;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin-top: 0;
+            color: #666;
+            text-align: center;
+        }
+
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        input[type="file"], input[type="range"] {
+            cursor: pointer;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .canvas-container {
+            max-width: 90vw;
+            max-height: 70vh;
+            overflow: auto;
+            border: 2px dashed #ccc;
+            background: white;
+            position: relative;
+            cursor: crosshair;
+        }
+
+        canvas {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .color-preview-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #colorPreview {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #ccc;
+            border-radius: 50%;
+            background-color: transparent;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Color Isolator</h1>
+    <p>Upload an image, click a color on the image to isolate it, and adjust the variance.</p>
+
+    <div class="controls">
+        <div class="control-group">
+            <label for="imageUpload"><strong>1. Upload Image</strong></label>
+            <input type="file" id="imageUpload" accept="image/png, image/jpeg, image/webp">
+        </div>
+
+        <div class="control-group">
+            <label for="tolerance"><strong>2. Adjust Variance: <span id="toleranceValue">60</span></strong></label>
+            <input type="range" id="tolerance" min="0" max="255" value="60">
+        </div>
+
+        <div class="control-group">
+            <label><strong>Selected Color</strong></label>
+            <div class="color-preview-wrapper">
+                <div id="colorPreview"></div>
+                <span id="rgbValues">-</span>
+            </div>
+        </div>
+
+        <button id="downloadBtn" disabled>Download Image</button>
+    </div>
+
+    <div class="canvas-container">
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <script>
+        const imageUpload = document.getElementById('imageUpload');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        const toleranceSlider = document.getElementById('tolerance');
+        const toleranceValue = document.getElementById('toleranceValue');
+        const colorPreview = document.getElementById('colorPreview');
+        const rgbValues = document.getElementById('rgbValues');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        let originalImage = new Image();
+        let originalImageData = null;
+        let selectedColor = null;
+
+        // Handle Image Upload
+        imageUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                originalImage.onload = function() {
+                    // Set canvas dimensions to match image
+                    canvas.width = originalImage.width;
+                    canvas.height = originalImage.height;
+                    
+                    // Draw original image
+                    ctx.drawImage(originalImage, 0, 0);
+                    
+                    // Store original pixel data for processing
+                    originalImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    
+                    // Reset selections
+                    selectedColor = null;
+                    colorPreview.style.backgroundColor = 'transparent';
+                    rgbValues.innerText = '-';
+                    downloadBtn.disabled = false;
+                }
+                originalImage.src = event.target.result;
+            }
+            reader.readAsDataURL(file);
+        });
+
+        // Handle Canvas Click to Pick Color
+        canvas.addEventListener('click', function(e) {
+            if (!originalImageData) return;
+
+            // Get exact coordinates accounting for CSS scaling
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            
+            const x = Math.floor((e.clientX - rect.left) * scaleX);
+            const y = Math.floor((e.clientY - rect.top) * scaleY);
+
+            // Get color at clicked pixel from original data
+            const index = (y * canvas.width + x) * 4;
+            const r = originalImageData.data[index];
+            const g = originalImageData.data[index + 1];
+            const b = originalImageData.data[index + 2];
+
+            selectedColor = { r, g, b };
+            
+            // Update UI
+            colorPreview.style.backgroundColor = `rgb(${r},${g},${b})`;
+            rgbValues.innerText = `RGB(${r}, ${g}, ${b})`;
+
+            // Process Image
+            processImage();
+        });
+
+        // Handle Tolerance Slider Change
+        toleranceSlider.addEventListener('input', function() {
+            toleranceValue.innerText = this.value;
+            if (selectedColor) {
+                processImage(); // Reprocess instantly as slider moves
+            }
+        });
+
+        // Process the Image (Isolate Color)
+        function processImage() {
+            if (!originalImageData || !selectedColor) return;
+
+            const tolerance = parseInt(toleranceSlider.value);
+            // Create a copy of original data to modify
+            const currentImageData = new ImageData(
+                new Uint8ClampedArray(originalImageData.data), 
+                originalImageData.width, 
+                originalImageData.height
+            );
+            const data = currentImageData.data;
+
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i];
+                const g = data[i + 1];
+                const b = data[i + 2];
+
+                // Calculate Euclidean distance between current pixel and selected color
+                const distance = Math.sqrt(
+                    Math.pow(r - selectedColor.r, 2) + 
+                    Math.pow(g - selectedColor.g, 2) + 
+                    Math.pow(b - selectedColor.b, 2)
+                );
+
+                // If the color is OUTSIDE the variance tolerance, turn it grayscale
+                if (distance > tolerance) {
+                    // Standard luminance formula for grayscale
+                    const gray = (r * 0.299) + (g * 0.587) + (b * 0.114);
+                    data[i] = gray;     // Red
+                    data[i + 1] = gray; // Green
+                    data[i + 2] = gray; // Blue
+                }
+            }
+
+            // Put the modified image data back onto the canvas
+            ctx.putImageData(currentImageData, 0, 0);
+        }
+
+        // Handle Download
+        downloadBtn.addEventListener('click', function() {
+            if (!originalImageData) return;
+            
+            // Create a temporary link element
+            const link = document.createElement('a');
+            link.download = 'color-isolated-image.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    </script>
+</body>
+</html>
