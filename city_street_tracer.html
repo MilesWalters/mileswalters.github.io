@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>City Street Tracer</title>
+  <style>
+    :root{--bg:#ecebe7;--panel:#f8f7f3;--ink:#171816;--muted:#73756e;--line:#d8d7d1;--accent:#d85e32}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.35 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    button,input,select{font:inherit} .app{min-height:100vh;display:grid;grid-template-columns:320px 1fr}
+    aside{background:var(--panel);border-right:1px solid var(--line);padding:28px 24px;overflow:auto}
+    .eyebrow{font-size:10px;font-weight:750;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+    h1{font:500 30px/1.02 Georgia,serif;margin:10px 0 8px} .intro{color:var(--muted);margin:0 0 28px}
+    label,.group-title{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:18px 0 7px}
+    input[type=text],select{width:100%;border:1px solid var(--line);background:white;padding:11px 12px;border-radius:6px;outline:none}
+    input:focus,select:focus{border-color:#777} .row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+    .checks{display:grid;gap:8px;margin-top:10px}.check{display:flex;align-items:center;gap:9px;color:#3f403c;text-transform:none;letter-spacing:0;font-weight:500;font-size:13px;margin:0}.check input{accent-color:var(--accent)}
+    input[type=range]{width:100%;accent-color:var(--accent)} .range-row{display:flex;align-items:center;justify-content:space-between}.range-row span{color:var(--muted);font-size:12px}
+    .actions{display:grid;gap:8px;margin-top:24px}.btn{border:1px solid #1d1e1b;border-radius:6px;padding:11px 13px;background:#1d1e1b;color:white;cursor:pointer;font-weight:650}.btn:hover{filter:brightness(1.15)}.btn.secondary{background:transparent;color:var(--ink);border-color:var(--line)}.btn:disabled{opacity:.45;cursor:wait}
+    .exports{display:grid;grid-template-columns:1fr 1fr;gap:8px}.status{min-height:48px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}.status.error{color:#a52e25}
+    main{padding:30px;display:flex;flex-direction:column;min-width:0}.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;color:var(--muted);font-size:12px}.size{font-variant-numeric:tabular-nums}
+    .sheet-wrap{flex:1;display:grid;place-items:center;min-height:400px}.sheet{position:relative;background:#fff;box-shadow:0 16px 45px #2222;aspect-ratio:11/8.5;width:min(100%,calc((100vh - 100px)*11/8.5));max-height:calc(100vh - 100px);overflow:hidden}
+    #map{display:block;width:100%;height:100%}.empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:#999}.empty b{display:block;color:#5d5f58;font:500 22px Georgia,serif;margin-bottom:4px}.empty.hide{display:none}.spinner{width:22px;height:22px;border:2px solid #bbb;border-top-color:#222;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}@keyframes spin{to{transform:rotate(360deg)}}
+    @media(max-width:760px){.app{grid-template-columns:1fr}aside{border-right:0;border-bottom:1px solid var(--line)}main{padding:16px}.sheet{width:100%;max-height:none}}
+    @page{size:11in 8.5in landscape;margin:0}
+    @media print{body{background:white}.app{display:block}aside,.topbar{display:none!important}main{padding:0}.sheet-wrap,.sheet{display:block;width:11in;height:8.5in;max-height:none;box-shadow:none}.empty{display:none!important}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="eyebrow">OpenStreetMap studio</div><h1>City Street Tracer</h1>
+    <p class="intro">Turn a city’s street network into a clean, landscape print.</p>
+    <form id="form">
+      <label for="city">City</label><input id="city" type="text" value="Los Angeles, California" placeholder="City, state or country" required>
+      <div class="row"><div><label for="detail">Road detail</label><select id="detail"><option value="major">Major only</option><option value="balanced" selected>Balanced</option><option value="dense">Dense</option></select></div><div><label for="theme">Theme</label><select id="theme"><option value="ink">Ink on paper</option><option value="night">Night</option><option value="blueprint">Blueprint</option></select></div></div>
+      <label for="framing">Page framing</label><select id="framing"><option value="cover" selected>Fill the whole page</option><option value="contain">Fit the whole city</option></select>
+      <label for="padding">Edge margin</label><div class="range-row"><input id="padding" type="range" min="1" max="12" value="5"><span id="paddingValue">5%</span></div>
+      <div class="group-title">Layers</div><div class="checks">
+        <label class="check"><input id="boundary" type="checkbox" checked> Show and clip to city border</label>
+        <label class="check"><input id="water" type="checkbox"> Add coastline / waterways</label>
+        <label class="check"><input id="title" type="checkbox"> Add city title</label>
+        <label class="check"><input id="frame" type="checkbox"> Add thin border</label>
+      </div>
+      <div class="actions"><button class="btn" id="generate" type="submit">Generate street map</button><div class="exports"><button class="btn secondary" id="svgBtn" type="button" disabled>Download SVG</button><button class="btn secondary" id="pngBtn" type="button" disabled>Download PNG</button></div><button class="btn secondary" id="printBtn" type="button" disabled>Print / Save PDF</button></div>
+    </form><div id="status" class="status">Ready. Map data comes from OpenStreetMap contributors.</div>
+  </aside>
+  <main><div class="topbar"><span id="mapName">Untitled map</span><span class="size">11 × 8.5 in · landscape</span></div><div class="sheet-wrap"><div class="sheet"><svg id="map" viewBox="0 0 1100 850" xmlns="http://www.w3.org/2000/svg" aria-label="Street map preview"></svg><div id="empty" class="empty"><div><b>Your city, traced.</b>Enter a place and generate the map.</div></div></div></div></main>
+</div>
+<script>
+const $=s=>document.querySelector(s), NS='http://www.w3.org/2000/svg';
+const form=$('#form'), svg=$('#map'), statusEl=$('#status'), empty=$('#empty'), gen=$('#generate');
+let currentName='', lastBounds=null;
+const themes={ink:{bg:'#fffdfa',motorway:'#171816',trunk:'#2d2e2b',primary:'#4a4b47',secondary:'#777872',tertiary:'#aaa9a2',water:'#9db6bd',text:'#171816'},night:{bg:'#141615',motorway:'#f2eee3',trunk:'#d9d5cb',primary:'#b8b6ae',secondary:'#777b76',tertiary:'#484c48',water:'#446b76',text:'#f2eee3'},blueprint:{bg:'#153b58',motorway:'#f4eee1',trunk:'#dce7e8',primary:'#adc8cf',secondary:'#739ba8',tertiary:'#416d7d',water:'#6bb4c2',text:'#f4eee1'}};
+function setStatus(msg,error=false){statusEl.textContent=msg;statusEl.classList.toggle('error',error)}
+function esc(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]))}
+function roadClass(h){if(Array.isArray(h))h=h[0]; if(/motorway/.test(h))return'motorway';if(/trunk/.test(h))return'trunk';if(/primary/.test(h))return'primary';if(/secondary/.test(h))return'secondary';return'tertiary'}
+function filterFor(detail){const sets={major:'motorway|trunk|primary',balanced:'motorway|trunk|primary|secondary',dense:'motorway|trunk|primary|secondary|tertiary'};return sets[detail]}
+async function geocode(place){const u='https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&addressdetails=1&polygon_geojson=1&polygon_threshold=0.001&q='+encodeURIComponent(place);const r=await fetch(u,{headers:{'Accept-Language':'en'}});if(!r.ok)throw Error('City search failed. Try again in a moment.');const a=await r.json();if(!a.length)throw Error('I could not find that city. Try adding a state or country.');return a[0]}
+async function overpass(bounds,detail,water){const [s,n,w,e]=bounds.map(Number);const roads=filterFor(detail);let q=`[out:json][timeout:60];(way["highway"~"^(${roads})(_link)?$"](${s},${w},${n},${e});`;if(water)q+=`way["natural"="coastline"](${s},${w},${n},${e});way["waterway"~"river|canal"](${s},${w},${n},${e});`;q+=');out geom;';const endpoints=['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter'];let err;for(const ep of endpoints){try{const r=await fetch(ep,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'data='+encodeURIComponent(q)});if(!r.ok)throw Error('Map server returned '+r.status);return await r.json()}catch(e){err=e}}throw Error('Street data server is busy. Please try again shortly. ('+err.message+')')}
+function boundaryPath(geojson,project){if(!geojson||!['Polygon','MultiPolygon'].includes(geojson.type))return'';const polys=geojson.type==='Polygon'?[geojson.coordinates]:geojson.coordinates;return polys.flatMap(poly=>poly.map(ring=>ring.map((p,i)=>{const [x,y]=project({lon:p[0],lat:p[1]});return(i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1)}).join(' ')+' Z')).join(' ')}
+function render(data,bounds,name,geojson){const t=themes[$('#theme').value], pad=Number($('#padding').value)/100, [s,n,w,e]=bounds.map(Number), mid=(s+n)/2, cos=Math.cos(mid*Math.PI/180);const rawW=(e-w)*cos,rawH=n-s,fitX=1100*(1-2*pad)/rawW,fitY=850*(1-2*pad)/rawH,scale=$('#framing').value==='cover'?Math.max(fitX,fitY):Math.min(fitX,fitY),mapW=rawW*scale,mapH=rawH*scale,ox=(1100-mapW)/2,oy=(850-mapH)/2;const project=p=>[ox+(p.lon-w)*cos*scale,oy+(n-p.lat)*scale],borderD=boundaryPath(geojson,project),useBoundary=$('#boundary').checked&&borderD;let groups={water:[],tertiary:[],secondary:[],primary:[],trunk:[],motorway:[]};for(const el of data.elements){if(!el.geometry?.length)continue;const isWater=el.tags?.natural==='coastline'||el.tags?.waterway;const c=isWater?'water':roadClass(el.tags?.highway||'');const d=el.geometry.map((p,i)=>{const [x,y]=project(p);return(i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1)}).join(' ');groups[c].push(d)}const widths={water:1.3,tertiary:.65,secondary:1.05,primary:1.7,trunk:2.4,motorway:3.2};let out=`<rect width="1100" height="850" fill="${t.bg}"/>`;if(useBoundary)out+=`<defs><clipPath id="cityClip"><path d="${borderD}" fill-rule="evenodd"/></clipPath></defs><g clip-path="url(#cityClip)">`;for(const c of Object.keys(groups))if(groups[c].length)out+=`<g fill="none" stroke="${t[c]}" stroke-width="${widths[c]}" stroke-linecap="round" stroke-linejoin="round" opacity="${c==='water'?.8:.94}"><path d="${groups[c].join(' ')}"/></g>`;if(useBoundary)out+=`</g><path d="${borderD}" fill="none" fill-rule="evenodd" stroke="${t.text}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" opacity=".82"/>`;if($('#frame').checked)out+=`<rect x="16" y="16" width="1068" height="818" fill="none" stroke="${t.text}" stroke-width="1" opacity=".55"/>`;if($('#title').checked)out+=`<text x="550" y="813" text-anchor="middle" fill="${t.text}" font-family="Georgia,serif" font-size="19" letter-spacing="5">${esc(name.toUpperCase())}</text>`;svg.innerHTML=out;svg.style.background=t.bg;empty.classList.add('hide');$('#mapName').textContent=name;currentName=name;for(const id of ['svgBtn','pngBtn','printBtn'])$('#'+id).disabled=false;return Object.values(groups).reduce((a,x)=>a+x.length,0)}
+async function generate(){const place=$('#city').value.trim();if(!place)return;gen.disabled=true;gen.textContent='Working…';empty.classList.remove('hide');empty.innerHTML='<div><div class="spinner"></div>Finding the exact city border…</div>';try{setStatus('Finding '+place+' and its municipal boundary…');const geo=await geocode(place);lastBounds=geo.boundingbox;empty.innerHTML='<div><div class="spinner"></div>Tracing streets inside the city…</div>';setStatus('Downloading the selected road network…');const data=await overpass(lastBounds,$('#detail').value,$('#water').checked);const count=render(data,lastBounds,geo.display_name.split(',').slice(0,2).join(','),geo.geojson);setStatus(`Rendered ${count.toLocaleString()} street segments, clipped to the city border.`)}catch(e){empty.innerHTML='<div><b>Could not build this map.</b>'+esc(e.message)+'</div>';setStatus(e.message,true)}finally{gen.disabled=false;gen.textContent='Generate street map'}}
+form.addEventListener('submit',e=>{e.preventDefault();generate()});
+$('#padding').addEventListener('input',e=>$('#paddingValue').textContent=e.target.value+'%');
+for(const id of ['theme','framing','padding','boundary','title','frame'])$('#'+id).addEventListener('change',()=>{if(lastBounds)generate()});
+function svgBlob(){const source='<?xml version="1.0" encoding="UTF-8"?>\n'+new XMLSerializer().serializeToString(svg);return new Blob([source],{type:'image/svg+xml;charset=utf-8'})}
+function download(blob,ext){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(currentName||'city-map').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')+'.'+ext;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+$('#svgBtn').onclick=()=>download(svgBlob(),'svg');
+$('#pngBtn').onclick=()=>{const u=URL.createObjectURL(svgBlob()),img=new Image;img.onload=()=>{const c=document.createElement('canvas');c.width=3300;c.height=2550;const x=c.getContext('2d');x.drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>download(b,'png'),'image/png')};img.src=u};
+$('#printBtn').onclick=()=>window.print();
+</script>
+</body>
+</html>
