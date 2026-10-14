@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ride through the Revolution</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#111b20;color:#ece8db;font:14px system-ui,-apple-system,sans-serif}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #edc986;outline-offset:3px}
+button:disabled{opacity:.45;cursor:default}
+.app{max-width:1500px;margin:auto;padding:22px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}
+.brand{display:flex;align-items:center;gap:13px}
+.seal{border:1px solid #9b8b65;border-radius:50%;width:43px;height:43px;display:grid;place-items:center;color:#e4c991;font:24px Georgia}
+.eyebrow{font-size:10px;letter-spacing:2.1px;text-transform:uppercase;color:#bbaa88}
+.brand h1{font:25px Georgia,serif;margin:4px 0}
+.top-controls{display:flex;gap:7px;flex-wrap:wrap}
+.quiet{color:#d6d8cc;background:#1b292f;border:1px solid #3c4a4b;border-radius:7px;padding:9px 12px;font-size:12px}
+.quiet:hover{background:#2c3c40}
+.quiet[aria-pressed=true]{border-color:#d4b777;color:#f5dba3}
+.main{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:16px}
+.stage{position:relative;overflow:hidden;border-radius:12px;background:#1c333b;min-height:500px;height:min(64vh,640px);border:1px solid #405052;isolation:isolate}
+canvas#world{width:100%;height:100%;display:block;cursor:grab;touch-action:pan-y}
+canvas#world:active{cursor:grabbing}
+.scene-tag{position:absolute;top:20px;left:20px;pointer-events:none;text-shadow:0 1px 8px #000}
+.scene-tag .eyebrow{color:#e5cf9f}
+.scene-tag h2{font:32px Georgia;margin:5px 0;color:#fff4db}
+.scene-tag p{font-size:12px;color:#e3e8dd;margin:4px 0;max-width:320px}
+.viewport-tools{position:absolute;right:15px;top:16px;display:flex;gap:6px}
+.glass{background:#14242bd9;backdrop-filter:blur(8px);color:#f2e9d3;border:1px solid #adb59e4a;border-radius:7px;padding:9px 11px;font-size:12px}
+.hotspot{position:absolute;transform:translate(-50%,-50%);background:#17262ef5;border:1px solid #dfc285;border-radius:30px;color:#ffe8b6;padding:10px 16px;box-shadow:0 3px 25px #0006;white-space:nowrap;display:none;z-index:2}
+.hotspot:before{content:'+';display:inline-grid;place-items:center;width:21px;height:21px;border:1px solid #dfc285;border-radius:50%;margin-right:7px}
+.view-hint{position:absolute;bottom:114px;left:18px;background:#102127b3;border-radius:5px;padding:7px 10px;font-size:11px;color:#c7d1c7;pointer-events:none}
+.subtitle{position:absolute;bottom:23px;left:50%;transform:translateX(-50%);width:min(88%,620px);background:#101b22e8;border-left:2px solid #d3b575;padding:13px 17px;border-radius:0 7px 7px 0;pointer-events:none}
+.subtitle strong{display:block;font-size:10px;letter-spacing:1.6px;color:#e8ca92;text-transform:uppercase;margin-bottom:5px}
+.subtitle p{margin:0;line-height:1.5;font-size:14px}
+.sidebar{display:flex;flex-direction:column;gap:12px}
+.panel{border:1px solid #3b4a4d;background:#18272d;border-radius:11px;padding:17px}
+.panel h3{font:19px Georgia;margin:0 0 8px}
+.small{font-size:12px;line-height:1.5;color:#b8c4bf}
+.map{display:block;width:100%;height:205px}
+.map text{font:10px system-ui;fill:#c1c9ba}
+.map circle.stop{cursor:pointer;stroke:#19282f;stroke-width:3}
+.map circle.stop:hover{stroke:#e8c682}
+.stats{display:flex;justify-content:space-between;border-top:1px solid #39474a;margin-top:6px;padding-top:12px;gap:8px}
+.stats strong{display:block;font:19px Georgia;color:#f2d9a7}
+.stats span{font-size:10px;color:#aab7b3}
+.mission{flex:1}
+.objective{color:#e5e5d7;line-height:1.6;font-size:13px;margin:0 0 15px}
+.intel{display:flex;gap:7px;flex-wrap:wrap}
+.intel span{border:1px dashed #53615c;border-radius:5px;padding:7px 9px;font-size:11px;color:#93a19a}
+.intel span.found{border:1px solid #ae975e;background:#b29c5d16;color:#f5dba3}
+.step-label{font-size:10px;letter-spacing:1.5px;color:#d1b57e;text-transform:uppercase;margin-bottom:9px}
+.transport{background:#18272d;border:1px solid #3b4a4d;border-radius:11px;padding:15px 18px;margin-top:14px}
+.timeline{display:flex;align-items:center;gap:14px}
+.time{font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap;color:#cbd1c5}
+input[type=range]{width:100%;accent-color:#dfc18a;cursor:pointer}
+.actions{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:11px}
+.actions-left,.actions-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.primary{border:0;border-radius:7px;color:#1f2828;background:#e3c58c;padding:12px 20px;font-weight:600;font-size:13px;box-shadow:inset 0 1px #fff5}
+.primary:hover{background:#f1d6a4}
+.primary:disabled{opacity:.6}
+.primary.moving{background:#b9c7bd}
+.select{background:#25343a;color:#d6ddcf;border:1px solid #4b5959;border-radius:6px;padding:9px;font-size:12px}
+.chapters{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:14px}
+.chapter{background:transparent;border:0;border-top:2px solid #36474b;text-align:left;color:#94a9a5;padding:10px 6px;font-size:12px}
+.chapter b{font:16px Georgia;margin-right:7px;color:#8a9a91}
+.chapter.active{border-color:#dfc187;color:#f4dfb5}
+.chapter.active b{color:#f4dfb5}
+.chapter:hover{background:#1c2b30}
+.foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:#8da19d;font-size:11px;margin-top:16px}
+.overlay{position:absolute;inset:0;z-index:4;background:#0e1a2194;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.overlay.open{display:flex}
+.dialog{background:#ece2cd;color:#26322f;border:1px solid #fff3d3;border-radius:9px;max-width:510px;width:100%;box-shadow:0 24px 80px #0008;max-height:100%;overflow:auto}
+.dialog-head{padding:22px 24px 10px;display:flex;gap:10px;justify-content:space-between;align-items:start}
+.dialog .eyebrow{color:#7d6742}
+.dialog h2{font:27px Georgia;margin:6px 0}
+.close{background:transparent;border:0;color:#4b5245;font-size:23px;padding:0 4px}
+.dialog-body{padding:0 24px 23px;line-height:1.6;font-size:14px}
+.dialog-body p{margin:5px 0 14px}
+.dialog .primary{background:#253e44;color:#f6e9cd}
+.order{display:block;width:100%;text-align:left;background:#fff6e2;border:1px solid #bfb296;color:#263831;border-radius:6px;padding:12px 14px;margin:8px 0;font-size:14px}
+.order.done{background:#dbe3cc;border-color:#7e966d}
+.dialog .small{color:#687362}
+.report-input{display:block;width:100%;resize:vertical;min-height:84px;max-height:140px;border:1px solid #b7b39e;border-radius:6px;background:#fff9e9;color:#26332e;padding:12px;font-size:14px;line-height:1.5;margin:8px 0}
+.dialog-buttons{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.dialog .quiet{background:#e2d8c1;color:#344439;border-color:#b8ac90}
+.response{background:#d8dfca;padding:12px 14px;border-radius:6px;margin-top:12px}
+.sr{position:absolute;width:1px;height:1px;clip-path:inset(50%);overflow:hidden}
+.help{display:none;color:#bdc9bf;font-size:12px;line-height:1.6;padding:12px 0}
+.help.open{display:block}
+.toast{position:absolute;top:90px;left:50%;transform:translateX(-50%);background:#263f3af2;border:1px solid #8d9d74;color:#edf1d3;border-radius:7px;padding:10px 16px;font-size:12px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:5}
+.toast.show{opacity:1}
+button,select{-webkit-tap-highlight-color:transparent}
+@media(max-width:1000px){
+ .main{grid-template-columns:minmax(0,1fr) 240px}
+ .panel{padding:13px}
+ .stage{height:550px}
+ .scene-tag h2{font-size:27px}
+}
+@media(max-width:740px){
+ .app{padding:12px}
+ header{align-items:start;margin-bottom:13px}
+ .brand h1{font-size:20px}
+ .seal{display:none}
+ .eyebrow{font-size:9px}
+ .top-controls{justify-content:end}
+ .top-controls button{padding:7px;font-size:11px}
+ .main{grid-template-columns:1fr}
+ .stage{height:490px;min-height:400px}
+ .sidebar{display:grid;grid-template-columns:1fr 1fr}
+ .map{height:160px}
+ .stats strong{font-size:16px}
+ .panel h3{font-size:17px}
+ .scene-tag{top:15px;left:15px}
+ .scene-tag p{max-width:220px}
+ .viewport-tools{top:93px;right:10px}
+ .actions{align-items:stretch;gap:12px}
+ .actions-left{flex:1}
+ .actions .primary{flex:1;padding:12px}
+ .actions-right{gap:5px}
+ .actions .quiet{padding:9px}
+ .chapter{font-size:10px;padding:8px 2px}
+ .chapter b{display:block;margin-bottom:4px}
+ .subtitle{bottom:17px;width:92%}
+ .view-hint{bottom:126px;font-size:10px}
+ .foot{font-size:10px}
+ .dialog-head{padding:17px 18px 8px}
+ .dialog-body{padding:0 18px 18px}
+ .dialog h2{font-size:23px}
+}
+@media(prefers-reduced-motion:reduce){
+ *{scroll-behavior:auto;transition:none!important}
+}
+</style>
+</head>
+<body>
+<main class="app">
+<header>
+ <div class="brand">
+  <div class="seal" aria-hidden="true">✦</div>
+  <div>
+   <div class="eyebrow">ENGR 102 · Attraction concept</div>
+   <h1>Ride through the Revolution</h1>
+  </div>
+ </div>
+ <div class="top-controls">
+  <button class="quiet" id="sound" aria-pressed="false">Sound off</button>
+  <button class="quiet" id="motion" aria-pressed="false">Gentle motion</button>
+  <button class="quiet" id="help">Controls</button>
+ </div>
+</header>
+
+<div id="helpText" class="help">
+ Click the gold button to move along the rails. At each stop, click the character or the button to interact.
+ Drag the scene to look around. Use ↑ / ↓ to move, ← / → to look, and Space to pause.
+ The map, chapters, and timeline let you revisit any scene.
+ The microphone is optional; typed reports always work.
+</div>
+
+<div class="main">
+ <section class="stage" id="stage" aria-label="Interactive ride viewport">
+  <canvas id="world" aria-label="Animated first-person view of a horse ride through a colonial camp and forest">
+   A canvas-enabled browser is needed for the moving ride.
+  </canvas>
+  <div class="scene-tag">
+   <div class="eyebrow" id="sceneNumber">Boarding · 00</div>
+   <h2 id="sceneName">Your mission awaits.</h2>
+   <p id="sceneDesc">Climb aboard. The Continental camp needs you.</p>
+  </div>
+  <div class="viewport-tools">
+   <button class="glass" id="center" title="Face along the track">Center view</button>
+   <button class="glass" id="rear" aria-pressed="false">Look behind</button>
+  </div>
+  <button id="hotspot" class="hotspot"></button>
+  <div id="toast" class="toast" role="status"></div>
+  <div class="view-hint">Drag to look around · Ride follows the rails</div>
+  <div class="subtitle" aria-live="polite">
+   <strong id="speaker">Your guide</strong>
+   <p id="caption">Nine horses. Eighteen riders. One chance to bring the warning home.</p>
+  </div>
+  <div class="overlay" id="overlay">
+   <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+    <div class="dialog-head">
+     <div>
+      <div class="eyebrow" id="dialogLabel"></div>
+      <h2 id="dialogTitle"></h2>
+     </div>
+     <button class="close" id="closeDialog" aria-label="Close dialog">×</button>
+    </div>
+    <div class="dialog-body" id="dialogBody"></div>
+   </section>
+  </div>
+ </section>
+
+ <aside class="sidebar">
+  <section class="panel">
+   <div class="step-label">The route</div>
+   <h3>A ride behind enemy lines</h3>
+   <svg id="map" class="map" viewBox="0 0 250 205" role="img" aria-label="Ride route. Use the chapter buttons below the ride to jump between scenes.">
+    <path id="mapTrack" fill="none" stroke="#7f8d7d" stroke-width="4"/>
+    <path id="mapProgress" fill="none" stroke="#d7bd83" stroke-width="4"/>
+    <g id="mapStops"></g>
+    <g id="mapTrain"></g>
+    <circle id="mapDot" r="5" fill="#ffdfa3" stroke="#20332e" stroke-width="2"/>
+   </svg>
+   <div class="stats">
+    <div><strong>9</strong><span>horses</span></div>
+    <div><strong>18</strong><span>riders</span></div>
+    <div><strong>3:30</strong><span>concept cycle</span></div>
+   </div>
+  </section>
+  <section class="panel mission">
+   <div class="step-label" id="objectiveLabel">Your assignment</div>
+   <p class="objective" id="objective">
+    Board the horse train, meet your commander, and learn what the British are planning.
+   </p>
+   <div class="intel">
+    <span id="intelTime">? Attack time</span>
+    <span id="intelDirection">? Direction</span>
+   </div>
+   <p class="small" id="statusNote">The route is yours to explore. Click any chapter to jump ahead.</p>
+  </section>
+ </aside>
+</div>
+
+<section class="transport" aria-label="Ride controls">
+ <div class="timeline">
+  <span class="time" id="elapsed">0:00</span>
+  <input id="scrub" type="range" min="0" max="210" step="0.1" value="0" aria-label="Ride position in seconds">
+  <span class="time">3:30</span>
+ </div>
+ <div class="actions">
+  <div class="actions-left">
+   <button class="primary" id="advance">Board & begin →</button>
+   <button class="quiet" id="back" title="Previous scene">← Back</button>
+  </div>
+  <div class="actions-right">
+   <select class="select" id="rate" aria-label="Playback speed">
+    <option value="1">1× speed</option>
+    <option value="3" selected>3× speed</option>
+    <option value="6">6× speed</option>
+   </select>
+   <button class="quiet" id="restart">Restart</button>
+  </div>
+ </div>
+</section>
+
+<nav class="chapters" aria-label="Jump to a ride scene">
+ <button class="chapter active" data-scene="0"><b>00</b>Loading</button>
+ <button class="chapter" data-scene="1"><b>01</b>Briefing</button>
+ <button class="chapter" data-scene="2"><b>02</b>Spying</button>
+ <button class="chapter" data-scene="3"><b>03</b>Chase</button>
+ <button class="chapter" data-scene="4"><b>04</b>Return & report</button>
+</nav>
+<footer class="foot">
+ <span>Concept by Miles, Enzo, Grace & Richard</span>
+ <span>Fictional mission · Illustrative motion · Scripted commander</span>
+</footer>
+<div id="announcement" class="sr" aria-live="polite"></div>
+</main>
+
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const canvas=$('world'),ctx=canvas.getContext('2d');
+const TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const mix=(a,b,t)=>a+(b-a)*t;
+let W=900,H=550,dpr=1,clock=0,time=0,playing=false,target=32,rate=3,yaw=0,pitch=0,rear=false,muted=true;
+let gentle=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let scene=0,heard=false,found=[false,false],reported=false,completed=false;
+let objects=[],faces=[],cam={},activeDialog='',lastFocus=null,toastTimer,soundCtx=null,hoofClock=0,lastCaption='',recognition=null;
+const keys=new Set();
+const stops=[0,32,90,140,188],ranges=[0,14,55,112,170];
+const chapters=[
+ {
+  name:'Your mission awaits.',
+  desc:'Climb aboard. The Continental camp needs you.',
+  speaker:'Your guide',
+  line:'Nine horses. Eighteen riders. One chance to bring the warning home.',
+  objective:'Board the horse train, meet your commander, and learn what the British are planning.'
+ },
+ {
+  name:'The mission briefing',
+  desc:'Continental camp · Orders from the commander',
+  speaker:'Continental commander',
+  line:'Find out where and when the British intend to strike. Return with their plans, and be quick about it.',
+  objective:'Speak to the commander. Your mission is to learn when and where the British plan to attack.'
+ },
+ {
+  name:'Behind enemy lines',
+  desc:'British encampment · Keep your voices down',
+  speaker:'British officer',
+  line:'We march at dawn, approaching the Continental camp from the east. They will never see us coming.',
+  objective:'Listen to the British officers. Remember the attack time and the direction of their approach.'
+ },
+ {
+  name:'They have spotted you.',
+  desc:'Forest escape · Hold tight',
+  speaker:'British patrol',
+  line:'Spies! Stop them! They know our plans! Do not let them escape!',
+  objective:'Race through the forest and bring the warning home. Look behind to see the patrol on your tail.'
+ },
+ {
+  name:'Bring the warning home',
+  desc:'Continental camp · Return and report',
+  speaker:'Continental commander',
+  line:'You made it back! What did you discover? Tell me when and where they plan to strike.',
+  objective:'Report the attack time and approach direction to the commander. Type your report, or try the microphone.'
+ }
+];
+
+const points=[
+ [-100,10],[-112,-34],[-95,-78],[-28,-100],[25,-75],[84,-72],
+ [115,-35],[92,3],[38,-4],[13,-28],[-5,-2],[22,28],[83,30],
+ [106,75],[30,85],[-40,59],[-100,92],[-121,60],[-100,10]
+];
+
+function spline(u){
+ const v=clamp(u,0,.999999)*(points.length-1),i=Math.floor(v),t=v-i;
+ const p0=points[Math.max(0,i-1)],p1=points[i],p2=points[i+1],p3=points[Math.min(points.length-1,i+2)];
+ return {
+  x:.5*((2*p1[0])+(-p0[0]+p2[0])*t+(2*p0[0]-5*p1[0]+4*p2[0]-p3[0])*t*t+(-p0[0]+3*p1[0]-3*p2[0]+p3[0])*t*t*t),
+  z:.5*((2*p1[1])+(-p0[1]+p2[1])*t+(2*p0[1]-5*p1[1]+4*p2[1]-p3[1])*t*t+(-p0[1]+3*p1[1]-3*p2[1]+p3[1])*t*t*t)
+ };
+}
+const path=[],dist=[0];
+let total=0;
+for(let i=0;i<=1400;i++){
+ path.push(spline(i/1400));
+ if(i){
+  total+=Math.hypot(path[i].x-path[i-1].x,path[i].z-path[i-1].z);
+  dist.push(total);
+ }
+}
+function at(s){
+ s=clamp(s,0,.999999);
+ let lo=0,hi=dist.length-1;
+ while(lo<hi){
+  const m=(lo+hi)>>1;
+  if(dist[m]<s*total)lo=m+1;else hi=m;
+ }
+ const i=Math.max(1,lo),f=(s*total-dist[i-1])/(dist[i]-dist[i-1]);
+ return {x:mix(path[i-1].x,path[i].x,f),z:mix(path[i-1].z,path[i].z,f)};
+}
+function nearPoint(n){
+ let best=0,d=Infinity;
+ path.forEach((p,i)=>{
+  const d0=Math.hypot(p.x-points[n][0],p.z-points[n][1]);
+  if(d0<d){d=d0;best=i}
+ });
+ return dist[best]/total;
+}
+const arcStops=[0,nearPoint(1),nearPoint(5),nearPoint(10),nearPoint(16),1];
+const timeStops=[0,32,90,140,188,210];
+function progress(t){
+ for(let i=1;i<timeStops.length;i++){
+  if(t<=timeStops[i]){
+   return mix(arcStops[i-1],arcStops[i],clamp((t-timeStops[i-1])/(timeStops[i]-timeStops[i-1]),0,1));
+  }
+ }
+ return 1;
+}
+function track(t){
+ const s=progress(t),p=at(s),a=at(Math.max(0,s-.002)),b=at(Math.min(.99999,s+.002));
+ const d=Math.hypot(b.x-a.x,b.z-a.z)||1;
+ return {...p,dx:(b.x-a.x)/d,dz:(b.z-a.z)/d};
+}
+function anchor(t,lateral=0,ahead=0){
+ const p=track(t);
+ return {x:p.x+p.dz*lateral+p.dx*ahead,z:p.z-p.dx*lateral+p.dz*ahead,angle:Math.atan2(p.dx,p.dz)};
+}
+let seed=1867;
+function rand(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296}
+function add(type,p,extra={}){objects.push({type,...p,...extra})}
+
+for(let i=0;i<320;i++){
+ const s=rand(),p=at(s),a=at(clamp(s+.002,0,.99999)),d=Math.hypot(a.x-p.x,a.z-p.z)||1;
+ const side=(rand()<.5?-1:1)*(8+rand()*40);
+ add('tree',{x:p.x+(a.z-p.z)/d*side,z:p.z-(a.x-p.x)/d*side},{height:4+rand()*6,tone:rand()});
+}
+for(const [t,red]of [[32,false],[90,true],[188,false]]){
+ for(let side of [-1,1]){
+  for(let i=0;i<4;i++){
+   add('tent',anchor(t,side*(9+i%2*5),-12+i*10),{angle:anchor(t).angle,size:2.8,red});
+  }
+ }
+ add('fire',anchor(t,-6,9));
+ add('flag',anchor(t,10,15),{red});
+ add('table',anchor(t,4,10));
+ add('person',anchor(t,4,12),{red,general:!red});
+ add('person',anchor(t,7,10),{red});
+ add('person',anchor(t,-8,18),{red});
+ for(let i=0;i<5;i++)add('lantern',anchor(t,i%2?7:-7,-9+i*7));
+}
+add('platform',anchor(0,0,0));
+for(let i=0;i<8;i++)add('fence',anchor(0,-5,-12+i*4),{angle:anchor(0).angle});
+for(let i=0;i<14;i++)add('lantern',anchor(116+i*4,i%2?-5:5));
+
+function resize(){
+ const r=canvas.getBoundingClientRect();
+ W=r.width;H=r.height;dpr=Math.min(window.devicePixelRatio||1,1.8);
+ canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);
+ ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+new ResizeObserver(resize).observe(canvas);
+
+function cameraPoint(p){
+ const dx=p[0]-cam.x,dz=p[2]-cam.z;
+ return [dx*cam.cz-dz*cam.sx,p[1]-cam.y,dx*cam.sx+dz*cam.cz];
+}
+function project(p){
+ const v=cameraPoint(p);
+ if(v[2]<.3)return null;
+ return {x:W*.5+v[0]*cam.f/v[2],y:H*.48-(v[1]*cam.f/v[2])+pitch*H,z:v[2]};
+}
+function poly(v,color){
+ let p=v.map(cameraPoint),out=[];
+ for(let i=0;i<p.length;i++){
+  const a=p[i],b=p[(i+1)%p.length],ia=a[2]>.4,ib=b[2]>.4;
+  if(ia)out.push(a);
+  if(ia!==ib){
+   const t=(.4-a[2])/(b[2]-a[2]);
+   out.push([mix(a[0],b[0],t),mix(a[1],b[1],t),.4]);
+  }
+ }
+ if(out.length<3)return;
+ faces.push({v:out,color,z:out.reduce((a,b)=>a+b[2],0)/out.length});
+}
+function box(x,y,z,w,h,d,color,angle=0){
+ const c=Math.cos(angle),s=Math.sin(angle),p=(a,b,k)=>[x+a*c+k*s,y+b,z-a*s+k*c],a=w/2,b=d/2;
+ poly([p(-a,0,-b),p(a,0,-b),p(a,h,-b),p(-a,h,-b)],color[0]);
+ poly([p(-a,0,b),p(a,0,b),p(a,h,b),p(-a,h,b)],color[0]);
+ poly([p(-a,0,-b),p(-a,0,b),p(-a,h,b),p(-a,h,-b)],color[1]);
+ poly([p(a,0,-b),p(a,0,b),p(a,h,b),p(a,h,-b)],color[1]);
+ poly([p(-a,h,-b),p(a,h,-b),p(a,h,b),p(-a,h,b)],color[2]);
+}
+function tent(o){
+ const a=o.angle||0,c=Math.cos(a),s=Math.sin(a),p=(x,y,z)=>[o.x+x*c+z*s,y,o.z-x*s+z*c];
+ const w=o.size,d=w*1.4,h=w*1.1;
+ poly([p(-w,0,-d),p(w,0,-d),p(0,h,-d)],'#bba987');
+ poly([p(-w,0,d),p(w,0,d),p(0,h,d)],'#cabb99');
+ poly([p(-w,0,-d),p(-w,0,d),p(0,h,d),p(0,h,-d)],'#e4d7af');
+ poly([p(w,0,-d),p(w,0,d),p(0,h,d),p(0,h,-d)],'#b3a17b');
+ poly([p(-.5,0,-d-.02),p(.5,0,-d-.02),p(0,h*.73,-d-.02)],'#3c443d');
+}
+function tree(o){
+ const h=o.height;
+ box(o.x,0,o.z,.32,h*.65,.32,['#463d2f','#3a3529','#66533a']);
+ const cols=o.tone>.5?['#263f3b','#2d4940','#385243']:['#203733','#29443b','#304b3c'];
+ for(let k=0;k<3;k++){
+  const y=h*(.18+k*.23),r=h*(.35-k*.07),top=y+h*.52;
+  for(let i=0;i<5;i++){
+   const a=i*TAU/5,b=(i+1)*TAU/5;
+   poly([
+    [o.x+Math.cos(a)*r,y,o.z+Math.sin(a)*r],
+    [o.x+Math.cos(b)*r,y,o.z+Math.sin(b)*r],
+    [o.x,top,o.z]
+   ],cols[i%3]);
+  }
+ }
+}
+function billboard(o,verts,col){
+ const c=cam.cz,s=cam.sx;
+ poly(verts.map(v=>[o.x+v[0]*c,v[1],o.z-v[0]*s]),col);
+}
+function person(o){
+ const y=o.lift||0,red=o.red,c=red?'#a5483d':'#345268';
+ const draw=(v,col)=>billboard(o,v.map(p=>[p[0],p[1]+y]),col);
+ draw([[-.32,0],[-.1,0],[-.08,.75],[-.3,.75]],'#b5ac8d');
+ draw([[.09,0],[.32,0],[.29,.75],[.08,.75]],'#d2c8a5');
+ draw([[-.36,.65],[.36,.65],[.26,1.42],[-.26,1.42]],c);
+ draw([[-.11,.7],[.12,.7],[.17,1.38],[-.17,1.38]],'#dccb9d');
+ draw([[-.25,1.35],[.26,.8],[.31,.88],[-.2,1.43]],'#ece0bc');
+ draw([[-.47,.75],[-.32,.7],[-.22,1.34],[-.36,1.38]],c);
+ draw([[.34,.72],[.48,.8],[.36,1.38],[.22,1.34]],c);
+ draw([[-.17,1.4],[.17,1.4],[.18,1.75],[-.17,1.75]],'#d7ac7c');
+ draw([[-.43,1.75],[.4,1.75],[.21,1.99],[0,1.86],[-.22,2]],'#202d2a');
+ if(o.general)draw([[-.4,1.75],[.4,1.75],[.36,1.79],[-.4,1.79]],'#c3a762');
+ else draw([[.5,.2],[.56,.2],[.58,2.25],[.52,2.25]],'#6b5940');
+}
+function horseWorld(o){
+ const a=o.angle||0,s=Math.sin(a),c=Math.cos(a);
+ const p=(x,z)=>({x:o.x+x*c+z*s,z:o.z-x*s+z*c});
+ box(o.x,.8,o.z,.85,.65,1.8,['#9b8057','#68583d','#b49b6d'],a);
+ const head=p(0,.85);
+ box(head.x,1.12,head.z,.42,.9,.48,['#ac9365','#857049','#c4aa77'],a);
+ for(const x of [-.3,.3]){
+  for(const z of [-.6,.6]){
+   const leg=p(x,z);
+   box(leg.x,.12,leg.z,.13,.75,.13,['#87724e','#66563d','#a1895e'],a);
+  }
+ }
+ box(o.x,.12,o.z,1.35,.16,2.5,['#414e49','#323f3a','#667167'],a);
+ person({...o,lift:1.02,red:!!o.red});
+ if(!o.red){
+  const q=p(0,-.65);
+  person({...q,lift:1.02,red:false});
+ }
+}
+function addObject(o){
+ const p=project([o.x,2,o.z]);
+ if(!p||p.z>140||Math.abs(p.x-W/2)>W*1.6)return;
+ switch(o.type){
+  case 'tree':tree(o);break;
+  case 'tent':tent(o);break;
+  case 'person':person(o);break;
+  case 'table':
+   box(o.x,.8,o.z,3,.15,1.5,['#766043','#5c4c37','#b19a6d'],o.angle);
+   box(o.x,.92,o.z,1.5,.025,.9,['#d3c59a','#d3c59a','#e8dbaf'],o.angle);
+   for(const d of [-1,1])box(o.x+d*.95,0,o.z,.13,.8,1.2,['#5c4c37','#5c4c37','#5c4c37']);
+   break;
+  case 'fire':
+   box(o.x,0,o.z,1.2,.2,.6,['#5a4431','#6f5539','#715d41']);
+   for(let i=0;i<3;i++){
+    billboard(o,[[-.55+i*.25,.12],[.15+i*.25,.12],[-.2+i*.25,1.1+Math.sin(clock*9+i)*.2]],i%2?'#ffe5a0':'#e6a153');
+   }
+   break;
+  case 'lantern':
+   box(o.x,0,o.z,.14,2.8,.14,['#62563e','#62563e','#837052']);
+   box(o.x,2.3,o.z,.32,.45,.32,['#e5b964','#a87b3e','#ffdd92']);
+   break;
+  case 'flag':{
+   box(o.x,0,o.z,.13,7,.13,['#847550','#6f6345','#aa9660']);
+   const wave=Math.sin(clock*2)*.2;
+   billboard(o,[[0,6.8],[3,6.6+wave],[3,4.9+wave],[0,5.1]],'#c7b797');
+   for(let i=0;i<4;i++){
+    billboard(o,[[0,6.8-i*.44],[3,6.6-i*.44+wave],[3,6.4-i*.44+wave],[0,6.6-i*.44]],'#a45e4d');
+   }
+   billboard(o,[[0,6.8],[1.25,6.7],[1.25,5.8],[0,5.9]],'#375267');
+   if(o.red){
+    billboard(o,[[0,6.1],[3,5.9+wave],[3,5.5+wave],[0,5.7]],'#e1d7b8');
+    billboard(o,[[1.25,6.7],[1.65,6.65],[1.65,4.99],[1.25,5.02]],'#e1d7b8');
+   }
+   break;
+  }
+  case 'platform':
+   box(o.x,-.2,o.z,7,.3,15,['#6d6550','#554f40','#8b7d5d'],anchor(0).angle);
+   break;
+  case 'fence':
+   box(o.x,0,o.z,.2,1.3,.2,['#8c7b58','#5c543c','#a08e65']);
+   box(o.x,.9,o.z,.12,.15,4,['#8c7b58','#5c543c','#a08e65'],o.angle);
+   break;
+ }
+}
+function drawRoad(){
+ for(let i=0;i<500;i++){
+  const a=at(i/500),b=at((i+1)/500),dx=b.x-a.x,dz=b.z-a.z,d=Math.hypot(dx,dz)||1,rx=dz/d,rz=-dx/d;
+  const v=(p,k,y)=>[p.x+rx*k,y,p.z+rz*k];
+  if(Math.hypot(a.x-cam.x,a.z-cam.z)>145)continue;
+  poly([v(a,-3.2,-.03),v(a,3.2,-.03),v(b,3.2,-.03),v(b,-3.2,-.03)],i%2?'#70684e':'#746c50');
+  if(i%2===0)poly([v(a,-1.05,.025),v(a,1.05,.025),v(b,1.05,.025),v(b,-1.05,.025)],'#484b3c');
+  for(const k of [-.7,.7]){
+   poly([v(a,k-.045,.06),v(a,k+.045,.06),v(b,k+.045,.06),v(b,k-.045,.06)],'#b8b5a0');
+  }
+ }
+}
+function paintFaces(){
+ faces.sort((a,b)=>b.z-a.z);
+ for(const f of faces){
+  ctx.beginPath();
+  f.v.forEach((p,i)=>{
+   const x=W*.5+p[0]*cam.f/p[2],y=H*.48-p[1]*cam.f/p[2]+pitch*H;
+   if(i)ctx.lineTo(x,y);else ctx.moveTo(x,y);
+  });
+  ctx.closePath();ctx.fillStyle=f.color;ctx.fill();
+  if(f.z>25){
+   ctx.globalAlpha=clamp((f.z-25)/180,0,.65);
+   ctx.fillStyle='#253f43';ctx.fill();ctx.globalAlpha=1;
+  }
+ }
+}
+function sky(){
+ const horizon=H*.48+pitch*H,g=ctx.createLinearGradient(0,0,0,H);
+ g.addColorStop(0,'#172b3c');g.addColorStop(.47,'#638184');
+ g.addColorStop(.48,'#6a7d6a');g.addColorStop(1,'#3c4c3b');
+ ctx.fillStyle=g;ctx.fillRect(0,0,W,H);ctx.globalAlpha=.5;
+ for(let i=0;i<26;i++){
+  const x=((i*173.3-yaw*W*.3)%W+W)%W,y=20+(i*37)%Math.max(30,H*.3);
+  ctx.fillStyle='#e4e2c6';ctx.fillRect(x,y,1.3,1.3);
+ }
+ ctx.globalAlpha=1;
+ const mx=W*.78-yaw*W*.15,my=H*.17+pitch*H*.3;
+ const glow=ctx.createRadialGradient(mx,my,2,mx,my,70);
+ glow.addColorStop(0,'#e4d6aa33');glow.addColorStop(1,'#e4d6aa00');
+ ctx.fillStyle=glow;ctx.fillRect(mx-70,my-70,140,140);
+ ctx.beginPath();ctx.arc(mx,my,15,0,TAU);ctx.fillStyle='#dedbb8';ctx.fill();
+ for(let layer=0;layer<3;layer++){
+  ctx.beginPath();ctx.moveTo(0,horizon+20);
+  for(let x=0;x<=W+20;x+=20){
+   ctx.lineTo(x,horizon-10-Math.sin(x*.009+layer+yaw*.5)*20-Math.cos(x*.017+layer*2)*11+layer*10);
+  }
+  ctx.lineTo(W,H);ctx.lineTo(0,H);
+  ctx.fillStyle=['#304d50','#354e47','#3e5547'][layer];ctx.fill();
+ }
+}
+function horseHUD(){
+ const move=(playing||keys.has('ArrowUp')||keys.has('w'))&&!gentle;
+ const bob=move?Math.sin(clock*(scene===3?12:6))*7:Math.sin(clock*1.4)*1.4;
+ const scale=Math.min(W/850,H/560);
+ ctx.save();ctx.translate(W*.5,H+70+bob);ctx.scale(scale,scale);
+ function shape(p,c){
+  ctx.beginPath();p.forEach((v,i)=>i?ctx.lineTo(...v):ctx.moveTo(...v));
+  ctx.closePath();ctx.fillStyle=c;ctx.fill();
+ }
+ shape([[-140,20],[-122,-65],[-85,-126],[78,-126],[121,-65],[140,20]],'#694c32');
+ shape([[-66,-40],[-70,-174],[-48,-254],[41,-260],[72,-188],[66,-30]],'#b79763');
+ shape([[-48,-80],[-43,-198],[-29,-257],[5,-260],[19,-197],[28,-75]],'#d2b780');
+ shape([[-39,-240],[-49,-310],[-26,-286],[-18,-245]],'#cdb27d');
+ shape([[22,-247],[35,-313],[47,-281],[42,-241]],'#ac8955');
+ shape([[-35,-247],[-27,-266],[-17,-263],[-4,-248],[12,-258],[28,-247],[21,-204],[16,-151],[8,-105],[-4,-150]],'#3d3a2d');
+ shape([[-68,-171],[-53,-175],[55,-173],[69,-164],[67,-152],[-65,-160]],'#524837');
+ ctx.strokeStyle='#b89d6b';ctx.lineWidth=3;ctx.beginPath();
+ ctx.moveTo(-59,-162);ctx.quadraticCurveTo(-115,-115,-160,-36);
+ ctx.moveTo(59,-162);ctx.quadraticCurveTo(115,-115,160,-36);ctx.stroke();
+ shape([[-210,0],[-208,-27],[208,-27],[210,0]],'#303b38');
+ shape([[-210,-27],[-207,-36],[207,-36],[210,-27]],'#65716a');
+ ctx.restore();
+}
+function draw(){
+ const p=track(time);
+ let heading=Math.atan2(p.dx,p.dz);
+ heading+=yaw+(rear?Math.PI:0);
+ const moving=playing||keys.has('ArrowUp')||keys.has('w');
+ cam={
+  x:p.x,z:p.z,
+  y:(rear?4.8:2.2)+(gentle?0:moving?Math.sin(clock*(scene===3?11:6))*.035:0),
+  sx:Math.sin(heading),cz:Math.cos(heading),f:Math.min(W*.84,H*1.15)
+ };
+ faces=[];sky();drawRoad();objects.forEach(addObject);
+ if(rear){
+  for(let i=1;i<9;i++){
+   const s=(progress(time)-i*2.8/total+1)%1,p=at(s),q=at((s+.001)%1);
+   horseWorld({...p,angle:Math.atan2(q.x-p.x,q.z-p.z),red:false});
+  }
+ }
+ if(scene===3){
+  for(let i=0;i<3;i++){
+   const s=(progress(time)-(31+i*3)/total+1)%1,p=at(s),q=at((s+.001)%1);
+   const a=Math.atan2(q.x-p.x,q.z-p.z),offset=i===0?-4.5:i===1?4.2:-5.5;
+   horseWorld({x:p.x+Math.cos(a)*offset,z:p.z-Math.sin(a)*offset,angle:a,red:true});
+  }
+ }
+ paintFaces();
+ for(const o of objects){
+  if(o.type==='fire'||o.type==='lantern'){
+   const q=project([o.x,o.type==='fire'?.65:2.55,o.z]);
+   if(q&&q.z<65){
+    const r=clamp(180/q.z,3,60),g=ctx.createRadialGradient(q.x,q.y,0,q.x,q.y,r);
+    g.addColorStop(0,'#ffd88b44');g.addColorStop(1,'#ffd88b00');
+    ctx.fillStyle=g;ctx.fillRect(q.x-r,q.y-r,r*2,r*2);
+   }
+  }
+ }
+ if(!rear)horseHUD();
+ const vignette=ctx.createRadialGradient(W*.5,H*.45,H*.15,W*.5,H*.5,Math.max(W,H)*.7);
+ vignette.addColorStop(0,'#07171d00');vignette.addColorStop(1,'#07171d77');
+ ctx.fillStyle=vignette;ctx.fillRect(0,0,W,H);
+ positionHotspot();
+}
+
+const mapXY=p=>({x:21+(p.x+135)/265*208,y:18+(p.z+110)/215*165});
+const mapD=path.filter((_,i)=>i%6===0).map((p,i)=>{
+ p=mapXY(p);return(i?'L':'M')+p.x.toFixed(1)+','+p.y.toFixed(1);
+}).join(' ');
+$('mapTrack').setAttribute('d',mapD);
+$('mapProgress').setAttribute('d',mapD);
+const mapLen=$('mapProgress').getTotalLength();
+$('mapProgress').style.strokeDasharray=mapLen;
+const ns='http://www.w3.org/2000/svg';
+stops.forEach((t,i)=>{
+ const p=mapXY(track(t)),c=document.createElementNS(ns,'circle');
+ c.setAttribute('cx',p.x);c.setAttribute('cy',p.y);
+ c.setAttribute('r',i===0?4:5);c.setAttribute('fill','#a6ac8f');
+ c.setAttribute('class','stop');c.setAttribute('tabindex','0');c.setAttribute('role','button');
+ c.setAttribute('aria-label','Jump to '+['Loading','Briefing','Spying','Chase','Return'][i]);
+ c.addEventListener('click',()=>jump(i));
+ c.addEventListener('keydown',e=>{
+  if(e.key==='Enter'||e.key===' '){e.preventDefault();jump(i)}
+ });
+ $('mapStops').appendChild(c);
+ const tx=document.createElementNS(ns,'text');
+ tx.setAttribute('x',p.x+(i===2?-8:8));tx.setAttribute('y',p.y+(i===0?-9:3));
+ if(i===2)tx.setAttribute('text-anchor','end');
+ tx.textContent=['Load','Brief','Spy','Chase','Return'][i];
+ $('mapStops').appendChild(tx);
+});
+for(let i=0;i<8;i++){
+ const c=document.createElementNS(ns,'circle');
+ c.setAttribute('r','2.1');c.setAttribute('fill','#c7b58a');
+ $('mapTrain').appendChild(c);
+}
+function updateMap(){
+ const p=mapXY(track(time));
+ $('mapDot').setAttribute('cx',p.x);$('mapDot').setAttribute('cy',p.y);
+ $('mapProgress').style.strokeDashoffset=mapLen*(1-progress(time));
+ [...$('mapTrain').children].forEach((c,i)=>{
+  const s=(progress(time)-(i+1)*2.2/total+1)%1,q=mapXY(at(s));
+  c.setAttribute('cx',q.x);c.setAttribute('cy',q.y);
+ });
+}
+function currentScene(){
+ let s=0;
+ for(let i=0;i<ranges.length;i++)if(time>=ranges[i])s=i;
+ return s;
+}
+function say(speaker,text,speak=false){
+ $('speaker').textContent=speaker;$('caption').textContent=text;
+ const key=speaker+text;
+ if(speak&&key!==lastCaption&&!muted&&'speechSynthesis'in window){
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=.95;u.pitch=speaker.includes('British')?.85:1;
+  window.speechSynthesis.speak(u);
+ }
+ lastCaption=key;
+}
+function syncScene(force=false){
+ const s=currentScene();
+ if(s!==scene||force){
+  scene=s;
+  $('sceneNumber').textContent=['Boarding · 00','Scene 01 · Briefing','Scene 02 · Spying','Scene 03 · Chase','Scene 04 · Return'][s];
+  $('sceneName').textContent=completed?'Mission accomplished.':chapters[s].name;
+  $('sceneDesc').textContent=chapters[s].desc;
+  $('objective').textContent=reported&&s===4
+   ?'The warning has reached camp. Ride back to the loading area, or explore the scenes again.'
+   :chapters[s].objective;
+  document.querySelectorAll('.chapter').forEach((el,i)=>{
+   el.classList.toggle('active',i===s);
+   if(i===s)el.setAttribute('aria-current','step');else el.removeAttribute('aria-current');
+  });
+  say(chapters[s].speaker,chapters[s].line,true);
+  $('announcement').textContent=chapters[s].name;
+ }
+ syncControls();
+}
+function syncControls(){
+ const b=$('advance');
+ if(playing){
+  b.textContent='Ⅱ Pause ride';b.classList.add('moving');
+ }else{
+  b.classList.remove('moving');
+  if(completed)b.textContent='Ride again ↻';
+  else if(scene===0)b.textContent='Board & begin →';
+  else if(scene===1)b.textContent=time<31.8?'Ride to the commander →':heard?'Ride to British camp →':'Hear your mission →';
+  else if(scene===2)b.textContent=time<89.8?'Approach the officers →':found.every(Boolean)?'Leave the British camp →':'Listen to the officers →';
+  else if(scene===3)b.textContent='Gallop back to camp →';
+  else b.textContent=reported?'Return to loading →':time<187.8?'Ride to the commander →':'Give your report →';
+ }
+ $('back').disabled=time<1;
+ $('scrub').value=time;
+ $('elapsed').textContent=Math.floor(time/60)+':'+String(Math.floor(time%60)).padStart(2,'0');
+ $('intelTime').textContent=found[0]?'✓ At dawn':'? Attack time';
+ $('intelDirection').textContent=found[1]?'✓ From the east':'? Direction';
+ $('intelTime').classList.toggle('found',found[0]);
+ $('intelDirection').classList.toggle('found',found[1]);
+ $('statusNote').textContent=completed
+  ?'Mission complete. The camp has time to prepare.'
+  :scene===3?'The train speeds up through the forest. Hold on.'
+  :scene===4?'Prototype: the commander uses a scripted response to your report.'
+  :found.every(Boolean)?'Both details recorded. Get this information back to camp.'
+  :scene===2?'Click “Listen to the officers” to record the orders.'
+  :'Click the characters at each stop to hear their part of the story.';
+ updateMap();
+}
+function positionHotspot(){
+ const h=$('hotspot');
+ let t,label;
+ if(!playing&&scene===1&&Math.abs(time-32)<2){t=32;label='Speak to commander'}
+ else if(!playing&&scene===2&&Math.abs(time-90)<2){t=90;label='Overhear the plans'}
+ else if(!playing&&scene===4&&time>=186&&!completed){t=188;label='Report your discovery'}
+ else{h.style.display='none';return}
+ const o=anchor(t,4,12),p=project([o.x,2.5,o.z]);
+ if(!p||p.x<60||p.x>W-60||p.y<110||p.y>H-90){h.style.display='none';return}
+ h.textContent=label;h.style.left=p.x+'px';h.style.top=p.y+'px';h.style.display='block';
+}
+function go(t){
+ closeDialog();rear=false;$('rear').setAttribute('aria-pressed','false');
+ yaw=0;target=t;playing=true;syncControls();
+ if(gentle){time=t;arrive()}
+}
+function arrive(){
+ playing=false;time=target;syncScene(true);
+ if(target===210){
+  completed=true;$('sceneName').textContent='Mission accomplished.';
+  say('Your guide',reported
+   ?'The warning is delivered. The Continental camp can prepare. Thank you, riders.'
+   :'The train is back at the station. You can revisit camp to give your report.');
+  syncControls();
+ }else if(target===32){
+  say('Continental commander','Riders! Over here. I have an important assignment for you. Click to hear your mission.',true);
+ }else if(target===90){
+  say('Your guide','Stay hidden. Click the officers to listen to their orders.');
+ }else if(target===140){
+  say('Your guide','The patrol is right behind us. Look back, then gallop for the Continental camp.');
+ }else if(target===188){
+  say('Continental commander','You are back! Tell me what you overheard.',true);
+ }
+}
+function advance(){
+ if(playing){playing=false;syncControls();return}
+ if(completed){reset();go(32);return}
+ if(scene===0)go(32);
+ else if(scene===1){
+  if(time<31.8)go(32);
+  else if(!heard)openDialog('brief');
+  else go(90);
+ }else if(scene===2){
+  if(time<89.8)go(90);
+  else if(!found.every(Boolean))openDialog('spy');
+  else go(140);
+ }else if(scene===3)go(188);
+ else if(!reported){
+  if(time<187.8)go(188);else openDialog('report');
+ }else go(210);
+}
+function jump(i){
+ closeDialog();playing=false;completed=false;time=stops[i];yaw=0;pitch=0;rear=false;
+ $('rear').setAttribute('aria-pressed','false');syncScene(true);
+}
+function reset(){
+ closeDialog();playing=false;time=0;target=32;yaw=0;pitch=0;rear=false;
+ heard=false;found=[false,false];reported=false;completed=false;keys.clear();
+ $('rear').setAttribute('aria-pressed','false');
+ if('speechSynthesis'in window)window.speechSynthesis.cancel();
+ syncScene(true);
+}
+function toast(text){
+ $('toast').textContent=text;$('toast').classList.add('show');
+ clearTimeout(toastTimer);
+ toastTimer=setTimeout(()=>$('toast').classList.remove('show'),3000);
+}
+function showDialog(label,title,html){
+ if(!$('overlay').classList.contains('open'))lastFocus=document.activeElement;
+ playing=false;keys.clear();
+ $('dialogLabel').textContent=label;$('dialogTitle').textContent=title;
+ $('dialogBody').innerHTML=html;$('overlay').classList.add('open');
+ syncControls();$('closeDialog').focus();
+}
+function openDialog(type){
+ activeDialog=type;
+ if(type==='brief'){
+  showDialog('Scene 01 · Continental camp','A mission for the riders',`
+   <p>“Listen carefully, soldiers! The British are planning an attack. Find out
+   <strong>where and when</strong> they intend to strike, and report back immediately!”</p>
+   <p class="small">Your horse train will take you through the woods to the edge
+   of the British camp. Listen carefully and bring back both details.</p>
+   <button class="primary" id="acceptMission">Accept mission & ride out →</button>
+  `);
+  say('Continental commander','Listen carefully, soldiers! The British are planning an attack. Find out where and when they intend to strike, and report back immediately!',true);
+  $('acceptMission').onclick=()=>{heard=true;go(90)};
+ }else if(type==='spy'){
+  showDialog('Scene 02 · British encampment','Listen. Remember. Get out.',`
+   <p>Lanterns light a map on the officers’ table. From your hiding place,
+   you can hear their orders.</p>
+   <button class="order ${found[0]?'done':''}" id="hearTime">
+    ${found[0]?'✓ Recorded:':'Listen for the time:'} “We march at dawn.”
+   </button>
+   <button class="order ${found[1]?'done':''}" id="hearDirection">
+    ${found[1]?'✓ Recorded:':'Listen for the direction:'}
+    “Approach the Continental camp from the east.”
+   </button>
+   <p class="small">This fictional exchange follows your storyboard.
+   Collect both details before leaving.</p>
+   <button class="primary" id="leaveCamp" ${found.every(Boolean)?'':'disabled'}>Leave camp →</button>
+  `);
+  $('hearTime').onclick=()=>record(0);
+  $('hearDirection').onclick=()=>record(1);
+  $('leaveCamp').onclick=()=>go(140);
+ }else{
+  showDialog('Scene 04 · Scripted commander','What did you discover?',`
+   <p>“You made it back! Tell me when they plan to attack and where they
+   will approach from.”</p>
+   <label for="reportInput" class="small">Your report to the commander</label>
+   <textarea id="reportInput" class="report-input"
+    placeholder="General, the British plan to…" maxlength="600"></textarea>
+   <div class="dialog-buttons">
+    <button class="primary" id="submitReport">Deliver report →</button>
+    <button class="quiet" id="speakReport">Try microphone</button>
+    <button class="quiet" id="recallOrders">Recall orders</button>
+   </div>
+   <p id="micStatus" class="small">Typed reports always work.
+   Voice input depends on your browser’s support and permission.</p>
+   <div id="reportResponse" role="status"></div>
+  `);
+  $('submitReport').onclick=submitReport;
+  $('speakReport').onclick=startMic;
+  $('recallOrders').onclick=()=>{
+   const r=$('reportResponse');r.className='response';
+   r.textContent='Overheard orders: “We march at dawn, approaching the Continental camp from the east.”';
+   found=[true,true];syncControls();
+  };
+  $('reportInput').addEventListener('keydown',e=>{
+   if((e.metaKey||e.ctrlKey)&&e.key==='Enter')submitReport();
+  });
+ }
+}
+function record(i){
+ found[i]=true;
+ const b=$(i===0?'hearTime':'hearDirection');
+ b.classList.add('done');
+ b.textContent=i===0?'✓ Recorded: “We march at dawn.”':'✓ Recorded: “Approach the Continental camp from the east.”';
+ say('British officer',i===0?'We march at dawn.':'Approach the Continental camp from the east. They will never see us coming.',true);
+ $('leaveCamp').disabled=!found.every(Boolean);
+ syncControls();
+}
+function submitReport(){
+ const input=$('reportInput'),text=input.value.toLowerCase().trim(),r=$('reportResponse');
+ r.className='response';
+ if(!text){
+  r.textContent='Tell the commander what you learned, or use “Recall orders” for a reminder.';
+  input.focus();return;
+ }
+ const when=/\b(dawn|sunrise|daybreak|morning)\b/.test(text);
+ const where=/\b(east|eastern|eastward)\b/.test(text);
+ let response;
+ if(when&&where){
+  reported=true;found=[true,true];
+  response='“An attack at dawn, from the east? Excellent work, soldiers! You have given us the chance to prepare. The Continental Army owes you its thanks!”';
+  r.textContent=response;
+  const b=document.createElement('button');
+  b.className='primary';b.style.marginTop='12px';b.textContent='Finish the ride →';
+  b.onclick=()=>go(210);r.appendChild(document.createElement('br'));r.appendChild(b);
+  $('objective').textContent='The warning has reached camp. The soldiers can prepare for the attack.';
+ }else if(when){
+  response='“At dawn. Understood. From which direction will they approach?”';
+ }else if(where){
+  response='“From the east. Good. When do they intend to attack?”';
+ }else{
+  response='“We need their attack time and approach direction. Think back to what the officers said.”';
+ }
+ if(!(when&&where))r.textContent=response;
+ say('Continental commander',response,true);syncControls();
+}
+function startMic(){
+ const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+ const label=$('micStatus');
+ if(!Recognition){label.textContent='Voice input is unavailable in this preview. Type your report above.';return}
+ if(recognition){recognition.stop();return}
+ try{
+  recognition=new Recognition();recognition.lang='en-US';recognition.interimResults=false;
+  recognition.onresult=e=>{
+   const input=$('reportInput');
+   if(input)input.value=e.results[0][0].transcript;
+   if($('micStatus'))$('micStatus').textContent='Report captured. Review it, then click Deliver report.';
+  };
+  recognition.onerror=e=>{
+   if($('micStatus'))$('micStatus').textContent='Microphone unavailable ('+e.error+'). Type your report instead.';
+  };
+  recognition.onend=()=>{
+   recognition=null;
+   if($('speakReport'))$('speakReport').textContent='Try microphone';
+  };
+  recognition.start();$('speakReport').textContent='Stop listening';
+  label.textContent='Listening… Say when and where the British will attack.';
+ }catch(e){
+  recognition=null;label.textContent='Voice input is blocked in this preview. Type your report above.';
+ }
+}
+function closeDialog(){
+ const open=$('overlay').classList.contains('open');
+ $('overlay').classList.remove('open');activeDialog='';
+ if(recognition){recognition.abort();recognition=null}
+ if(open&&lastFocus&&lastFocus.isConnected)lastFocus.focus();
+}
+function audioInit(){
+ try{
+  if(!soundCtx){
+   const A=window.AudioContext||window.webkitAudioContext;
+   if(A)soundCtx=new A();
+  }
+  if(soundCtx)soundCtx.resume();
+ }catch(e){}
+}
+function hoof(){
+ if(!soundCtx||muted||soundCtx.state!=='running')return;
+ const osc=soundCtx.createOscillator(),gain=soundCtx.createGain(),t=soundCtx.currentTime;
+ osc.type='triangle';osc.frequency.setValueAtTime(125,t);
+ osc.frequency.exponentialRampToValueAtTime(48,t+.065);
+ gain.gain.setValueAtTime(.065,t);gain.gain.exponentialRampToValueAtTime(.001,t+.09);
+ osc.connect(gain);gain.connect(soundCtx.destination);osc.start(t);osc.stop(t+.1);
+}
+
+$('advance').onclick=advance;
+$('hotspot').onclick=()=>openDialog(scene===1?'brief':scene===2?'spy':'report');
+$('back').onclick=()=>{
+ let i=stops.findIndex(t=>t>=time-.1);
+ if(i<0)i=stops.length;
+ jump(Math.max(0,i-1));
+};
+$('restart').onclick=reset;
+$('closeDialog').onclick=closeDialog;
+$('overlay').addEventListener('click',e=>{
+ if(e.target===$('overlay'))closeDialog();
+});
+$('scrub').addEventListener('input',e=>{
+ closeDialog();playing=false;completed=false;time=Number(e.target.value);syncScene();
+});
+$('rate').onchange=e=>rate=Number(e.target.value);
+document.querySelectorAll('[data-scene]').forEach(b=>b.onclick=()=>jump(Number(b.dataset.scene)));
+$('center').onclick=()=>{
+ yaw=0;pitch=0;rear=false;$('rear').setAttribute('aria-pressed','false');
+};
+$('rear').onclick=()=>{
+ rear=!rear;$('rear').setAttribute('aria-pressed',rear);yaw=0;pitch=0;
+};
+$('help').onclick=()=>{
+ $('helpText').classList.toggle('open');
+ $('help').setAttribute('aria-expanded',$('helpText').classList.contains('open'));
+};
+$('motion').setAttribute('aria-pressed',gentle);
+$('motion').onclick=()=>{
+ gentle=!gentle;$('motion').setAttribute('aria-pressed',gentle);
+ if(gentle&&playing){time=target;arrive()}
+ toast(gentle?'Gentle motion: travel jumps directly to each stop.':'Animated travel enabled.');
+};
+$('sound').onclick=()=>{
+ muted=!muted;$('sound').textContent=muted?'Sound off':'Sound on';
+ $('sound').setAttribute('aria-pressed',!muted);
+ if(!muted){
+  audioInit();say(chapters[scene].speaker,chapters[scene].line,false);
+  lastCaption='';say(chapters[scene].speaker,chapters[scene].line,true);
+ }else if('speechSynthesis'in window)window.speechSynthesis.cancel();
+};
+let dragging=false,dragX=0,dragY=0,baseYaw=0,basePitch=0;
+canvas.addEventListener('pointerdown',e=>{
+ dragging=true;dragX=e.clientX;dragY=e.clientY;baseYaw=yaw;basePitch=pitch;
+ canvas.setPointerCapture(e.pointerId);
+});
+canvas.addEventListener('pointermove',e=>{
+ if(!dragging)return;
+ yaw=clamp(baseYaw-(e.clientX-dragX)*.004,-1.5,1.5);
+ pitch=clamp(basePitch+(e.clientY-dragY)*.001,-.2,.2);
+});
+canvas.addEventListener('pointerup',()=>dragging=false);
+canvas.addEventListener('pointercancel',()=>dragging=false);
+
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'){closeDialog();return}
+ if($('overlay').classList.contains('open')){
+  if(e.key==='Tab'){
+   const els=[...$('overlay').querySelectorAll('button:not(:disabled),textarea')],first=els[0],last=els[els.length-1];
+   if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
+   else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+  }
+  return;
+ }
+ if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)||(e.target.tagName==='BUTTON'&&e.key===' '))return;
+ if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','w','s','a','d',' '].includes(e.key)){
+  e.preventDefault();
+  if(e.key===' '){advance();return}
+  if(e.key==='ArrowUp'||e.key==='ArrowDown'||e.key==='w'||e.key==='s'){
+   playing=false;completed=false;
+  }
+  keys.add(e.key);
+ }
+});
+document.addEventListener('keyup',e=>keys.delete(e.key));
+window.addEventListener('blur',()=>keys.clear());
+document.addEventListener('visibilitychange',()=>{
+ keys.clear();
+ if(document.hidden){
+  playing=false;
+  if('speechSynthesis'in window)window.speechSynthesis.cancel();
+  syncControls();
+ }
+});
+let last=0,uiTick=0;
+function frame(ms){
+ const dt=last?Math.min((ms-last)/1000,.05):.016;
+ last=ms;clock+=dt;
+ if(playing){
+  const factor=scene===3?1.5:1;
+  time=Math.min(target,time+dt*rate*factor);
+  if(time>=target-.001)arrive();
+ }else if(!$('overlay').classList.contains('open')){
+  if(keys.has('ArrowUp')||keys.has('w'))time=clamp(time+dt*rate*3,0,210);
+  if(keys.has('ArrowDown')||keys.has('s'))time=clamp(time-dt*rate*3,0,210);
+  if(keys.has('ArrowLeft')||keys.has('a'))yaw=clamp(yaw-dt,-1.5,1.5);
+  if(keys.has('ArrowRight')||keys.has('d'))yaw=clamp(yaw+dt,-1.5,1.5);
+ }
+ if(playing||keys.size){
+  hoofClock+=dt;
+  if(hoofClock>(scene===3?.14:.26)){hoof();hoofClock=0}
+ }
+ uiTick+=dt;
+ if(uiTick>.09){syncScene();uiTick=0}
+ draw();requestAnimationFrame(frame);
+}
+syncScene(true);resize();requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
