@@ -1,0 +1,2233 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="I’m Miles Walters, an artificial intelligence student at USC and a researcher at Carnegie Science. I build and train models to help people.">
+  <meta name="author" content="Miles Walters">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="application-name" content="Miles Walters">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#151719" id="themeColorMeta">
+  <link rel="canonical" href="https://mileswalters.com/">
+  <link rel="me" href="https://www.linkedin.com/in/miles-walters/">
+  <link rel="icon" href="favicon.svg?v=20261023-muted" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20261023-muted" sizes="180x180">
+
+  <meta property="og:type" content="profile">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:site_name" content="Miles Walters">
+  <meta property="og:title" content="Miles Walters | AI Student and Researcher">
+  <meta property="og:description" content="I study artificial intelligence at USC and do research at Carnegie Science, building models for projects in astrobiology, language, health, and education.">
+  <meta property="og:url" content="https://mileswalters.com/">
+  <meta property="og:image" content="https://mileswalters.com/social-preview.png?v=20261023-muted">
+  <meta property="og:image:secure_url" content="https://mileswalters.com/social-preview.png?v=20261023-muted">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Miles Walters — AI student and researcher">
+  <meta property="profile:first_name" content="Miles">
+  <meta property="profile:last_name" content="Walters">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Miles Walters | AI Student and Researcher">
+  <meta name="twitter:description" content="I study artificial intelligence at USC and do research at Carnegie Science, building models for projects in astrobiology, language, health, and education.">
+  <meta name="twitter:image" content="https://mileswalters.com/social-preview.png?v=20261023-muted">
+  <meta name="twitter:image:alt" content="Miles Walters — AI student and researcher">
+
+  <title>Miles Walters | Portfolio</title>
+  <style>
+    :root {
+      --bg: #f7f4ee;
+      --surface: #fffdf8;
+      --soft: #ece9e1;
+      --ink: #1b231f;
+      --muted: #66706b;
+      --accent: #2f7058;
+      --accent-dark: #225541;
+      --accent-soft: #dce9e2;
+      --line: #d9d7cf;
+      --white: #ffffff;
+      --display: "Avenir Next", Avenir, "Segoe UI", Arial, sans-serif;
+      --body: Inter, "Segoe UI", Arial, sans-serif;
+    }
+
+    html.wednesday {
+      --bg: #fff5f8;
+      --surface: #fffafd;
+      --soft: #f8e5ec;
+      --ink: #321823;
+      --muted: #765d67;
+      --accent: #cb3e73;
+      --accent-dark: #9d2956;
+      --accent-soft: #f6d9e4;
+      --line: #e8cfd8;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 16px/1.65 var(--body);
+    }
+    button, a { font: inherit; }
+    button { color: inherit; }
+    a { color: inherit; }
+    h1, h2, h3, h4, p { margin-top: 0; }
+    h1, h2, h3, h4 { font-family: var(--display); }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+    .skip-link {
+      position: fixed;
+      top: -100px;
+      left: 18px;
+      z-index: 200;
+      padding: 10px 14px;
+      background: var(--ink);
+      color: var(--bg);
+    }
+    .skip-link:focus { top: 18px; }
+
+    .wednesday-note {
+      display: none;
+      padding: 7px 18px;
+      background: var(--accent);
+      color: var(--white);
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+    }
+    .wednesday .wednesday-note { display: block; }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--line);
+      background: var(--bg);
+    }
+    .header-inner {
+      width: min(1080px, calc(100% - 40px));
+      min-height: 68px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+    .brand {
+      flex: 0 0 auto;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      font-family: var(--display);
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -.06em;
+      cursor: pointer;
+    }
+    .brand span { color: var(--accent); }
+    .tab-list {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .tab {
+      padding: 23px 0 19px;
+      border: 0;
+      border-bottom: 3px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 650;
+      cursor: pointer;
+    }
+    .tab:hover { color: var(--ink); }
+    .tab[aria-selected="true"] {
+      color: var(--accent-dark);
+      border-bottom-color: var(--accent);
+    }
+    .share-button {
+      flex: 0 0 auto;
+      min-height: 37px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 750;
+      cursor: pointer;
+    }
+    .share-button:hover { border-color: var(--ink); }
+    .share-button svg { width: 15px; height: 15px; }
+
+    main {
+      width: min(1040px, calc(100% - 40px));
+      min-height: calc(100vh - 160px);
+      margin: 0 auto;
+    }
+    .page { padding: 82px 0 100px; }
+    .page[hidden] { display: none; }
+
+    .eyebrow {
+      margin-bottom: 12px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+    .hero {
+      min-height: 610px;
+      display: grid;
+      grid-template-columns: 170px minmax(0, 1fr);
+      align-items: center;
+      gap: clamp(42px, 8vw, 90px);
+      justify-content: center;
+      padding: 86px 0 100px;
+      text-align: left;
+    }
+    .monogram {
+      width: 150px;
+      height: 188px;
+      display: grid;
+      place-items: center;
+      border-top: 1px solid var(--ink);
+      border-bottom: 1px solid var(--ink);
+      border-left: 18px solid var(--accent);
+      background: transparent;
+      color: var(--ink);
+      font-family: var(--display);
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -.07em;
+    }
+    .hero-copy { max-width: 770px; }
+    h1 {
+      margin-bottom: 16px;
+      font-size: clamp(50px, 8vw, 82px);
+      line-height: 1;
+      letter-spacing: -.06em;
+    }
+    .hero .lede {
+      max-width: 720px;
+      margin-bottom: 30px;
+      color: var(--muted);
+      font-size: clamp(18px, 2.3vw, 22px);
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      gap: 10px;
+    }
+    .button {
+      min-height: 45px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 18px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 750;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .button:hover { border-color: var(--ink); }
+    .button.primary {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: var(--white);
+    }
+    .button.primary:hover { background: var(--accent-dark); }
+
+    .home-grid, .work-grid, .activity-grid, .skill-grid {
+      display: grid;
+      gap: 0;
+    }
+    .home-grid { grid-template-columns: repeat(3, 1fr); }
+    .work-grid { grid-template-columns: repeat(2, 1fr); }
+    .activity-grid { grid-template-columns: repeat(2, 1fr); }
+    .skill-grid { grid-template-columns: repeat(3, 1fr); }
+    .personal-grid { display: grid; grid-template-columns: repeat(2, 1fr); border-top: 2px solid var(--ink); }
+    .personal-item { padding: 28px 36px 4px 0; }
+    .personal-item + .personal-item { padding-left: 36px; border-left: 1px solid var(--line); }
+    .personal-item h4 { margin-bottom: 10px; font-size: 19px; }
+    .personal-item p { margin-bottom: 0; color: var(--muted); }
+
+    .card {
+      padding: 0;
+      border: 0;
+      background: transparent;
+    }
+    .card .meta {
+      margin-bottom: 12px;
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+    .card h3 {
+      margin-bottom: 12px;
+      font-size: 22px;
+      line-height: 1.25;
+      letter-spacing: -.025em;
+    }
+    .card p:last-child { margin-bottom: 0; }
+    .card p { color: var(--muted); }
+    .home-grid {
+      border-top: 2px solid var(--ink);
+      border-bottom: 1px solid var(--line);
+      counter-reset: overview;
+    }
+    .home-card {
+      position: relative;
+      min-height: 250px;
+      padding: 58px 28px 34px 0;
+      border-right: 1px solid var(--line);
+      counter-increment: overview;
+    }
+    .home-card:not(:first-child) { padding-left: 28px; }
+    .home-card:last-child { border-right: 0; }
+    .home-card::before {
+      content: "0" counter(overview);
+      position: absolute;
+      top: 18px;
+      left: 0;
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .1em;
+    }
+    .home-card:not(:first-child)::before { left: 28px; }
+    .home-card .text-link { margin-top: 8px; }
+    .text-link {
+      padding: 0;
+      border: 0;
+      border-bottom: 1px solid var(--accent);
+      background: transparent;
+      color: var(--accent-dark);
+      font-size: 13px;
+      font-weight: 750;
+      cursor: pointer;
+    }
+
+    .page-intro {
+      max-width: 790px;
+      margin-bottom: 50px;
+      padding-left: 24px;
+      border-left: 6px solid var(--accent);
+    }
+    .page-intro h2 {
+      margin-bottom: 18px;
+      font-size: clamp(40px, 6vw, 62px);
+      line-height: 1.06;
+      letter-spacing: -.055em;
+    }
+    .page-intro .lede {
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 19px;
+    }
+
+    .work-card {
+      min-height: 315px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      padding: 52px 38px 38px 0;
+      border-top: 1px solid var(--line);
+    }
+    .work-card:not(.featured):nth-child(even) { border-right: 1px solid var(--line); }
+    .work-card:not(.featured):nth-child(odd) { padding-left: 38px; }
+    .work-card.featured {
+      grid-column: 1 / -1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, .72fr) minmax(0, 1.28fr);
+      gap: 45px;
+      padding: 38px 0 42px;
+      border-top: 3px solid var(--accent);
+      border-bottom: 1px solid var(--line);
+      background: transparent;
+    }
+    .work-card .plain-label {
+      color: var(--accent-dark);
+      font-family: var(--display);
+      font-size: 15px;
+      font-weight: 750;
+    }
+    .work-card footer {
+      margin-top: auto;
+      padding-top: 24px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .work-card.featured footer { margin-top: 18px; }
+
+    .activity-card {
+      min-height: 235px;
+      padding: 32px 36px 34px 0;
+      border-top: 1px solid var(--line);
+    }
+    .activity-card:nth-child(odd) { border-right: 1px solid var(--line); }
+    .activity-card:nth-child(even) { padding-left: 36px; }
+    .activity-card .role {
+      margin-bottom: 6px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 750;
+    }
+    .activity-card h3 { margin-bottom: 14px; }
+
+    .citation-list {
+      margin: 0;
+      padding: 0;
+      border-top: 1px solid var(--line);
+      list-style: none;
+      counter-reset: citation;
+    }
+    .citation-list li {
+      counter-increment: citation;
+      position: relative;
+      padding: 26px 0 26px 52px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .citation-list li::before {
+      content: "[" counter(citation) "]";
+      position: absolute;
+      top: 26px;
+      left: 0;
+      color: var(--accent);
+      font-weight: 800;
+    }
+    .citation-list strong { color: var(--ink); }
+
+    .about-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(260px, .85fr);
+      gap: 54px;
+      align-items: start;
+    }
+    .about-story {
+      padding: 28px 0 0;
+      border-top: 3px solid var(--accent);
+    }
+    .about-story p { font-size: 17px; }
+    .about-story p:last-child { margin-bottom: 0; }
+    .education-list {
+      display: grid;
+      gap: 0;
+    }
+    .education-item { padding: 24px 0; border-top: 1px solid var(--line); }
+    .education-item h3 { font-size: 18px; }
+    .education-item p { font-size: 14px; }
+
+    .section {
+      margin-top: 64px;
+      padding-top: 52px;
+      border-top: 1px solid var(--line);
+    }
+    .section-heading {
+      max-width: 690px;
+      margin-bottom: 28px;
+    }
+    .section-heading h3 {
+      margin-bottom: 10px;
+      font-size: 30px;
+      letter-spacing: -.035em;
+    }
+    .section-heading p:last-child { color: var(--muted); }
+    .skill-grid { border-top: 2px solid var(--ink); border-bottom: 1px solid var(--line); }
+    .skill-card {
+      min-height: 170px;
+      padding: 26px 26px 28px 0;
+      border-right: 1px solid var(--line);
+    }
+    .skill-card:not(:first-child) { padding-left: 26px; }
+    .skill-card:last-child { border-right: 0; }
+    .skill-card h4 { margin-bottom: 12px; font-size: 16px; }
+    .skill-card p { font-size: 14px; }
+    .language-note {
+      margin-top: 16px;
+      padding: 18px 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      border-left: 3px solid var(--accent);
+      padding-left: 20px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .contact-panel {
+      margin-top: 64px;
+      padding: 38px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 30px;
+      align-items: center;
+      border-left: 18px solid var(--accent);
+      background: var(--ink);
+      color: var(--white);
+    }
+    .contact-panel h3 {
+      margin-bottom: 8px;
+      font-size: 28px;
+      letter-spacing: -.035em;
+    }
+    .contact-panel p { margin-bottom: 0; opacity: .82; }
+    .contact-panel .button {
+      border-color: var(--white);
+      background: var(--white);
+      color: var(--accent-dark);
+    }
+
+    .site-footer {
+      width: min(1080px, calc(100% - 40px));
+      min-height: 88px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .site-footer p { margin: 0; }
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 150;
+      max-width: calc(100% - 40px);
+      padding: 11px 15px;
+      background: var(--ink);
+      color: var(--bg);
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, .16);
+    }
+    .toast[hidden] { display: none; }
+
+    @media (max-width: 800px) {
+      .header-inner {
+        min-height: auto;
+        padding: 14px 0 11px;
+        flex-wrap: wrap;
+        gap: 10px 20px;
+      }
+      .tab-list {
+        order: 3;
+        width: 100%;
+        margin: 0;
+        overflow-x: auto;
+        padding-bottom: 3px;
+      }
+      .share-button { margin-left: auto; }
+      .tab { flex: 0 0 auto; }
+      .page { padding-top: 60px; }
+      .hero { min-height: 500px; padding-top: 54px; }
+      .home-grid, .skill-grid { grid-template-columns: 1fr; }
+      .personal-grid { grid-template-columns: 1fr; }
+      .personal-item, .personal-item + .personal-item { padding: 24px 0; border-left: 0; }
+      .personal-item + .personal-item { border-top: 1px solid var(--line); }
+      .work-card.featured, .about-layout { grid-template-columns: 1fr; }
+      .home-card, .skill-card { min-height: 0; border-right: 0; }
+      .home-card, .home-card:not(:first-child) { padding: 54px 0 30px; }
+      .skill-card, .skill-card:not(:first-child) { padding: 24px 0; }
+      .home-card:not(:first-child)::before { left: 0; }
+      .home-card:not(:first-child), .skill-card:not(:first-child) { border-top: 1px solid var(--line); }
+    }
+
+    @media (max-width: 620px) {
+      .header-inner, main, .site-footer { width: min(100% - 28px, 1080px); }
+      .page { padding-bottom: 74px; }
+      h1 { font-size: 52px; }
+      .hero .lede, .page-intro .lede { font-size: 17px; }
+      .hero { grid-template-columns: 1fr; gap: 34px; }
+      .monogram { width: 118px; height: 94px; justify-self: start; border-left-width: 13px; font-size: 30px; }
+      .work-grid, .activity-grid { grid-template-columns: 1fr; }
+      .work-card.featured { grid-column: auto; padding: 30px 0; gap: 12px; }
+      .work-card, .work-card:not(.featured):nth-child(odd), .work-card:not(.featured):nth-child(even) { min-height: 0; padding: 34px 0; border-right: 0; }
+      .activity-card, .activity-card:nth-child(even), .activity-card:nth-child(odd) { min-height: 0; padding: 28px 0; border-right: 0; }
+      .actions { width: 100%; }
+      .actions .button { flex: 1 1 150px; }
+      .contact-panel { grid-template-columns: 1fr; padding: 28px; }
+      .contact-panel .button { width: 100%; }
+      .site-footer { padding: 24px 0; flex-direction: column; align-items: flex-start; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+
+    @media print {
+      .site-header, .wednesday-note, .actions, .text-link, .site-footer, .toast { display: none !important; }
+      body { background: #fff; color: #111; }
+      main { width: 100%; }
+      .page, .page[hidden] { display: block !important; padding: 24px 0; }
+      .hero { min-height: 0; padding: 30px 0; }
+      .card, .contact-panel { break-inside: avoid; }
+    }
+
+    /* Refined visual system: one calm surface language across every page. */
+    :root {
+      --panel-radius: 22px;
+      --panel-shadow: 0 22px 60px rgba(27, 35, 31, .075);
+    }
+    body { background: var(--bg); }
+    .site-header { border-bottom-color: color-mix(in srgb, var(--line) 78%, transparent); }
+    .header-inner { min-height: 72px; gap: 24px; }
+    .tab-list { gap: 20px; }
+    .tab {
+      padding: 24px 0 20px;
+      border-bottom-width: 2px;
+      transition: color .18s ease, border-color .18s ease;
+    }
+    .share-button {
+      min-height: 38px;
+      padding: 0 14px;
+      border-radius: 999px;
+      box-shadow: 0 4px 16px rgba(27, 35, 31, .05);
+      transition: border-color .18s ease, transform .18s ease;
+    }
+    .share-button:hover { transform: translateY(-1px); }
+
+    .page { padding: 76px 0 112px; }
+    .page:not([hidden]) { animation: page-reveal .34s ease both; }
+    @keyframes page-reveal {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero {
+      min-height: 590px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      padding: 72px 0 96px;
+      text-align: center;
+    }
+    .monogram {
+      position: relative;
+      width: 112px;
+      height: 112px;
+      margin-bottom: 34px;
+      border: 1px solid var(--accent);
+      border-radius: 50%;
+      background: var(--surface);
+      color: var(--accent-dark);
+      font-size: 27px;
+      box-shadow: 0 16px 40px rgba(47, 112, 88, .12);
+      isolation: isolate;
+    }
+    .monogram::before {
+      content: "";
+      position: absolute;
+      inset: -13px 8px;
+      z-index: -1;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      transform: rotate(-28deg);
+    }
+    .monogram::after {
+      content: "";
+      position: absolute;
+      top: 8px;
+      right: 5px;
+      width: 9px;
+      height: 9px;
+      border: 3px solid var(--bg);
+      border-radius: 50%;
+      background: var(--accent);
+    }
+    .hero-copy { max-width: 760px; }
+    h1 { margin-bottom: 18px; }
+    .hero .lede { max-width: 700px; margin: 0 auto 32px; }
+    .actions { justify-content: center; }
+    .button {
+      min-height: 46px;
+      border-radius: 999px;
+      transition: border-color .18s ease, background-color .18s ease, transform .18s ease;
+    }
+    .button:hover { transform: translateY(-2px); }
+
+    .page-intro {
+      max-width: 760px;
+      margin: 0 auto 54px;
+      padding-left: 0;
+      border-left: 0;
+      text-align: center;
+    }
+    .page-intro::after {
+      content: "";
+      display: block;
+      width: 44px;
+      height: 2px;
+      margin: 27px auto 0;
+      background: var(--accent);
+    }
+
+    .home-grid,
+    .work-grid,
+    .activity-grid,
+    .skill-grid,
+    .personal-grid,
+    .about-layout {
+      border: 1px solid var(--line);
+      border-radius: var(--panel-radius);
+      background: var(--surface);
+      box-shadow: var(--panel-shadow);
+      overflow: hidden;
+    }
+
+    .card { background: transparent; }
+    .home-grid { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .home-card,
+    .home-card:not(:first-child) {
+      min-height: 238px;
+      padding: 62px 30px 32px;
+      border-top: 0;
+      border-right: 1px solid var(--line);
+      transition: background-color .2s ease;
+    }
+    .home-card:last-child { border-right: 0; }
+    .home-card::before,
+    .home-card:not(:first-child)::before { top: 24px; left: 30px; }
+    .home-card:hover { background: var(--soft); }
+    .text-link {
+      border-bottom: 0;
+      transition: color .18s ease;
+    }
+    .text-link::after { content: "  →"; }
+    .text-link:hover { color: var(--accent); }
+
+    .work-grid { border-bottom: 1px solid var(--line); }
+    .work-card.featured {
+      grid-column: 1 / -1;
+      min-height: 0;
+      padding: 42px;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      background: var(--accent-soft);
+    }
+    .work-card:not(.featured),
+    .work-card:not(.featured):nth-child(odd) {
+      min-height: 300px;
+      padding: 36px;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      background: transparent;
+    }
+    .work-card:not(.featured):nth-child(even) { border-right: 1px solid var(--line); }
+    .work-card:nth-last-child(-n + 2) { border-bottom: 0; }
+
+    .activity-card,
+    .activity-card:nth-child(even),
+    .activity-card:nth-child(odd) {
+      min-height: 225px;
+      padding: 34px;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      background: transparent;
+    }
+    .activity-card:nth-child(odd) { border-right: 1px solid var(--line); }
+    .activity-card:nth-last-child(-n + 2) { border-bottom: 0; }
+
+    .about-layout { gap: 0; }
+    .about-story {
+      padding: 42px;
+      border: 0;
+      border-right: 1px solid var(--line);
+    }
+    .education-list { gap: 0; }
+    .education-item {
+      min-height: 50%;
+      padding: 32px;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .education-item:last-child { border-bottom: 0; }
+
+    .section { margin-top: 72px; padding-top: 0; border-top: 0; }
+    .section-heading { margin: 0 auto 30px; text-align: center; }
+    .personal-grid { border-top: 1px solid var(--line); }
+    .personal-item,
+    .personal-item + .personal-item {
+      min-height: 190px;
+      padding: 32px;
+      border: 0;
+    }
+    .personal-item + .personal-item { border-left: 1px solid var(--line); }
+
+    .skill-grid { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .skill-card,
+    .skill-card:not(:first-child) {
+      min-height: 170px;
+      padding: 30px;
+      border: 0;
+      border-right: 1px solid var(--line);
+    }
+    .skill-card:last-child { border-right: 0; }
+    .language-note {
+      margin-top: 18px;
+      padding: 17px 20px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface);
+      box-shadow: 0 8px 24px rgba(27, 35, 31, .04);
+      text-align: center;
+    }
+
+    .contact-panel {
+      margin-top: 72px;
+      padding: 44px;
+      border: 0;
+      border-radius: var(--panel-radius);
+      background: var(--ink);
+      box-shadow: 0 22px 60px rgba(27, 35, 31, .16);
+    }
+    .contact-panel .button { border-radius: 999px; }
+    .toast { border-radius: 12px; }
+
+    @media (max-width: 800px) {
+      .page { padding-top: 60px; }
+      .hero { min-height: 520px; padding: 56px 0 82px; }
+      .home-grid, .work-grid, .activity-grid, .skill-grid, .personal-grid, .about-layout { grid-template-columns: 1fr; }
+      .home-card,
+      .home-card:not(:first-child),
+      .skill-card,
+      .skill-card:not(:first-child),
+      .personal-item,
+      .personal-item + .personal-item,
+      .activity-card,
+      .activity-card:nth-child(even),
+      .activity-card:nth-child(odd),
+      .work-card:not(.featured),
+      .work-card:not(.featured):nth-child(odd),
+      .work-card:not(.featured):nth-child(even) {
+        min-height: 0;
+        padding: 30px;
+        border-right: 0;
+        border-left: 0;
+        border-top: 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .home-card,
+      .home-card:not(:first-child) { padding-top: 62px; }
+      .home-card::before,
+      .home-card:not(:first-child)::before { top: 24px; left: 30px; }
+      .home-card:last-child,
+      .skill-card:last-child,
+      .personal-item:last-child,
+      .activity-card:last-child,
+      .work-card:last-child { border-bottom: 0 !important; }
+      .work-card.featured { grid-template-columns: 1fr; gap: 16px; padding: 34px; }
+      .about-story { padding: 34px; border-right: 0; border-bottom: 1px solid var(--line); }
+      .education-item { padding: 28px 34px; }
+    }
+
+    @media (max-width: 620px) {
+      .monogram { width: 100px; height: 100px; margin-bottom: 30px; font-size: 24px; }
+      .hero { display: flex; gap: 0; text-align: center; }
+      .page-intro { text-align: left; }
+      .page-intro::after { margin-left: 0; }
+      .section-heading { text-align: left; }
+      .actions { width: 100%; justify-content: center; }
+      .contact-panel { padding: 30px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .page:not([hidden]) { animation: none; }
+      .button, .share-button, .tab { transition: none; }
+    }
+
+    @media print {
+      .home-grid, .work-grid, .activity-grid, .skill-grid, .personal-grid, .about-layout, .contact-panel { box-shadow: none; }
+      .page:not([hidden]) { animation: none; }
+    }
+
+    /* Palette-led editorial system: distinctive, restrained, and consistent. */
+    :root {
+      --bg: #f5f7f4;
+      --surface: #ffffff;
+      --soft: #edf2ef;
+      --ink: #252840;
+      --muted: #697080;
+      --accent: #558b6e;
+      --accent-dark: #43624b;
+      --accent-soft: #e5efe9;
+      --sky: #cae9ff;
+      --sky-soft: #edf7fd;
+      --indigo: #3b4564;
+      --line: #d7dde0;
+      --panel-radius: 2px;
+      --panel-shadow: none;
+    }
+
+    html.wednesday {
+      --bg: #fff5f8;
+      --surface: #fffafd;
+      --soft: #f8e5ec;
+      --ink: #342236;
+      --muted: #765d70;
+      --accent: #cb3e73;
+      --accent-dark: #9d2956;
+      --accent-soft: #f6d9e4;
+      --sky: #f8d7eb;
+      --sky-soft: #fff0f7;
+      --indigo: #4d3857;
+      --line: #e8cfd8;
+    }
+
+    body { background: var(--bg); }
+    .site-header { background: var(--bg); border-bottom-color: var(--line); }
+    .header-inner, .site-footer { width: min(1120px, calc(100% - 48px)); }
+    main { width: min(1080px, calc(100% - 48px)); }
+    .brand { color: var(--ink); letter-spacing: -.055em; }
+    .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+    .share-button,
+    .button,
+    .language-note,
+    .contact-panel,
+    .toast {
+      border-radius: 3px;
+    }
+    .share-button { box-shadow: none; }
+    .button.primary { border-color: var(--accent-dark); background: var(--accent-dark); }
+    .button.primary:hover { background: var(--ink); }
+
+    .hero { min-height: 570px; padding: 72px 0 88px; }
+    .monogram {
+      width: 112px;
+      height: 112px;
+      margin-bottom: 40px;
+      border: 0;
+      border-radius: 0;
+      background: var(--sky);
+      color: var(--ink);
+      box-shadow: 12px 12px 0 var(--accent);
+    }
+    .monogram::before {
+      inset: -10px 10px 10px -10px;
+      border-color: var(--indigo);
+      border-radius: 0;
+      transform: none;
+    }
+    .monogram::after {
+      top: 15px;
+      right: -19px;
+      width: 7px;
+      height: 42px;
+      border: 0;
+      border-radius: 0;
+      background: var(--indigo);
+    }
+    .hero .eyebrow { color: var(--accent-dark); }
+    .hero .lede { color: var(--muted); }
+
+    .mission-band {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+      gap: clamp(36px, 7vw, 82px);
+      align-items: end;
+      margin: 0 0 36px;
+      padding: clamp(38px, 6vw, 60px);
+      border-left: 10px solid var(--accent);
+      background: var(--ink);
+      color: var(--white);
+      overflow: hidden;
+    }
+    .mission-band::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 88px;
+      height: 10px;
+      background: var(--sky);
+    }
+    .mission-band .eyebrow { margin-bottom: 14px; color: var(--sky); }
+    .mission-band h2 {
+      max-width: 560px;
+      margin-bottom: 0;
+      font-size: clamp(34px, 5vw, 54px);
+      line-height: 1.03;
+      letter-spacing: -.05em;
+    }
+    .mission-copy { max-width: 520px; }
+    .mission-copy > p:first-child { margin-bottom: 22px; color: #e2e6ee; font-size: 17px; }
+    .mission-note {
+      margin-bottom: 0;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, .24);
+      color: var(--sky);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .055em;
+      text-transform: uppercase;
+    }
+
+    .home-grid,
+    .work-grid,
+    .activity-grid,
+    .skill-grid,
+    .personal-grid,
+    .about-layout {
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .home-grid { border-top: 4px solid var(--indigo); }
+    .home-card:hover { background: var(--sky-soft); }
+    .home-card::before,
+    .home-card:not(:first-child)::before { color: var(--accent-dark); }
+    .page-intro::after { width: 58px; height: 4px; background: var(--accent); }
+    .work-grid { border-top: 4px solid var(--indigo); }
+    .work-card.featured { background: var(--sky-soft); }
+    .work-card:not(.featured) { transition: background-color .2s ease; }
+    .work-card:not(.featured):hover { background: var(--soft); }
+    .activity-grid { border-top: 4px solid var(--indigo); }
+    .about-layout { border-top: 4px solid var(--indigo); }
+    .skill-grid { border-top: 4px solid var(--indigo); }
+    .personal-grid { border-top: 4px solid var(--indigo); }
+    .contact-panel { border-left: 10px solid var(--accent); background: var(--indigo); }
+
+    .project-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 20px;
+      margin-top: 22px;
+    }
+    .project-link,
+    .citation-link {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 5px;
+      border-bottom: 1px solid currentColor;
+      color: var(--accent-dark);
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.5;
+      text-decoration: none;
+    }
+    .project-link:hover,
+    .citation-link:hover { color: var(--ink); }
+    .work-card footer + .project-links { margin-top: 14px; }
+    .citation-link { margin: 10px 14px 0 0; }
+    .about-principle {
+      margin: 26px 0 0;
+      padding: 22px 0 0 22px;
+      border-top: 1px solid var(--line);
+      border-left: 5px solid var(--accent);
+      color: var(--ink);
+      font-family: var(--display);
+      font-size: 19px !important;
+      font-weight: 750;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 800px) {
+      .mission-band { grid-template-columns: 1fr; align-items: start; }
+      .header-inner, .site-footer, main { width: min(100% - 32px, 1080px); }
+    }
+
+    @media (max-width: 620px) {
+      .hero { min-height: 520px; }
+      .monogram { width: 94px; height: 94px; }
+      .mission-band { margin-bottom: 24px; padding: 34px 26px; border-left-width: 7px; }
+      .mission-band::after { width: 54px; height: 7px; }
+      .project-links { display: grid; gap: 12px; }
+      .project-link { width: fit-content; }
+    }
+
+    @media print {
+      .mission-band { border: 1px solid #777; background: #fff; color: #111; }
+      .mission-band .eyebrow, .mission-copy > p:first-child, .mission-note { color: #333; }
+      .project-link, .citation-link { color: #111; }
+    }
+
+    /* Flowing theme system: dark first, open layouts, and a light-mode switch. */
+    :root,
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #151719;
+      --surface: #1b1e20;
+      --soft: #202427;
+      --ink: #f0f1ee;
+      --muted: #a3a9a6;
+      --accent: #7e9385;
+      --accent-dark: #a8b6ad;
+      --accent-soft: #27312c;
+      --sky: #8997a0;
+      --sky-soft: #22282b;
+      --indigo: #828a94;
+      --line: rgba(236, 238, 233, .09);
+      --white: #ffffff;
+    }
+
+    html[data-theme="light"] {
+      color-scheme: light;
+      --bg: #f3f3f0;
+      --surface: #f9f9f6;
+      --soft: #e9ebe7;
+      --ink: #252829;
+      --muted: #6d7370;
+      --accent: #647a6c;
+      --accent-dark: #526258;
+      --accent-soft: #e5e9e5;
+      --sky: #7f8c94;
+      --sky-soft: #eaedec;
+      --indigo: #68717a;
+      --line: rgba(37, 40, 41, .10);
+    }
+
+    html.wednesday[data-theme="dark"] {
+      --bg: #191517;
+      --surface: #211b1e;
+      --soft: #282125;
+      --ink: #f3edef;
+      --muted: #b5a6ad;
+      --accent: #9b7382;
+      --accent-dark: #bea0ac;
+      --accent-soft: #34272d;
+      --sky: #92858b;
+      --sky-soft: #2a2326;
+      --indigo: #9a8e94;
+      --line: rgba(243, 237, 239, .09);
+    }
+
+    html.wednesday[data-theme="light"] {
+      --bg: #f7f2f4;
+      --surface: #fbf8f9;
+      --soft: #eee5e9;
+      --ink: #342d30;
+      --muted: #786b70;
+      --accent: #8c6675;
+      --accent-dark: #6f5260;
+      --accent-soft: #eee1e6;
+      --sky: #94858b;
+      --sky-soft: #f1e9ec;
+      --indigo: #776b70;
+      --line: rgba(52, 45, 48, .10);
+    }
+
+    html, body { min-height: 100%; }
+    body {
+      position: relative;
+      isolation: isolate;
+      overflow-x: hidden;
+      background: var(--bg);
+      transition: background-color .32s ease, color .32s ease;
+    }
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      z-index: -1;
+      pointer-events: none;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      transition: border-color .32s ease;
+    }
+    body::before {
+      top: 130px;
+      left: -240px;
+      width: 680px;
+      height: 330px;
+      transform: rotate(-16deg);
+    }
+    body::after {
+      right: -280px;
+      bottom: 80px;
+      width: 740px;
+      height: 380px;
+      transform: rotate(20deg);
+    }
+
+    .site-header {
+      background: var(--bg);
+      transition: background-color .32s ease, border-color .32s ease;
+    }
+    .header-actions { display: flex; align-items: center; gap: 8px; }
+    .theme-toggle,
+    .share-button {
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 0 13px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--ink);
+      box-shadow: none;
+      font-size: 12px;
+      font-weight: 750;
+      cursor: pointer;
+      transition: border-color .18s ease, color .18s ease, transform .18s ease;
+    }
+    .theme-toggle:hover,
+    .share-button:hover { border-color: var(--accent); transform: translateY(-1px); }
+    .theme-icon,
+    .share-button svg { width: 15px; height: 15px; }
+
+    .page { padding: 82px 0 124px; }
+    .hero {
+      min-height: 630px;
+      padding: 84px 0 104px;
+    }
+    .monogram {
+      width: 108px;
+      height: 108px;
+      margin-bottom: 42px;
+      border: 1px solid var(--accent);
+      border-radius: 50%;
+      background: transparent;
+      color: var(--ink);
+      box-shadow: none;
+    }
+    .monogram::before {
+      inset: -14px 8px;
+      border-color: var(--line);
+      border-radius: 50%;
+      transform: rotate(-27deg);
+    }
+    .monogram::after {
+      top: 4px;
+      right: 4px;
+      width: 10px;
+      height: 10px;
+      border: 3px solid var(--bg);
+      border-radius: 50%;
+      background: var(--sky);
+    }
+    .hero-copy { max-width: 800px; }
+    .hero .eyebrow { color: var(--accent-dark); }
+    .button,
+    .contact-panel .button { border-radius: 999px; }
+    .button { background: transparent; }
+    .button.primary {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #101a16;
+    }
+    .button.primary:hover { border-color: var(--sky); background: var(--sky); color: #111526; }
+
+    .mission-band {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
+      gap: clamp(42px, 8vw, 96px);
+      align-items: center;
+      margin: 0;
+      padding: 76px 0 106px;
+      border: 0;
+      background: transparent;
+      color: var(--ink);
+      overflow: visible;
+    }
+    .mission-band::before,
+    .mission-band::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      height: 96px;
+      border-radius: 50%;
+      background: transparent;
+      pointer-events: none;
+    }
+    .mission-band::before {
+      left: -8%;
+      bottom: 30px;
+      width: 52%;
+      border-top: 1px solid var(--accent);
+      transform: rotate(4deg);
+    }
+    .mission-band::after {
+      top: 30px;
+      right: -9%;
+      width: 48%;
+      height: 120px;
+      border-bottom: 1px solid var(--sky);
+      transform: rotate(-5deg);
+    }
+    .mission-band .eyebrow { color: var(--accent-dark); }
+    .mission-band h2 { color: var(--ink); }
+    .mission-copy > p:first-child { color: var(--muted); }
+    .mission-note {
+      padding-top: 0;
+      border-top: 0;
+      color: var(--accent-dark);
+      letter-spacing: .065em;
+    }
+
+    .home-grid,
+    .work-grid,
+    .activity-grid,
+    .skill-grid,
+    .personal-grid,
+    .about-layout {
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      overflow: visible;
+    }
+    .home-grid { gap: clamp(34px, 6vw, 68px); padding: 42px 0 34px; }
+    .home-card,
+    .home-card:not(:first-child) {
+      min-height: 0;
+      padding: 50px 0 26px;
+      border: 0;
+      background: transparent;
+      transition: transform .2s ease;
+    }
+    .home-card:hover { background: transparent; transform: translateY(-4px); }
+    .home-card::before,
+    .home-card:not(:first-child)::before { top: 10px; left: 0; color: var(--sky); }
+
+    .page-intro { margin-bottom: 66px; }
+    .page-intro::after {
+      width: 92px;
+      height: 20px;
+      margin-top: 24px;
+      border-top: 2px solid var(--accent);
+      border-radius: 50%;
+      background: transparent;
+      transform: rotate(-4deg);
+    }
+
+    .work-grid { column-gap: clamp(42px, 7vw, 76px); }
+    .work-card.featured {
+      grid-column: 1 / -1;
+      padding: 52px 0 68px;
+      border: 0;
+      border-top: 2px solid var(--accent);
+      border-bottom: 1px solid var(--line);
+      background: transparent;
+    }
+    .work-card:not(.featured),
+    .work-card:not(.featured):nth-child(odd),
+    .work-card:not(.featured):nth-child(even) {
+      min-height: 0;
+      padding: 48px 0 56px;
+      border: 0;
+      border-top: 1px solid var(--line);
+      background: transparent;
+    }
+    .work-card:not(.featured):hover { background: transparent; }
+
+    .activity-grid { column-gap: clamp(42px, 7vw, 76px); }
+    .activity-card,
+    .activity-card:nth-child(even),
+    .activity-card:nth-child(odd) {
+      min-height: 0;
+      padding: 42px 0 50px;
+      border: 0;
+      border-top: 1px solid var(--line);
+      background: transparent;
+    }
+
+    .about-layout { gap: clamp(44px, 8vw, 88px); }
+    .about-story {
+      padding: 42px 0 0;
+      border: 0;
+      border-top: 2px solid var(--accent);
+    }
+    .education-item {
+      min-height: 0;
+      padding: 30px 0;
+      border: 0;
+      border-top: 1px solid var(--line);
+    }
+    .education-item:last-child { border-bottom: 1px solid var(--line); }
+    .about-principle { border-top-color: var(--line); }
+
+    .personal-grid { column-gap: clamp(42px, 7vw, 76px); }
+    .personal-item,
+    .personal-item + .personal-item {
+      min-height: 0;
+      padding: 34px 0 10px;
+      border: 0;
+      border-top: 1px solid var(--line);
+    }
+    .skill-grid { column-gap: clamp(28px, 5vw, 56px); }
+    .skill-card,
+    .skill-card:not(:first-child) {
+      min-height: 0;
+      padding: 30px 0 12px;
+      border: 0;
+      border-top: 1px solid var(--line);
+    }
+    .language-note {
+      margin-top: 30px;
+      padding: 20px 0;
+      border: 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: transparent;
+      box-shadow: none;
+      text-align: left;
+    }
+    .citation-list { border-top-color: var(--line); }
+    .citation-list li { border-bottom-color: var(--line); }
+
+    .contact-panel {
+      margin-top: 88px;
+      padding: 48px 0;
+      border: 0;
+      border-top: 1px solid var(--accent);
+      border-bottom: 1px solid var(--line);
+      border-radius: 0;
+      background: transparent;
+      color: var(--ink);
+      box-shadow: none;
+    }
+    .contact-panel p { color: var(--muted); opacity: 1; }
+    .contact-panel .button {
+      border-color: var(--line);
+      background: transparent;
+      color: var(--ink);
+    }
+    .contact-panel .button:hover { border-color: var(--accent); }
+    .toast { background: var(--surface); color: var(--ink); border: 1px solid var(--line); }
+
+    @media (max-width: 800px) {
+      .mission-band { grid-template-columns: 1fr; gap: 30px; }
+      .home-grid, .work-grid, .activity-grid, .skill-grid, .personal-grid, .about-layout { gap: 0; }
+      .home-card,
+      .home-card:not(:first-child),
+      .skill-card,
+      .skill-card:not(:first-child),
+      .personal-item,
+      .personal-item + .personal-item,
+      .activity-card,
+      .activity-card:nth-child(even),
+      .activity-card:nth-child(odd),
+      .work-card:not(.featured),
+      .work-card:not(.featured):nth-child(odd),
+      .work-card:not(.featured):nth-child(even) {
+        padding-right: 0;
+        padding-left: 0;
+        border-right: 0;
+        border-left: 0;
+      }
+      .about-story { padding-right: 0; padding-left: 0; border-right: 0; }
+      .education-item { padding-right: 0; padding-left: 0; }
+    }
+
+    @media (max-width: 620px) {
+      .header-actions { margin-left: auto; }
+      .theme-toggle,
+      .share-button { width: 40px; padding: 0; }
+      .theme-toggle span,
+      .share-button span { display: none; }
+      .hero { min-height: 560px; padding: 68px 0 84px; }
+      .monogram { width: 96px; height: 96px; }
+      .mission-band { padding: 58px 0 86px; }
+      .mission-band::before { left: -26%; width: 80%; }
+      .mission-band::after { right: -22%; width: 72%; }
+      .contact-panel { padding: 38px 0; }
+    }
+
+    /* Human-scale movement: asymmetry first, effects second. */
+    :root {
+      --drift-x: 0px;
+      --drift-y: 0px;
+      --drift-x-reverse: 0px;
+      --drift-y-reverse: 0px;
+    }
+    body::before {
+      transform: translate3d(var(--drift-x), var(--drift-y), 0) rotate(-16deg);
+      will-change: transform;
+    }
+    body::after {
+      transform: translate3d(var(--drift-x-reverse), var(--drift-y-reverse), 0) rotate(20deg);
+      will-change: transform;
+    }
+    main, .site-footer { position: relative; z-index: 1; }
+    .cursor-aura {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: var(--sky);
+      filter: blur(72px);
+      opacity: 0;
+      pointer-events: none;
+      will-change: transform;
+      transition: opacity .55s ease, background-color .32s ease;
+    }
+    .cursor-aura.is-active { opacity: .035; }
+
+    .monogram {
+      --planet-x: 43px;
+      --planet-y: -43px;
+      --ring-tilt: -27deg;
+    }
+    .monogram::before {
+      transform: rotate(var(--ring-tilt));
+      will-change: transform;
+    }
+    .monogram::after {
+      top: calc(50% + var(--planet-y));
+      right: auto;
+      left: calc(50% + var(--planet-x));
+      transform: translate(-50%, -50%);
+      will-change: top, left;
+    }
+
+    .mission-band {
+      display: block;
+      padding-top: 82px;
+      padding-bottom: 116px;
+    }
+    .mission-band > div:first-child { max-width: 760px; }
+    .mission-copy {
+      max-width: 650px;
+      margin: 34px 7% 0 auto;
+    }
+    .mission-copy > p:first-child { font-size: 18px; }
+
+    .home-grid {
+      counter-reset: none;
+      grid-template-columns: 1fr 1.08fr .92fr;
+      align-items: start;
+      gap: clamp(38px, 6vw, 72px);
+      padding-top: 26px;
+      padding-bottom: 62px;
+    }
+    .home-card,
+    .home-card:not(:first-child) { padding-top: 0; }
+    .home-card::before,
+    .home-card:not(:first-child)::before { display: none; content: none; }
+    .home-card:nth-child(2) { margin-top: 54px; }
+    .home-card:nth-child(3) { margin-top: 18px; }
+    .home-card:hover { transform: translateY(-2px); }
+
+    /* Quieter grouping: whitespace replaces most visible rules. */
+    body::before,
+    body::after { opacity: .18; }
+    .cursor-aura.is-active { opacity: .018; }
+    .monogram::before { opacity: .58; }
+
+    .mission-band {
+      display: grid;
+      grid-template-columns: minmax(250px, .8fr) minmax(0, 1.2fr);
+      gap: clamp(42px, 7vw, 86px);
+      align-items: start;
+      padding: 72px 0 98px;
+    }
+    .mission-band::before,
+    .mission-band::after { display: none; }
+    .mission-band > div:first-child {
+      position: relative;
+      max-width: 520px;
+      padding-left: 20px;
+    }
+    .mission-band > div:first-child::before {
+      content: "";
+      position: absolute;
+      top: 8px;
+      left: 0;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: .72;
+    }
+    .mission-band h2 { font-size: clamp(36px, 4.5vw, 52px); }
+    .mission-copy {
+      max-width: 650px;
+      margin: 6px 0 0;
+    }
+    .mission-copy > p:first-child { font-size: 17px; }
+    .mission-note {
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: .025em;
+      text-transform: none;
+    }
+
+    .page-intro::after { display: none; }
+    .work-grid,
+    .activity-grid,
+    .personal-grid,
+    .skill-grid { row-gap: 18px; }
+    .work-card.featured,
+    .work-card:not(.featured),
+    .work-card:not(.featured):nth-child(odd),
+    .work-card:not(.featured):nth-child(even),
+    .activity-card,
+    .activity-card:nth-child(odd),
+    .activity-card:nth-child(even),
+    .about-story,
+    .education-item,
+    .education-item:last-child,
+    .personal-item,
+    .personal-item + .personal-item,
+    .skill-card,
+    .skill-card:not(:first-child),
+    .language-note,
+    .contact-panel,
+    .citation-list,
+    .citation-list li {
+      border: 0;
+    }
+    .work-card.featured { padding-top: 34px; padding-bottom: 54px; }
+    .work-card:not(.featured),
+    .work-card:not(.featured):nth-child(odd),
+    .work-card:not(.featured):nth-child(even) { padding-top: 34px; padding-bottom: 48px; }
+    .activity-card,
+    .activity-card:nth-child(odd),
+    .activity-card:nth-child(even) { padding-top: 32px; padding-bottom: 42px; }
+    .about-story { padding-top: 26px; }
+    .education-item { padding: 22px 0 28px; }
+    .about-principle { border-top: 0; border-left-width: 3px; }
+    .personal-item,
+    .personal-item + .personal-item { padding-top: 24px; }
+    .skill-card,
+    .skill-card:not(:first-child) { padding-top: 22px; }
+    .language-note { padding-top: 14px; padding-bottom: 0; }
+    .citation-list li { padding-top: 24px; padding-bottom: 30px; }
+    .contact-panel { padding-top: 34px; padding-bottom: 30px; }
+    .site-footer { border-top: 0; }
+
+    @media (max-width: 800px) {
+      .mission-band { grid-template-columns: 1fr; gap: 26px; }
+      .mission-copy { margin: 0; }
+      .home-grid { grid-template-columns: 1fr; padding-top: 6px; }
+      .home-card,
+      .home-card:not(:first-child),
+      .home-card:nth-child(2),
+      .home-card:nth-child(3) {
+        margin-top: 0;
+        padding: 34px 0;
+        border: 0;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .mission-band { padding-top: 66px; padding-bottom: 96px; }
+      .cursor-aura { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      body, .site-header { transition: none; }
+      .theme-toggle, .share-button, .home-card { transition: none; }
+      .cursor-aura { display: none; }
+      body::before { transform: rotate(-16deg); }
+      body::after { transform: rotate(20deg); }
+    }
+
+    @media print {
+      html, html[data-theme="dark"], html[data-theme="light"] {
+        --bg: #ffffff;
+        --surface: #ffffff;
+        --ink: #111111;
+        --muted: #444444;
+        --line: #cccccc;
+        color-scheme: light;
+      }
+      body::before, body::after, .theme-toggle, .cursor-aura { display: none !important; }
+      .mission-band { border: 0; background: transparent; color: #111; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="wednesday-note" role="status" data-nosnippet>On Wednesdays we wear pink.</div>
+  <div class="cursor-aura" id="cursorAura" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <button class="brand" type="button" data-route="home" aria-label="Go to home page">MW<span>.</span></button>
+      <nav class="tab-list" aria-label="Portfolio pages" role="tablist" data-nosnippet>
+        <button class="tab" type="button" role="tab" aria-selected="true" aria-controls="page-home" data-route="home">Home</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="page-work" data-route="work">Work</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="page-leadership" data-route="leadership">Leadership</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="page-publications" data-route="publications">Publications</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="page-about" data-route="about">About</button>
+      </nav>
+      <div class="header-actions" data-nosnippet>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to light mode" aria-pressed="true">
+          <svg class="theme-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9Z"></path>
+          </svg>
+          <span id="themeLabel">Light</span>
+        </button>
+        <button class="share-button" id="shareButton" type="button" aria-label="Share this portfolio">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="18" cy="5" r="3"></circle>
+            <circle cx="6" cy="12" r="3"></circle>
+            <circle cx="18" cy="19" r="3"></circle>
+            <path d="m8.6 10.5 6.8-4M8.6 13.5l6.8 4"></path>
+          </svg>
+          <span>Share</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section class="page" id="page-home" data-page="home" aria-labelledby="home-title">
+      <div class="hero">
+        <div class="monogram" aria-hidden="true">MW</div>
+        <div class="hero-copy">
+          <p class="eyebrow">USC and Carnegie Science</p>
+          <h1 id="home-title">Hi, I’m Miles.</h1>
+          <p class="lede">I study artificial intelligence at USC and build models to help people.</p>
+          <div class="actions">
+            <button class="button primary" type="button" data-route="work">See my work</button>
+            <a class="button" href="mailto:milesw@usc.edu">Email me</a>
+          </div>
+        </div>
+      </div>
+
+      <section class="mission-band" aria-labelledby="mission-title">
+        <div>
+          <p class="eyebrow">Why I do this</p>
+          <h2 id="mission-title">AI for the common good.</h2>
+        </div>
+        <div class="mission-copy">
+          <p>I’ve seen firsthand how artificial intelligence can be used for the common good, from looking for signs of life in chemical data to helping students manage their assignments. I like being involved in the whole process: preparing the data, building and training the model, and figuring out why it gets something wrong.</p>
+          <p class="mission-note">I want the result to be something useful, and I want to understand why it works.</p>
+        </div>
+      </section>
+
+      <div class="home-grid" aria-label="Portfolio overview">
+        <article class="card home-card">
+          <p class="meta">Research</p>
+          <h3>Searching for signs of life</h3>
+          <p>At Carnegie Science, I use machine learning to study the chemical differences between biological and nonbiological samples and help identify patterns that could point to life.</p>
+          <button class="text-link" type="button" data-route="work">Read about my research</button>
+        </article>
+        <article class="card home-card">
+          <p class="meta">Projects</p>
+          <h3>A few things I’ve built</h3>
+          <p>I’ve built an AI detector, trained a model to classify breast cancer images, and created a planning app that was a runner-up in the Congressional App Challenge.</p>
+          <button class="text-link" type="button" data-route="work">See my projects</button>
+        </article>
+        <article class="card home-card">
+          <p class="meta">Community</p>
+          <h3>Teaching and getting involved</h3>
+          <p>I’ve founded an AI club, taught other students to code, and captained a climbing team. I’ve also worked on environmental projects and helped organize Jewish programs.</p>
+          <button class="text-link" type="button" data-route="leadership">More about what I do</button>
+        </article>
+      </div>
+    </section>
+
+    <section class="page" id="page-work" data-page="work" aria-labelledby="work-title" hidden>
+      <header class="page-intro">
+        <p class="eyebrow">Research and projects</p>
+        <h2 id="work-title">What I’ve been working on.</h2>
+        <p class="lede">I’ve used machine learning to look for signs of life, identify AI-generated writing, and classify breast cancer images. I’m interested in how the same technology can be used for such different problems, and what I need to change to make it work for each one.</p>
+      </header>
+
+      <div class="work-grid">
+        <article class="card work-card featured">
+          <div>
+            <p class="meta">Carnegie Science · Research Intern</p>
+            <h3>Looking for signs of life in chemical data</h3>
+            <p class="plain-label">Earth &amp; Planets Laboratory · Summers 2025–2026</p>
+          </div>
+          <div>
+            <p>At Carnegie Science, I write code in Python and R to clean and align chemical data from biological and nonbiological samples, compare their patterns, and train models to tell them apart. The goal is to find signs of life by looking at the chemical pattern of a sample as a whole, even if it does not contain a molecule we already associate with life.</p>
+            <p>My work has contributed to several conference presentations, and I’m now helping write a paper about what we’ve found.</p>
+            <footer>Machine learning · astrobiology · data analysis</footer>
+            <div class="project-links" aria-label="Carnegie Science project links">
+              <a class="project-link" href="https://carnegiescience.edu/news/undergrads-return-another-epiic-summer" target="_blank" rel="noreferrer">Read about the internship <span aria-hidden="true">↗</span></a>
+              <a class="project-link" href="https://lnkd.in/p/g-i7DEea" target="_blank" rel="noreferrer">My internship reflection <span aria-hidden="true">↗</span></a>
+              <a class="project-link" href="https://lnkd.in/p/g52v6rR9" target="_blank" rel="noreferrer">My AGU research update <span aria-hidden="true">↗</span></a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card work-card">
+          <p class="meta">Independent research · 2026</p>
+          <h3>Detecting AI-generated writing</h3>
+          <p>I built and trained an AI detector that looks at how people put sentences together, including parts of speech and verb tense. I wanted to understand which patterns could help distinguish human writing from AI-generated text, while also being careful about incorrectly flagging someone’s own work.</p>
+          <footer>Python · natural language processing</footer>
+          <div class="project-links">
+            <a class="project-link" href="https://youtu.be/RJvPouc2uds?t=2624" target="_blank" rel="noreferrer">Watch my capstone presentation <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card work-card">
+          <p class="meta">Computer vision · 2023</p>
+          <h3>Classifying breast cancer images</h3>
+          <p>I built and tested a convolutional neural network to classify breast cancer images as benign or malignant. I worked through preparing the images, training the model, and checking its predictions to see how well it performed.</p>
+          <footer>TensorFlow · image classification</footer>
+        </article>
+
+        <article class="card work-card">
+          <p class="meta">iOS application · 2023</p>
+          <h3>AllocateAI</h3>
+          <p>I built AllocateAI to help students break a long assignment into smaller steps and put those steps into a schedule they could follow. I used SwiftUI for the interface and Python for the planning process.</p>
+          <footer>Runner-up · MD-08 Congressional App Challenge</footer>
+          <div class="project-links">
+            <a class="project-link" href="https://www.linkedin.com/in/miles-walters/details/honors/" target="_blank" rel="noreferrer">See the award <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card work-card">
+          <p class="meta">Conference research · 2026</p>
+          <h3>Processed materials and technosignatures</h3>
+          <p>I coauthored research on processed foods, cosmetics, and other materials made by people, looking at whether a model could recognize chemical patterns left by processing.</p>
+          <footer>Coauthored research · presented at EANA</footer>
+          <div class="project-links">
+            <a class="project-link" href="https://eana-net.eu/conferences/EANA2026/abstract_show.php?id=245" target="_blank" rel="noreferrer">Read the EANA abstract <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="page" id="page-leadership" data-page="leadership" aria-labelledby="leadership-title" hidden>
+      <header class="page-intro">
+        <p class="eyebrow">Leadership and activities</p>
+        <h2 id="leadership-title">The groups I’ve been part of.</h2>
+        <p class="lede">I like helping other people learn something I care about, whether that means teaching a Python lesson or working with a new climber. I’ve also helped organize environmental projects and Jewish programs at school.</p>
+      </header>
+
+      <div class="activity-grid">
+        <article class="card activity-card">
+          <p class="role">Founder and President · 2024–2026</p>
+          <h3>Bullis Artificial Intelligence Club</h3>
+          <p>I started the AI club at Bullis, planned what we would learn, and led discussions about how AI could be used responsibly. I also worked with teachers as they considered new tools for the classroom.</p>
+        </article>
+        <article class="card activity-card">
+          <p class="role">Co-Leader · 2024–2026</p>
+          <h3>Bullis Computer Science Club</h3>
+          <p>I taught weekly lessons in Python, JavaScript, and C++ and helped students plan their projects, work through programming concepts, and figure out why their code wasn’t working.</p>
+        </article>
+        <article class="card activity-card">
+          <p class="role">Marketing Director · 2023–2026</p>
+          <h3>Bullis Green Team</h3>
+          <p>I led the photography, media, and presentations for Bullis’s successful National Wildlife Federation Green Flag application.</p>
+        </article>
+        <article class="card activity-card">
+          <p class="role">Captain · 2023–2026</p>
+          <h3>Bullis Varsity Rock Climbing</h3>
+          <p>As captain, I helped new climbers learn, ran workshops on climbing technique, and worked with the team on our strategy for top-rope and bouldering meets.</p>
+        </article>
+        <article class="card activity-card">
+          <p class="role">Member · USC</p>
+          <h3>Trojan Climbing</h3>
+          <p>I’m continuing to work on my top-rope and bouldering skills with other climbers at USC.</p>
+        </article>
+        <article class="card activity-card">
+          <p class="role">Committee Member · USC</p>
+          <h3>USC Hillel Ritual Committee</h3>
+          <p>I help plan Jewish services and other ritual programs at USC Hillel.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="page" id="page-publications" data-page="publications" aria-labelledby="publications-title" hidden>
+      <header class="page-intro">
+        <p class="eyebrow">Publications and presentations</p>
+        <h2 id="publications-title">Conference presentations.</h2>
+        <p class="lede">These are some of the abstracts and presentations I’ve contributed to through my research at Carnegie Science’s Earth &amp; Planets Laboratory.</p>
+      </header>
+
+      <ol class="citation-list">
+        <li><strong>Walters, W. M.</strong>, Dobberfuhl, E., Prabhu, A., Cody, G. D., Hystad, G., Cleaves, H. J., II, Hazen, R. M., &amp; Wong, M. L. (2025, December 15–19). <em>Unifying pyrolysis-gas chromatography-mass spectrometry data for agnostic biosignature detection with peak alignment and vector embeddings</em> [Poster presentation]. AGU Fall Meeting 2025, New Orleans, LA, United States.<br><a class="citation-link" href="https://studio.m-anage.com/agu/agu25/meetingapp.cgi/Person/815293" target="_blank" rel="noreferrer">See the AGU program <span aria-hidden="true">↗</span></a></li>
+        <li>Dobberfuhl, E., <strong>Walters, W. M.</strong>, Prabhu, A., Cody, G. D., Hystad, G., Cleaves, H. J., II, Hazen, R. M., &amp; Wong, M. L. (2025, December 15–19). <em>Exploring the effects of contemporary biotic contamination on detecting agnostic biosignatures</em> [Conference presentation]. AGU Fall Meeting 2025, New Orleans, LA, United States.<br><a class="citation-link" href="https://studio.m-anage.com/agu/agu25/meetingapp.cgi/Person/815293" target="_blank" rel="noreferrer">See the AGU program <span aria-hidden="true">↗</span></a></li>
+        <li>Dobberfuhl, E., Prabhu, A., Cody, G. D., <strong>Walters, W. M.</strong>, Hystad, G., &amp; Wong, M. L. (2024, May 5–10). <em>Building interpretable biosignature detection models using machine learning</em> [Conference presentation]. Astrobiology Science Conference 2024, Providence, RI, United States.</li>
+        <li>Alling, A. N., <strong>Walters, M.</strong>, Cody, G. D., Prabhu, A., Cleaves, H. J., II, Hazen, R. M., &amp; Wong, M. L. (2026, September 1–4). <em>Exploring technosignatures using pyrolysis-gas chromatography mass spectrometry and machine learning</em> [Conference abstract]. 26th European Astrobiology Conference, Neuchâtel, Switzerland.<br><a class="citation-link" href="https://eana-net.eu/conferences/EANA2026/abstract_show.php?id=245" target="_blank" rel="noreferrer">Read the abstract <span aria-hidden="true">↗</span></a></li>
+      </ol>
+    </section>
+
+    <section class="page" id="page-about" data-page="about" aria-labelledby="about-title" hidden>
+      <header class="page-intro">
+        <p class="eyebrow">About</p>
+        <h2 id="about-title">I like figuring out how things work.</h2>
+        <p class="lede">That started with taking apart toys as a kid, and it’s a big part of why I study artificial intelligence now.</p>
+      </header>
+
+      <div class="about-layout">
+        <article class="card about-story">
+          <p>When I was younger, I would take apart my toys because I wanted to know how they worked. I still approach technology in much the same way, trying things and asking questions until I understand what is happening and why.</p>
+          <p>I started coding in Python and became interested in machine learning because of how it could be used to solve problems in other fields. Since then, I’ve worked on projects in science, language, health, and education, and each one has given me a different way to think about what AI can do.</p>
+          <p class="about-principle">I want to understand the models I build well enough to explain how they work, recognize when they’re wrong, and think carefully about how people use them.</p>
+        </article>
+
+        <div class="education-list">
+          <article class="card education-item">
+            <p class="meta">Education</p>
+            <h3>University of Southern California</h3>
+            <p>B.S. in Artificial Intelligence<br>Expected 2030</p>
+          </article>
+          <article class="card education-item">
+            <p class="meta">Education</p>
+            <h3>Bullis School</h3>
+            <p>Class of 2026<br>Cum Laude Society · High Honor Roll · Global Seal of Biliteracy</p>
+          </article>
+        </div>
+      </div>
+
+      <section class="section" aria-labelledby="beyond-title">
+        <div class="section-heading">
+          <p class="eyebrow">Outside of computer science</p>
+          <h3 id="beyond-title">Theater, music, and Jewish life.</h3>
+          <p>I’ve spent a lot of time performing, playing guitar, and singing in services, and those experiences have shaped how I express myself and connect with other people.</p>
+        </div>
+        <div class="personal-grid">
+          <article class="personal-item">
+            <h4>Theater</h4>
+            <p>I had named roles in three plays and a musical, where I also sang a solo. I competed at the Maryland State Thespian Festival and earned a five-star thespian ranking through the International Thespian Society.</p>
+          </article>
+          <article class="personal-item">
+            <h4>Temple Youth Choir</h4>
+            <p>As a songleader and guitarist in my temple's youth choir, I taught songs to younger students, helped clergy lead services, and performed during Jewish holidays.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="skills-title">
+        <div class="section-heading">
+          <p class="eyebrow">Skills</p>
+          <h3 id="skills-title">What I use.</h3>
+          <p>These are some of the programming languages, tools, and subjects I’ve worked with in research, classes, and my own projects.</p>
+        </div>
+        <div class="skill-grid">
+          <article class="card skill-card"><h4>Programming</h4><p>Python, R, JavaScript, C++, Swift, HTML, and CSS</p></article>
+          <article class="card skill-card"><h4>Machine learning</h4><p>TensorFlow, scikit-learn, natural language processing, and computer vision</p></article>
+          <article class="card skill-card"><h4>Working with data</h4><p>NumPy, pandas, Matplotlib, UMAP, preparing scientific data, and creating visualizations</p></article>
+        </div>
+        <p class="language-note"><strong>Languages:</strong> English (native) and Spanish (professional working proficiency)</p>
+      </section>
+
+      <div class="contact-panel">
+        <div>
+          <h3>Get in touch.</h3>
+          <p>The best way to get in touch is to email me. You can also reach out on LinkedIn.</p>
+        </div>
+        <div class="actions">
+          <a class="button" href="mailto:milesw@usc.edu">milesw@usc.edu</a>
+          <a class="button" href="https://www.linkedin.com/in/miles-walters/" target="_blank" rel="noreferrer">LinkedIn</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" data-nosnippet>
+    <p>© <span id="year"></span> Miles Walters</p>
+    <p>Los Angeles · Washington, D.C.</p>
+  </footer>
+  <div class="toast" id="shareStatus" role="status" aria-live="polite" hidden data-nosnippet>Link copied.</div>
+
+  <noscript>
+    <style>.page[hidden]{display:block!important}.site-header{position:static}.tab-list{display:none}</style>
+  </noscript>
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://mileswalters.com/#website",
+          "url": "https://mileswalters.com/",
+          "name": "Miles Walters",
+          "alternateName": "Miles Walters Portfolio",
+          "inLanguage": "en-US"
+        },
+        {
+          "@type": "ProfilePage",
+          "@id": "https://mileswalters.com/#profile",
+          "url": "https://mileswalters.com/",
+          "name": "Miles Walters | AI Student and Researcher",
+          "description": "I’m Miles Walters. I study artificial intelligence at USC, do research at Carnegie Science, and build models to help people.",
+          "dateModified": "2026-10-23",
+          "isPartOf": {"@id": "https://mileswalters.com/#website"},
+          "inLanguage": "en-US",
+          "mainEntity": {"@id": "https://mileswalters.com/#person"},
+          "hasPart": [
+            {
+              "@type": "CreativeWork",
+              "name": "AI-Generated Writing Detection",
+              "url": "https://youtu.be/RJvPouc2uds?t=2624",
+              "author": {"@id": "https://mileswalters.com/#person"}
+            },
+            {
+              "@type": "CreativeWork",
+              "name": "Unifying Pyrolysis-Gas Chromatography-Mass Spectrometry Data for Agnostic Biosignature Detection with Peak Alignment and Vector Embeddings",
+              "url": "https://studio.m-anage.com/agu/agu25/meetingapp.cgi/Person/815293",
+              "author": {"@id": "https://mileswalters.com/#person"}
+            },
+            {
+              "@type": "CreativeWork",
+              "name": "Exploring Technosignatures Using Pyrolysis-Gas Chromatography Mass Spectrometry and Machine Learning",
+              "url": "https://eana-net.eu/conferences/EANA2026/abstract_show.php?id=245",
+              "author": {"@id": "https://mileswalters.com/#person"}
+            }
+          ]
+        },
+        {
+          "@type": "Person",
+          "@id": "https://mileswalters.com/#person",
+          "name": "Miles Walters",
+          "url": "https://mileswalters.com/",
+          "email": "mailto:milesw@usc.edu",
+          "description": "Miles Walters studies artificial intelligence at USC and does research at Carnegie Science, building models for projects in astrobiology, language, health, and education.",
+          "jobTitle": "Artificial Intelligence Student and Researcher",
+          "sameAs": ["https://www.linkedin.com/in/miles-walters/"],
+          "affiliation": [
+            {"@type": "CollegeOrUniversity", "name": "University of Southern California", "url": "https://www.usc.edu/"},
+            {"@type": "Organization", "name": "Carnegie Science", "url": "https://carnegiescience.edu/"}
+          ],
+          "alumniOf": {"@type": "EducationalOrganization", "name": "Bullis School"},
+          "knowsAbout": ["Artificial intelligence model development", "Machine learning", "Model training", "Responsible AI", "Astrobiology", "Natural language processing", "Computer vision"]
+        }
+      ]
+    }
+  </script>
+
+  <script>
+    (() => {
+      const routes = new Set(["home", "work", "leadership", "publications", "about"]);
+      const pages = [...document.querySelectorAll("[data-page]")];
+      const controls = [...document.querySelectorAll("[data-route]")];
+      const tabs = [...document.querySelectorAll("[role='tab'][data-route]")];
+      const shareButton = document.getElementById("shareButton");
+      const shareStatus = document.getElementById("shareStatus");
+      const themeToggle = document.getElementById("themeToggle");
+      const themeLabel = document.getElementById("themeLabel");
+      const themeIcon = themeToggle.querySelector(".theme-icon");
+      const themeColorMeta = document.getElementById("themeColorMeta");
+      const cursorAura = document.getElementById("cursorAura");
+      const monogram = document.querySelector(".monogram");
+      let shareTimer;
+
+      const themeIcons = {
+        light: '<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"></path>',
+        dark: '<path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9Z"></path>'
+      };
+
+      function savedTheme() {
+        try {
+          const value = localStorage.getItem("miles-theme");
+          return value === "light" || value === "dark" ? value : null;
+        } catch {
+          return null;
+        }
+      }
+
+      function applyTheme(theme, persist = false) {
+        const next = theme === "light" ? "light" : "dark";
+        const destination = next === "dark" ? "light" : "dark";
+        document.documentElement.dataset.theme = next;
+        themeLabel.textContent = destination[0].toUpperCase() + destination.slice(1);
+        themeIcon.innerHTML = themeIcons[destination];
+        themeToggle.setAttribute("aria-label", `Switch to ${destination} mode`);
+        themeToggle.setAttribute("aria-pressed", String(next === "dark"));
+        themeToggle.title = `Switch to ${destination} mode`;
+        themeColorMeta.content = getComputedStyle(document.documentElement).getPropertyValue("--bg").trim();
+        if (persist) {
+          try { localStorage.setItem("miles-theme", next); }
+          catch { /* Theme still works for this visit. */ }
+        }
+      }
+
+      function initAmbientMotion() {
+        const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+        if (!finePointer.matches || reducedMotion.matches) return;
+
+        const root = document.documentElement;
+        let targetX = window.innerWidth / 2;
+        let targetY = window.innerHeight / 2;
+        let currentX = targetX;
+        let currentY = targetY;
+        let planetX = 43;
+        let planetY = -43;
+        let frameId = null;
+
+        function renderMotion() {
+          currentX += (targetX - currentX) * .075;
+          currentY += (targetY - currentY) * .075;
+
+          const nx = currentX / Math.max(window.innerWidth, 1) - .5;
+          const ny = currentY / Math.max(window.innerHeight, 1) - .5;
+          root.style.setProperty("--drift-x", `${(nx * 18).toFixed(2)}px`);
+          root.style.setProperty("--drift-y", `${(ny * 14).toFixed(2)}px`);
+          root.style.setProperty("--drift-x-reverse", `${(-nx * 14).toFixed(2)}px`);
+          root.style.setProperty("--drift-y-reverse", `${(-ny * 11).toFixed(2)}px`);
+          cursorAura.style.transform = `translate3d(${(currentX - 150).toFixed(1)}px, ${(currentY - 150).toFixed(1)}px, 0)`;
+
+          if (monogram.offsetParent !== null) {
+            const rect = monogram.getBoundingClientRect();
+            const angle = Math.atan2(currentY - (rect.top + rect.height / 2), currentX - (rect.left + rect.width / 2));
+            const radius = rect.width * .57;
+            const desiredX = Math.cos(angle) * radius;
+            const desiredY = Math.sin(angle) * radius;
+            planetX += (desiredX - planetX) * .09;
+            planetY += (desiredY - planetY) * .09;
+            monogram.style.setProperty("--planet-x", `${planetX.toFixed(2)}px`);
+            monogram.style.setProperty("--planet-y", `${planetY.toFixed(2)}px`);
+            monogram.style.setProperty("--ring-tilt", `${(-27 + nx * 8 + ny * 4).toFixed(2)}deg`);
+          }
+
+          const moving = Math.abs(targetX - currentX) > .1 || Math.abs(targetY - currentY) > .1;
+          frameId = moving ? requestAnimationFrame(renderMotion) : null;
+        }
+
+        function startMotion() {
+          if (frameId === null) frameId = requestAnimationFrame(renderMotion);
+        }
+
+        window.addEventListener("pointermove", (event) => {
+          targetX = event.clientX;
+          targetY = event.clientY;
+          cursorAura.classList.add("is-active");
+          startMotion();
+        }, {passive: true});
+
+        window.addEventListener("mouseout", (event) => {
+          if (event.relatedTarget) return;
+          targetX = window.innerWidth / 2;
+          targetY = window.innerHeight / 2;
+          cursorAura.classList.remove("is-active");
+          startMotion();
+        });
+      }
+
+      function routeFromHash() {
+        const route = location.hash.replace(/^#\/?/, "").toLowerCase();
+        return routes.has(route) ? route : "home";
+      }
+
+      function showPage(route, moveFocus = false) {
+        const next = routes.has(route) ? route : "home";
+        pages.forEach((page) => {
+          const active = page.dataset.page === next;
+          page.hidden = !active;
+          page.setAttribute("aria-hidden", String(!active));
+        });
+        tabs.forEach((tab) => {
+          const active = tab.dataset.route === next;
+          tab.setAttribute("aria-selected", String(active));
+          tab.tabIndex = active ? 0 : -1;
+        });
+        const pageTitles = {
+          home: "Miles Walters | AI Student and Researcher",
+          work: "Work | Miles Walters",
+          leadership: "Leadership | Miles Walters",
+          publications: "Publications | Miles Walters",
+          about: "About | Miles Walters"
+        };
+        document.title = pageTitles[next];
+        if (moveFocus) {
+          window.scrollTo(0, 0);
+          document.getElementById("main").focus({preventScroll: true});
+        }
+      }
+
+      controls.forEach((control) => {
+        control.addEventListener("click", () => {
+          const next = control.dataset.route;
+          if (routeFromHash() === next) showPage(next, true);
+          else location.hash = `#/${next}`;
+        });
+      });
+
+      tabs.forEach((tab, index) => {
+        tab.addEventListener("keydown", (event) => {
+          if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+          event.preventDefault();
+          const step = event.key === "ArrowRight" ? 1 : -1;
+          const nextTab = tabs[(index + step + tabs.length) % tabs.length];
+          nextTab.focus();
+          nextTab.click();
+        });
+      });
+
+      themeToggle.addEventListener("click", () => {
+        const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+        applyTheme(next, true);
+      });
+
+      window.addEventListener("storage", (event) => {
+        if (event.key === "miles-theme" && (event.newValue === "dark" || event.newValue === "light")) {
+          applyTheme(event.newValue);
+        }
+      });
+
+      function showShareStatus(message) {
+        clearTimeout(shareTimer);
+        shareStatus.textContent = message;
+        shareStatus.hidden = false;
+        shareTimer = setTimeout(() => { shareStatus.hidden = true; }, 2600);
+      }
+
+      async function copyShareLink() {
+        const url = window.location.href;
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(url);
+        } else {
+          const field = document.createElement("textarea");
+          field.value = url;
+          field.setAttribute("readonly", "");
+          field.style.position = "fixed";
+          field.style.opacity = "0";
+          document.body.appendChild(field);
+          field.select();
+          document.execCommand("copy");
+          field.remove();
+        }
+        showShareStatus("Link copied.");
+      }
+
+      shareButton.addEventListener("click", async () => {
+        const shareData = {
+          title: "Miles Walters | AI Student and Researcher",
+          text: "I study AI at USC and build models for projects in astrobiology, language, health, and education.",
+          url: window.location.href
+        };
+        if (navigator.share) {
+          try {
+            await navigator.share(shareData);
+            showShareStatus("Shared.");
+          } catch (error) {
+            if (error.name !== "AbortError") {
+              try { await copyShareLink(); }
+              catch { showShareStatus("Copy the URL from your browser to share."); }
+            }
+          }
+        } else {
+          try { await copyShareLink(); }
+          catch { showShareStatus("Copy the URL from your browser to share."); }
+        }
+      });
+
+      window.addEventListener("hashchange", () => showPage(routeFromHash(), true));
+      document.getElementById("year").textContent = new Date().getFullYear();
+      document.documentElement.classList.toggle("wednesday", new Date().getDay() === 3);
+      applyTheme(savedTheme() || "dark");
+      initAmbientMotion();
+      showPage(routeFromHash());
+    })();
+  </script>
+</body>
+</html>
